@@ -50,7 +50,7 @@ configuration (Phase 3), Web Worker (Phase 3), Docker/CI (Phase 4).
       `tsconfig.json` extending root, `vite.config.ts`, `src/main.tsx`, `src/App.tsx`,
       `src/index.css`, `index.html`. Install Vite, React 19, TypeScript as
       devDependencies in the package.
-- [ ] **Step 2** — Install and configure Tailwind CSS v4 in `apps/todo-pwa`. Wire
+- [x] **Step 2** — Install and configure Tailwind CSS v4 in `apps/todo-pwa`. Wire
       into `src/index.css` and verify a Tailwind utility class renders correctly.
 - [ ] **Step 3** — Add ESLint flat config (`eslint.config.js`) to `apps/todo-pwa`
       that extends the root config. Add Prettier config (`.prettierrc`) inheriting
