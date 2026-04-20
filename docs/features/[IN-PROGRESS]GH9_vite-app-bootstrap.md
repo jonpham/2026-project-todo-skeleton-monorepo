@@ -2,11 +2,11 @@
 project: "Project-BootStrap-Mono-Repo"
 phase: 2
 slug: "vite-app-bootstrap"
-status: TODO
+status: IN-PROGRESS
 step_gating: true
 issue: 9
 parent_issue: null
-branch: null
+branch: feat/GH9-vite-app-bootstrap
 pr: null
 completed_at: null
 ---
@@ -17,7 +17,7 @@ completed_at: null
 
 With the monorepo root in place, this phase scaffolds the first application
 package: a Vite + React + TypeScript Progressive Web Application shell at
-`apps/todo-web`. It also installs the full developer toolchain — linting,
+`apps/todo-pwa`. It also installs the full developer toolchain — linting,
 formatting, git hooks, and all three test frameworks — so that Phase 3 can
 develop features using a complete TDD workflow from day one.
 
@@ -45,26 +45,26 @@ configuration (Phase 3), Web Worker (Phase 3), Docker/CI (Phase 4).
 
 ## Steps
 
-- [ ] **Step 1** — Scaffold `apps/todo-web` package: create `package.json` (extends
+- [ ] **Step 1** — Scaffold `apps/todo-pwa` package: create `package.json` (extends
       root, defines `dev`, `build`, `test`, `lint`, `storybook`, `test:e2e` scripts),
       `tsconfig.json` extending root, `vite.config.ts`, `src/main.tsx`, `src/App.tsx`,
       `src/index.css`, `index.html`. Install Vite, React 19, TypeScript as
       devDependencies in the package.
-- [ ] **Step 2** — Install and configure Tailwind CSS v4 in `apps/todo-web`. Wire
+- [ ] **Step 2** — Install and configure Tailwind CSS v4 in `apps/todo-pwa`. Wire
       into `src/index.css` and verify a Tailwind utility class renders correctly.
-- [ ] **Step 3** — Add ESLint flat config (`eslint.config.js`) to `apps/todo-web`
+- [ ] **Step 3** — Add ESLint flat config (`eslint.config.js`) to `apps/todo-pwa`
       that extends the root config. Add Prettier config (`.prettierrc`) inheriting
       root settings. Install as devDependencies. Add `lint` and `format` scripts.
 - [ ] **Step 4** — Install Husky + lint-staged at the repo root. Configure
       `.husky/pre-commit` to run `pnpm lint-staged`. Configure `lint-staged` in root
       `package.json` for `*.{ts,tsx}` and `*.{js,json,md}` files.
-- [ ] **Step 5** — Install Vitest + React Testing Library in `apps/todo-web`.
+- [ ] **Step 5** — Install Vitest + React Testing Library in `apps/todo-pwa`.
       Configure Vitest in `vite.config.ts` with jsdom test environment. Create
       `src/App.test.tsx` with a smoke test asserting the app renders without crashing.
-- [ ] **Step 6** — Initialize Storybook 8 in `apps/todo-web` for Vite + React.
+- [ ] **Step 6** — Initialize Storybook 8 in `apps/todo-pwa` for Vite + React.
       Create `src/App.stories.tsx` with a Default story. Verify `pnpm storybook` opens
       and the story is visible.
-- [ ] **Step 7** — Initialize Playwright in `apps/todo-web`. Create
+- [ ] **Step 7** — Initialize Playwright in `apps/todo-pwa`. Create
       `playwright.config.ts` targeting the local Vite dev server. Create
       `e2e/app.spec.ts` with a smoke test that navigates to the app and asserts the
       page title is present.
@@ -73,7 +73,7 @@ configuration (Phase 3), Web Worker (Phase 3), Docker/CI (Phase 4).
 
 - Steps 3–7 are independent of each other — order listed is recommended but not required
 - Storybook init may modify `package.json` and `vite.config.ts` — review diffs carefully
-- Playwright requires browsers to be installed: `pnpm --filter todo-web exec playwright install`
+- Playwright requires browsers to be installed: `pnpm --filter todo-pwa exec playwright install`
 - Root ESLint config uses flat config format (`eslint.config.js`) — ensure app config
   extends it correctly using the flat config API, not the legacy `.eslintrc` format
 
