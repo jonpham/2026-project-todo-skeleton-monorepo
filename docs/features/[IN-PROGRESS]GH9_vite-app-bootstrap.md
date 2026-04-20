@@ -52,7 +52,7 @@ configuration (Phase 3), Web Worker (Phase 3), Docker/CI (Phase 4).
       devDependencies in the package.
 - [x] **Step 2** — Install and configure Tailwind CSS v4 in `apps/todo-pwa`. Wire
       into `src/index.css` and verify a Tailwind utility class renders correctly.
-- [ ] **Step 3** — Add ESLint flat config (`eslint.config.js`) to `apps/todo-pwa`
+- [x] **Step 3** — Add ESLint flat config (`eslint.config.js`) to `apps/todo-pwa`
       that extends the root config. Add Prettier config (`.prettierrc`) inheriting
       root settings. Install as devDependencies. Add `lint` and `format` scripts.
 - [ ] **Step 4** — Install Husky + lint-staged at the repo root. Configure
@@ -86,7 +86,9 @@ configuration (Phase 3), Web Worker (Phase 3), Docker/CI (Phase 4).
 
 ## Assumptions
 
-_None yet — populated during development._
+- Root `package.json` required `"type": "module"` for ESLint flat config to load without a performance warning
+- App-level `.prettierrc` mirrors root settings (Prettier doesn't support extends in JSON config)
+- Added `.prettierignore` to exclude `dist/` from formatting
 
 ## Change Log
 
