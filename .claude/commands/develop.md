@@ -152,19 +152,22 @@ current feature branch, then implement on it. After verifying, open a PR from
 TASK_PR_URL=$(gh pr create \
   --title "task(GH{sub-issue-number}): {step description}" \
   --body "Part of #{parent-issue-number}
-Closes #{sub-issue-number}
 
 {brief description of what was implemented}" \
   --base feat/GH{parent-issue-number}-{feature-slug})
 echo $TASK_PR_URL
 ```
-After the task PR is merged, switch back to the feature branch and pull:
+Note: `Closes #n` in a PR that merges into a non-default branch does NOT
+auto-close the issue. After the task PR is merged, explicitly close the
+sub-issue and switch back to the feature branch:
 ```bash
+gh issue close {sub-issue-number} \
+  --comment "Resolved in task PR: {TASK_PR_URL}"
 git checkout feat/GH{parent-issue-number}-{feature-slug}
 git pull
 ```
 
-If [2]: implement on the feature branch, then close the sub-issue with context:
+If [2]: implement on the feature branch, then explicitly close the sub-issue:
 ```bash
 gh issue close {sub-issue-number} \
   --comment "Implemented directly on feat/GH{parent-issue-number} — change was small enough to not warrant a separate branch"
@@ -272,7 +275,19 @@ Once all steps are checked off:
 2. Rename the feature doc:
    e.g. `[IN-PROGRESS]GH4_vite-app-bootstrap.md` → `[DONE]GH4_vite-app-bootstrap.md`
 
-3. Update the GitHub Issue status on the Project board to `Done`.
+3. Close any remaining open sub-issues linked in the feature doc's `## Steps`
+   checklist. Scan each step line for `#{issue-number}` references and check
+   their state:
+   ```bash
+   gh issue view {sub-issue-number} --repo {owner}/{repo} --json state
+   ```
+   For any that are still open:
+   ```bash
+   gh issue close {sub-issue-number} \
+     --comment "Phase {n} complete — resolved as part of feat/GH{n}-{feature-slug}"
+   ```
+
+4. Update the GitHub Issue status on the Project board to `Done`.
    Use cached IDs from `CLAUDE.md` (`## GitHub Project IDs`). Get the item ID:
    ```bash
    gh project item-list {project-number} --owner {owner} --format json
@@ -286,7 +301,7 @@ Once all steps are checked off:
      --single-select-option-id {done-option-id}
    ```
 
-4. Commit all remaining changes:
+5. Commit all remaining changes:
    ```
    git add .
    git commit -m "docs(GH{n}): mark phase {n} complete — {feature-slug}"
