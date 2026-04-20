@@ -207,7 +207,7 @@ git pull
 Implement exactly what the step describes. Do not implement anything from
 future steps, even if it seems logical to do so.
 
-### 4b — Verify the Step
+### 4c — Verify the Step
 
 Run the verification commands appropriate to what was just built:
 - If code was added: run lint and test scoped to the changed package:
@@ -223,14 +223,14 @@ Run the verification commands appropriate to what was just built:
 If any verification fails, fix it before marking the step complete.
 Do not move to the next step with a failing test.
 
-### 4c — Update the Feature Doc
+### 4d — Update the Feature Doc
 
 1. Check off the completed step in the `## Steps` checklist
 2. Append any non-obvious decisions to the `## Assumptions` section
 3. Run `/project:update-status-and-commit` to update `docs/PROJECT_STATUS.md`
    and commit the implementation + updated feature doc + status doc together.
 
-### 4d — Output the Working Agreement Summary
+### 4e — Output the Working Agreement Summary
 
 Output exactly:
 ```
@@ -249,7 +249,7 @@ Verify locally:
 Next step: {one sentence describing Step i+1}
 ```
 
-### 4e — Gate Check
+### 4f — Gate Check
 
 If `step_gating: true`:
   STOP. Do not proceed until the engineer types `proceed` or `next`.
@@ -257,7 +257,7 @@ If `step_gating: true`:
 If `step_gating: false`:
   Continue immediately to the next unchecked step.
 
-Repeat Steps 4a–4e for each remaining unchecked step.
+Repeat Steps 4a–4f for each remaining unchecked step.
 
 ---
 

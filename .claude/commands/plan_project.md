@@ -280,8 +280,8 @@ After all Issues are created, commit the renamed and updated feature docs:
 ```bash
 git add docs/features/ CLAUDE.md
 git commit -m "docs: sync feature docs with GitHub Issues"
-git push
 ```
+Then run `/project:update-docs-and-push` to review all project docs and push.
 
 Output a summary table:
 
@@ -298,12 +298,12 @@ Then STOP and wait for explicit approval.
 Skip this step if the `GitHub Project Board` URL is already filled in `CLAUDE.md`.
 
 1. Update the `GitHub Project Board` URL field in `CLAUDE.md` with the actual project board URL
-2. Commit the update:
+2. Commit and push:
    ```bash
    git add CLAUDE.md
    git commit -m "docs: update CLAUDE.md with project board URL"
-   git push
    ```
+   Then run `/project:update-docs-and-push`.
 
 Output the project board URL and confirm the commit was pushed.
 

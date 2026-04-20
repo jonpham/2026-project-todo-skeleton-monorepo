@@ -1,9 +1,7 @@
 # /project:bootstrap
-> Requires CLAUDE.md to have been populated using associated TEMPLATE
-> One-time command. Run this once per new repository to initialize Git,
+> One-time command. Run once per new repository to initialize Git,
 > create the GitHub repo, and set up the GitHub Project board shell.
-> After this command completes, run /project:populate_project to sync
-> feature docs into GitHub Issues.
+> After this completes, run `/project:plan_project` to sync feature docs into GitHub Issues.
 
 ---
 ## Step 0 — Verify Project Templates
@@ -34,9 +32,6 @@ Do not proceed to Step 1 until both files exist and placeholders are filled in.
 
 
 ## Step 1 — Verify Prerequisites
-
-Check that the project tools indicated in `Project Environment Prerequisites` of `CLAUDE.md` are available. 
-Do not install anything.
 
 Check that the following tools are available. Do not install anything.
 
