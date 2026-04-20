@@ -123,7 +123,82 @@ unchecked step (to support resuming a partially complete phase).
 
 For each unchecked step:
 
-### 4a — Implement the Step
+### 4a — Evaluate Step Size and Sub-Issue
+
+Before implementing, assess the scope of the step: how many files will change,
+whether new tests are involved, and whether the diff would be independently
+reviewable.
+
+**If a sub-issue is already linked to this step** (e.g. `- [ ] Step 3 — ... #{n}`):
+Always ask the engineer how to proceed, including your assessment of the step's
+size as context:
+```
+Step {i} has a linked sub-issue (#{n}).
+
+Assessment: {one sentence on scope — e.g. "adds 3 new components with
+co-located tests" or "single config file, no tests"}
+
+How would you like to proceed?
+  [1] Create a task/GH{sub-issue-number} branch and open a PR into the
+      feature branch
+  [2] Implement directly on the feature branch and close #{n}
+```
+Wait for the engineer's response before doing anything.
+
+If [1]: create and checkout `task/GH{sub-issue-number}-{brief-slug}` off the
+current feature branch, then implement on it. After verifying, open a PR from
+`task/*` → `feat/*`:
+```bash
+TASK_PR_URL=$(gh pr create \
+  --title "task(GH{sub-issue-number}): {step description}" \
+  --body "Part of #{parent-issue-number}
+Closes #{sub-issue-number}
+
+{brief description of what was implemented}" \
+  --base feat/GH{parent-issue-number}-{feature-slug})
+echo $TASK_PR_URL
+```
+After the task PR is merged, switch back to the feature branch and pull:
+```bash
+git checkout feat/GH{parent-issue-number}-{feature-slug}
+git pull
+```
+
+If [2]: implement on the feature branch, then close the sub-issue with context:
+```bash
+gh issue close {sub-issue-number} \
+  --comment "Implemented directly on feat/GH{parent-issue-number} — change was small enough to not warrant a separate branch"
+```
+
+**If no sub-issue is linked**:
+- If the step is large enough to warrant its own branch: propose one:
+  ```
+  Step {i} looks significant enough for a task branch (adds tests / multiple
+  new files). Create a sub-issue and task/GH* branch for it?
+  ```
+  If the engineer approves:
+  1. Create the sub-issue:
+     ```bash
+     gh issue create \
+       --title "[Phase {n}] Step {i} — {step description, first ~60 chars}" \
+       --body "Part of #{parent-issue-number}
+     {full step description}" \
+       --label "phase-{n}" --label "step"
+     ```
+  2. Update the feature doc step line to reference the new issue number
+  3. Create and checkout the task branch:
+     ```bash
+     git checkout -b task/GH{sub-issue-number}-{brief-slug}
+     ```
+- If the step is small: implement directly on the feature branch
+
+After a task branch is merged into the feature branch, switch back and pull:
+```bash
+git checkout feat/GH{parent-issue-number}-{feature-slug}
+git pull
+```
+
+### 4b — Implement the Step
 
 Implement exactly what the step describes. Do not implement anything from
 future steps, even if it seems logical to do so.
