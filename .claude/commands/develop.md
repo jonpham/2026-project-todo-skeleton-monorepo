@@ -31,11 +31,28 @@ Read `CLAUDE.md` fully before doing anything.
 
 4. Wait for the engineer's response before proceeding.
 
+5. Once an Issue number is provided, read the corresponding feature doc and
+   output a brief prompt to review it:
+
+   ```
+   Phase {n} — {Feature Name}
+   Doc: docs/features/{filename}
+   Criteria: {count} | Steps: {count}
+
+   Review the feature doc before we begin. Would you like to update the plan,
+   or say "proceed" to start development as-is.
+   ```
+
+6. Wait for the engineer's response.
+   - If they request changes: apply them to the feature doc and confirm before
+     continuing
+   - If they say "proceed": continue to Step 2
+
 ---
 
 ## Step 2 — Set Up the Feature Branch
 
-Once an Issue is confirmed:
+Once the engineer confirms the plan:
 
 1. Create a feature branch:
    `git checkout -b feat/GH{issue-number}-{feature-slug}`
