@@ -31,11 +31,28 @@ Read `CLAUDE.md` fully before doing anything.
 
 4. Wait for the engineer's response before proceeding.
 
+5. Once an Issue number is provided, read the corresponding feature doc and
+   output a brief prompt to review it:
+
+   ```
+   Phase {n} — {Feature Name}
+   Doc: docs/features/{filename}
+   Criteria: {count} | Steps: {count}
+
+   Review the feature doc before we begin. Would you like to update the plan,
+   or say "proceed" to start development as-is.
+   ```
+
+6. Wait for the engineer's response.
+   - If they request changes: apply them to the feature doc and confirm before
+     continuing
+   - If they say "proceed": continue to Step 2
+
 ---
 
 ## Step 2 — Set Up the Feature Branch
 
-Once an Issue is confirmed:
+Once the engineer confirms the plan:
 
 1. Create a feature branch:
    `git checkout -b feat/GH{issue-number}-{feature-slug}`
@@ -201,9 +218,9 @@ Once all steps are checked off:
    git push
    ```
 
-5. Open a Pull Request:
-   ```
-   gh pr create \
+5. Open a Pull Request and capture the URL:
+   ```bash
+   PR_URL=$(gh pr create \
      --title "feat(GH{n}): Phase {n} — {Feature Name}" \
      --body "Closes #GH{n}
 
@@ -218,10 +235,22 @@ Once all steps are checked off:
    - [ ] Storybook stories present (if applicable)
    - [ ] Playwright E2E test passes (if applicable)
    " \
-     --base main
+     --base main)
+   echo $PR_URL
    ```
 
-6. Output:
+6. Update the feature doc with the PR URL:
+   - Set `pr: {pr-url}` in frontmatter
+   - Update the `## Change Log` row added in step 1 to replace `PR pending`
+     with the PR URL (e.g. `[#28](https://github.com/.../.../pull/28)`)
+   - Commit and push:
+     ```bash
+     git add docs/features/
+     git commit -m "docs(GH{n}): add PR url to feature doc"
+     git push
+     ```
+
+7. Output:
    ```
    🎉 Phase {n} complete — {Feature Name}
 
