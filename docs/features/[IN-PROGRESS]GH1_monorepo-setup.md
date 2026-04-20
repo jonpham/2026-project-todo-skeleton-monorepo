@@ -57,7 +57,7 @@ ESLint/Prettier/Husky (Phase 2), GitHub Issues or Project board (handled by
       Turbo runs a task only in packages that define that script in their
       `package.json` — packages without `storybook` or `test:e2e` scripts are
       silently skipped. No per-package turbo config needed.
-- [ ] **Step 5** — Create root `tsconfig.json`: strict mode, `moduleResolution: bundler`,
+- [x] **Step 5** — Create root `tsconfig.json`: strict mode, `moduleResolution: bundler`,
       `target: ES2022`, no `include` (child packages extend and define their own)
 - [x] **Step 6** — Create `README.md` with project name and one-line description.
       Create `docs/` directory, move any planning markdown files into `docs/`.
