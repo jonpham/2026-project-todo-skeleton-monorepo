@@ -42,7 +42,7 @@ completed_at: null
 ## Steps
 
 > Ordered checklist of implementation steps.
-> Each step maps to one GitHub Sub-Issue.
+> Sub-issues are only created for steps that add or update tests (unit, Storybook, E2E).
 > Claude Code completes one step, stops, and waits for approval before proceeding
 > (unless step_gating is set to false in frontmatter).
 

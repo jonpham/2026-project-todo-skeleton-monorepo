@@ -1,7 +1,6 @@
 # CLAUDE.md — Project Context & Working Agreement
 
-> This file is read automatically by Claude Code at the start of every session.
-> Update the "Current Session Context" section at the start of each new session.
+> Loaded automatically at the start of every session.
 
 ---
 
@@ -19,7 +18,6 @@ These rules govern every session. Follow them without exception.
 ### Before Implementing Anything
 - State your assumptions explicitly
 - If a decision has meaningful tradeoffs, present options and ask which to take
-- In plan mode (Shift+Tab), never create or modify files
 
 ### After Every Step
 Output the following before stopping:
@@ -56,13 +54,10 @@ Using a “To-Do” Application Use Case, create a single monorepo system of dep
 
 ## Project Documentation
 
-- @docs/STACK.md - System or Project Tech Stack and Coding Standards
-- @docs/ARCHITECTURE.md - System or Project Architecture
-- @docs/CHANGELOG.md - A running changelog of completed features.
-- @docs/PROJECT_STATUS.md - the current in progress state of the project during development
-- Update files in the docs folder after major milestones and additions
-- Run `/project:update-docs-and-push` slash command when pushing commits to the repository
-- Run `/project:update-status-and-commit` slash command to update `docs/PROJECT_STATUS.md` when making git commits
+Docs live in `docs/`: STACK, ARCHITECTURE, CHANGELOG, PROJECT_STATUS.
+
+- Run `/project:update-status-and-commit` before each commit
+- Run `/project:update-docs-and-push` before each push
 
 ---
 
@@ -77,13 +72,7 @@ Using a “To-Do” Application Use Case, create a single monorepo system of dep
 - Every PR must include an updated feature doc in `docs/features/`
 
 ### Development Workflow
-1. Feature development should start with the creation of a feature branch from `/project:develop` slash command
-2. Develop and commit on the feature branch
-3. Test, lint, and format locally using appropriate development commands before committing.
-4. Run Integration tests before pushing
-5. Update docs when necessary
-6. Push the branch
-7. Create a PR to merge into `main` with tested proposed changes.
+Run `/project:develop` to start or resume a phase. It manages branching, step execution, doc updates, commits, and PRs.
 
 ---
 
