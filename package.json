@@ -1,6 +1,7 @@
 {
   "name": "project-bootstrap-mono-repo",
   "private": true,
+  "type": "module",
   "packageManager": "pnpm@10.33.0",
   "scripts": {
     "dev": "turbo run dev",
@@ -8,5 +9,11 @@
     "test": "turbo run test",
     "lint": "turbo run lint",
     "format": "turbo run format"
+  },
+  "devDependencies": {
+    "eslint": "^10.2.1",
+    "globals": "^17.5.0",
+    "prettier": "^3.8.3",
+    "typescript-eslint": "^8.59.0"
   }
 }
