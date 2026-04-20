@@ -218,9 +218,9 @@ Once all steps are checked off:
    git push
    ```
 
-5. Open a Pull Request:
-   ```
-   gh pr create \
+5. Open a Pull Request and capture the URL:
+   ```bash
+   PR_URL=$(gh pr create \
      --title "feat(GH{n}): Phase {n} — {Feature Name}" \
      --body "Closes #GH{n}
 
@@ -235,10 +235,22 @@ Once all steps are checked off:
    - [ ] Storybook stories present (if applicable)
    - [ ] Playwright E2E test passes (if applicable)
    " \
-     --base main
+     --base main)
+   echo $PR_URL
    ```
 
-6. Output:
+6. Update the feature doc with the PR URL:
+   - Set `pr: {pr-url}` in frontmatter
+   - Update the `## Change Log` row added in step 1 to replace `PR pending`
+     with the PR URL (e.g. `[#28](https://github.com/.../.../pull/28)`)
+   - Commit and push:
+     ```bash
+     git add docs/features/
+     git commit -m "docs(GH{n}): add PR url to feature doc"
+     git push
+     ```
+
+7. Output:
    ```
    🎉 Phase {n} complete — {Feature Name}
 

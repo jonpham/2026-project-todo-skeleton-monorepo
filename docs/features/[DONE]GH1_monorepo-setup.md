@@ -7,7 +7,7 @@ step_gating: true
 issue: 1
 parent_issue: null
 branch: feat/GH1-monorepo-setup
-pr: null
+pr: https://github.com/jonpham/2026-project-todo-skeleton-monorepo/pull/28
 completed_at: 2026-04-20
 ---
 
@@ -89,4 +89,4 @@ ESLint/Prettier/Husky (Phase 2), GitHub Issues or Project board (handled by
 
 | Date | PR | Status Change | Notes |
 |---|---|---|---|
-| 2026-04-20 | PR pending | TODO → DONE | All 7 steps complete; Steps 6 & 7 were pre-completed before phase began |
+| 2026-04-20 | [#28](https://github.com/jonpham/2026-project-todo-skeleton-monorepo/pull/28) | TODO → DONE | All 7 steps complete; Steps 6 & 7 were pre-completed before phase began |
