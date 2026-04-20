@@ -45,7 +45,7 @@ configuration (Phase 3), Web Worker (Phase 3), Docker/CI (Phase 4).
 
 ## Steps
 
-- [ ] **Step 1** — Scaffold `apps/todo-pwa` package: create `package.json` (extends
+- [x] **Step 1** — Scaffold `apps/todo-pwa` package: create `package.json` (extends
       root, defines `dev`, `build`, `test`, `lint`, `storybook`, `test:e2e` scripts),
       `tsconfig.json` extending root, `vite.config.ts`, `src/main.tsx`, `src/App.tsx`,
       `src/index.css`, `index.html`. Install Vite, React 19, TypeScript as
