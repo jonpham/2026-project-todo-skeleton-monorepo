@@ -54,6 +54,17 @@ gh auth login
 ```
 Do not proceed until `gh` is available and authenticated.
 
+Once `gh` is confirmed present, verify the token has the required scopes by
+checking the output of `gh auth status`. The token scopes line must include
+both `read:project` and `project`.
+
+If either scope is missing, stop and output:
+```
+gh token is missing required scopes.
+Run: gh auth refresh -s read:project -s project
+Then re-run /project:bootstrap.
+```
+
 Then STOP and wait for explicit approval before proceeding.
 
 ---

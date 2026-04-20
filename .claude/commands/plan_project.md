@@ -26,14 +26,43 @@ Read `CLAUDE.md` before doing anything.
 
 If no project exists, create one:
 ```bash
-gh project create --owner {owner} --title "{Project Name from CLAUDE.md}"
+gh project create --owner {owner} --title "{Project Name from CLAUDE.md}" --format json
 ```
-Then add a **Status** field:
+
+GitHub Projects v2 automatically creates a `Status` field with options `Todo`,
+`In Progress`, and `Done`. Do NOT attempt to create a new Status field — it will
+fail with a "Name has already been taken" error.
+
+Instead, add the missing `Blocked` option to the existing Status field using
+the `updateProjectV2Field` GraphQL mutation. First get the Status field ID:
 ```bash
-gh project field-create {project-number} --owner {owner} --name "Status" \
-  --data-type SINGLE_SELECT \
-  --single-select-options "To Do,In Progress,Done,Blocked"
+gh project field-list {project-number} --owner {owner} --format json
 ```
+Then update the field, preserving existing options and appending Blocked:
+```bash
+gh api graphql -f query='
+mutation {
+  updateProjectV2Field(input: {
+    fieldId: "{status-field-id}"
+    singleSelectOptions: [
+      { name: "Todo", color: GRAY, description: "" }
+      { name: "In Progress", color: BLUE, description: "" }
+      { name: "Done", color: GREEN, description: "" }
+      { name: "Blocked", color: RED, description: "Blocked by a dependency or external factor" }
+    ]
+  }) {
+    projectV2Field {
+      ... on ProjectV2SingleSelectField {
+        id
+        options { id name }
+      }
+    }
+  }
+}'
+```
+
+Note: updating the options list replaces all options and assigns new IDs — record
+the new IDs from the mutation response for use in subsequent steps.
 
 Record the project number for use in later steps.
 
@@ -147,6 +176,13 @@ gh api repos/{owner}/{repo}/milestones -X POST \
 
 ### 3c — Create the Parent Issue
 
+Create the `phase-{n}`, `feature`, and `step` labels if they don't exist:
+```bash
+gh label create "phase-{n}" --color "0075ca" --description "Phase {n}"
+gh label create "feature" --color "a2eeef" --description "Phase-level feature"
+gh label create "step" --color "e4e669" --description "Step-level sub-issue"
+```
+
 For each feature doc needing an Issue:
 
 ```bash
@@ -167,15 +203,24 @@ EOF
   --milestone "v{X.Y.Z}"
 ```
 
-Create the `phase-{n}` and `feature` labels if they don't exist:
-```bash
-gh label create "phase-{n}" --color "0075ca"
-gh label create "feature" --color "a2eeef"
-```
+Note: `gh issue create` does not support a `--json` flag. Capture the returned
+URL and parse the issue number from it (last path segment).
 
-### 3d — Create Step Issues and Link to Parent
+### 3d — Identify Steps That Warrant Sub-Issues
 
-For each checklist item in `## Steps`, create a linked issue:
+Not every step needs a GitHub sub-issue. Only create a sub-issue for steps that
+would produce significant, independently reviewable changes — specifically those
+that **add or update tests** in the codebase. These are the steps worth tracking
+on a branch of their own.
+
+For each step in `## Steps`, evaluate:
+- **Create a sub-issue if:** the step adds new source files with co-located
+  tests, adds a new Storybook story, or adds/updates Playwright E2E tests
+- **Skip sub-issue if:** the step is purely configuration, installs packages,
+  creates boilerplate without tests, or is a one-liner that will be committed
+  alongside a larger step
+
+For steps that qualify, create a linked issue:
 
 ```bash
 gh issue create \
@@ -186,8 +231,8 @@ gh issue create \
   --label "phase-{n}" --label "step"
 ```
 
-After all step issues are created, edit the parent issue body to replace the
-`## Steps` plain checklist with a task list of issue references:
+After creating sub-issues, edit the parent issue body to update the `## Steps`
+checklist with issue references for sub-issued steps only:
 
 ```bash
 gh issue edit {parent-issue-number} --body "$(cat <<'EOF'
@@ -198,8 +243,8 @@ gh issue edit {parent-issue-number} --body "$(cat <<'EOF'
 ...
 
 ## Steps
-- [ ] Step 1 — {description} #{step-1-issue-number}
-- [ ] Step 2 — {description} #{step-2-issue-number}
+- [ ] Step 1 — {description}              ← no sub-issue (config only)
+- [ ] Step 2 — {description} #{sub-issue} ← sub-issue (adds tests)
 ...
 EOF
 )"
@@ -207,21 +252,21 @@ EOF
 
 ### 3e — Update Feature Doc and Add to Project Board
 
-After creating parent + step issues:
+After creating parent + sub-issues:
 
 1. Update the feature doc frontmatter:
    - `issue: {parent-issue-number}`
 2. Rename the file: replace `P{n}` with `GH{parent-issue-number}`
    e.g. `[TODO]P1_monorepo-setup.md` → `[TODO]GH1_monorepo-setup.md`
-3. Add the parent Issue to the Project board:
+3. Add the parent Issue to the Project board and capture the item ID:
    ```bash
-   gh project item-add {project-number} --owner {owner} --url {parent-issue-url}
+   # --format json returns the full item object; extract id with python3 or jq
+   gh project item-add {project-number} --owner {owner} \
+     --url {parent-issue-url} --format json \
+     | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])"
    ```
-4. Set the item status to "To Do":
+4. Set the item status to "To Do" using the captured item ID:
    ```bash
-   # Get the item ID from the project board
-   gh project item-list {project-number} --owner {owner} --format json
-   # Set status to "To Do"
    gh project item-edit \
      --project-id {project-id} \
      --id {item-id} \
