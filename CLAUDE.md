@@ -50,7 +50,7 @@ Using a “To-Do” Application Use Case, create a single monorepo system of dep
 
 **GitHub Repo:** [2026-project-todo-skeleton-monorepo](https://github.com/jonpham/2026-project-todo-skeleton-monorepo)
 
-**GitHub Project Board:** [PROJECT_BOARD_URL]
+**GitHub Project Board:** https://github.com/users/jonpham/projects/7
 
 ---
 
