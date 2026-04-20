@@ -4,7 +4,7 @@ phase: 4
 slug: "deployment-setup"
 status: TODO
 step_gating: true
-issue: null
+issue: 24
 parent_issue: null
 branch: null
 pr: null

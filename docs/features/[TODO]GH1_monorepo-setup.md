@@ -4,7 +4,7 @@ phase: 1
 slug: "monorepo-setup"
 status: TODO
 step_gating: true
-issue: null
+issue: 1
 parent_issue: null
 branch: null
 pr: null

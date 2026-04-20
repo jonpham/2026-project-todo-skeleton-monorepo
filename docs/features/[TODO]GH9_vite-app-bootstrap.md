@@ -4,7 +4,7 @@ phase: 2
 slug: "vite-app-bootstrap"
 status: TODO
 step_gating: true
-issue: null
+issue: 9
 parent_issue: null
 branch: null
 pr: null

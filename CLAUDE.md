@@ -109,6 +109,17 @@ Feature docs in `docs/features/` follow this naming pattern:
 
 ---
 
+## GitHub Project IDs
+<!-- project-number: 7 -->
+<!-- project-id: PVT_kwHOAIsvKM4BVMxe -->
+<!-- status-field-id: PVTSSF_lAHOAIsvKM4BVMxezhQqPAs -->
+<!-- todo-option-id: 426a8c31 -->
+<!-- in-progress-option-id: 2b2cb0f7 -->
+<!-- done-option-id: 0b5f8eba -->
+<!-- blocked-option-id: 62d09295 -->
+
+---
+
 ## Current Session Context
 
 Read current status and progress to load into context from @docs/PROJECT_STATUS.md
