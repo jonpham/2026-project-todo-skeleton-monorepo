@@ -84,12 +84,13 @@ Once the engineer confirms the plan:
      --single-select-option-id {in-progress-option-id}
    ```
 
-5. Commit the feature doc update:
+5. Commit the feature doc update and push the branch:
    ```
    git add docs/features/
    git commit -m "docs(GH{n}): begin phase {n} — {feature-slug}"
-   git push -u origin feat/GH{issue-number}-{feature-slug}
    ```
+   Then run `/project:update-docs-and-push` to review and update all project
+   docs before pushing to the remote.
 
 Output the branch name and Issue URL, then STOP and wait for explicit approval
 before beginning implementation.
@@ -226,11 +227,8 @@ Do not move to the next step with a failing test.
 
 1. Check off the completed step in the `## Steps` checklist
 2. Append any non-obvious decisions to the `## Assumptions` section
-3. Commit the implementation + updated feature doc together:
-   ```
-   git add .
-   git commit -m "feat(GH{n}): {brief description of what was implemented}"
-   ```
+3. Run `/project:update-status-and-commit` to update `docs/PROJECT_STATUS.md`
+   and commit the implementation + updated feature doc + status doc together.
 
 ### 4d — Output the Working Agreement Summary
 
@@ -301,14 +299,12 @@ Once all steps are checked off:
      --single-select-option-id {done-option-id}
    ```
 
-5. Commit all remaining changes:
-   ```
-   git add .
-   git commit -m "docs(GH{n}): mark phase {n} complete — {feature-slug}"
-   git push
-   ```
+5. Run `/project:update-status-and-commit` to update `docs/PROJECT_STATUS.md`
+   and commit all remaining changes (feature doc rename, frontmatter, Change Log).
+   Then run `/project:update-docs-and-push` to review all project docs
+   (CHANGELOG, STACK, ARCHITECTURE, etc.), commit any doc updates, and push.
 
-5. Open a Pull Request and capture the URL:
+6. Open a Pull Request and capture the URL:
    ```bash
    PR_URL=$(gh pr create \
      --title "feat(GH{n}): Phase {n} — {Feature Name}" \
@@ -329,16 +325,16 @@ Once all steps are checked off:
    echo $PR_URL
    ```
 
-6. Update the feature doc with the PR URL:
+7. Update the feature doc with the PR URL:
    - Set `pr: {pr-url}` in frontmatter
    - Update the `## Change Log` row added in step 1 to replace `PR pending`
      with the PR URL (e.g. `[#28](https://github.com/.../.../pull/28)`)
-   - Commit and push:
+   - Commit:
      ```bash
      git add docs/features/
      git commit -m "docs(GH{n}): add PR url to feature doc"
-     git push
      ```
+   - Run `/project:update-docs-and-push` to finalize and push.
 
 7. Output:
    ```
