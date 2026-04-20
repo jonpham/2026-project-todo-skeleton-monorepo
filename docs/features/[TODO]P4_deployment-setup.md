@@ -1,5 +1,5 @@
 ---
-project: "[PROJECT_NAME]"
+project: "Project-BootStrap-Mono-Repo"
 phase: 4
 slug: "deployment-setup"
 status: TODO

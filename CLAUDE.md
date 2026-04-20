@@ -19,7 +19,7 @@ These rules govern every session. Follow them without exception.
 ### Before Implementing Anything
 - State your assumptions explicitly
 - If a decision has meaningful tradeoffs, present options and ask which to take
-- In plan mode (`/ultraplan` or Shift+Tab), never create or modify files
+- In plan mode (Shift+Tab), never create or modify files
 
 ### After Every Step
 Output the following before stopping:
@@ -38,13 +38,17 @@ Output the following before stopping:
 
 ## Project Overview
 
-**Project Name:** [PROJECT_NAME]
+**Project Name:** Project-BootStrap-Mono-Repo
 
-**Purpose:** [One sentence describing what this project does and why it exists]
+**Purpose:** 
+Using a “To-Do” Application Use Case, create a single monorepo system of deployables, clients, and libraries skeleton projects that aim to do 2 things:
 
-**Type:** [e.g. Vite + React PWA / NestJS API / Monorepo]
+1. Enrich the To-Do Product & Project Skeleton System with a variety of deployment types with similar boilerplate capabilities that can be cloned or re-used for other projects.  
+2. Each expand the To-Do product’s capabilities, either by adding new features to the product or providing a new client for a User to Utilize the To-Do product
 
-**GitHub Repo:** [https://github.com/USERNAME/REPO_NAME]
+**Type:** Monorepo with Various System Components (Projects) with individualized Tech Stacks and purposes
+
+**GitHub Repo:** [2026-project-todo-skeleton-monorepo](https://github.com/jonpham/2026-project-todo-skeleton-monorepo)
 
 **GitHub Project Board:** [PROJECT_BOARD_URL]
 
@@ -56,7 +60,7 @@ Output the following before stopping:
 - @docs/ARCHITECTURE.md - System or Project Architecture
 - @docs/CHANGELOG.md - A running changelog of completed features.
 - @docs/PROJECT_STATUS.md - the current in progress state of the project during development
-- Update files in the docs foler after major milestones and additions
+- Update files in the docs folder after major milestones and additions
 - Run `/project:update-docs-and-push` slash command when pushing commits to the repository
 - Run `/project:update-status-and-commit` slash command to update `docs/PROJECT_STATUS.md` when making git commits
 
@@ -79,7 +83,7 @@ Output the following before stopping:
 4. Run Integration tests before pushing
 5. Update docs when necessary
 6. Push the branch
-6. Create a PR to merge into `main` with tested proposed changes.
+7. Create a PR to merge into `main` with tested proposed changes.
 
 ---
 

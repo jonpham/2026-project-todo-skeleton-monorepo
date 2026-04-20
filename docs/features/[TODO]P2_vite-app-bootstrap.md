@@ -1,5 +1,5 @@
 ---
-project: "[PROJECT_NAME]"
+project: "Project-BootStrap-Mono-Repo"
 phase: 2
 slug: "vite-app-bootstrap"
 status: TODO

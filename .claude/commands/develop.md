@@ -48,8 +48,24 @@ Once an Issue is confirmed:
 3. Rename the feature doc file to reflect the new status:
    e.g. `[TODO]GH4_vite-app-bootstrap.md` → `[IN-PROGRESS]GH4_vite-app-bootstrap.md`
 
-4. Update the GitHub Issue status on the Project board to `In Progress`:
-   `gh project item-edit --id {item-id} --field-id {status-field-id} --project-id {project-id} --single-select-option-id {in-progress-option-id}`
+4. Update the GitHub Issue status on the Project board to `In Progress`.
+   First check `CLAUDE.md` for a `## GitHub Project IDs` section. If present,
+   use those cached values. If missing, fetch:
+   ```bash
+   gh project field-list {project-number} --owner {owner} --format json
+   ```
+   Then get the item ID for this Issue:
+   ```bash
+   gh project item-list {project-number} --owner {owner} --format json
+   ```
+   Then update the status:
+   ```bash
+   gh project item-edit \
+     --project-id {project-id} \
+     --id {item-id} \
+     --field-id {status-field-id} \
+     --single-select-option-id {in-progress-option-id}
+   ```
 
 5. Commit the feature doc update:
    ```
@@ -98,7 +114,13 @@ future steps, even if it seems logical to do so.
 ### 4b — Verify the Step
 
 Run the verification commands appropriate to what was just built:
-- If code was added: run `pnpm lint` and `pnpm test` (scoped to the changed package)
+- If code was added: run lint and test scoped to the changed package:
+  ```bash
+  pnpm --filter {package-name} lint
+  pnpm --filter {package-name} test
+  ```
+  The package name matches the `name` field in the package's `package.json`
+  (e.g. `todo-web`). Run from the repo root.
 - If a new component was added: confirm Storybook story exists and renders
 - If E2E-relevant behavior was added: run `pnpm test:e2e`
 
@@ -158,7 +180,19 @@ Once all steps are checked off:
 2. Rename the feature doc:
    e.g. `[IN-PROGRESS]GH4_vite-app-bootstrap.md` → `[DONE]GH4_vite-app-bootstrap.md`
 
-3. Update the GitHub Issue status on the Project board to `Done`
+3. Update the GitHub Issue status on the Project board to `Done`.
+   Use cached IDs from `CLAUDE.md` (`## GitHub Project IDs`). Get the item ID:
+   ```bash
+   gh project item-list {project-number} --owner {owner} --format json
+   ```
+   Then update:
+   ```bash
+   gh project item-edit \
+     --project-id {project-id} \
+     --id {item-id} \
+     --field-id {status-field-id} \
+     --single-select-option-id {done-option-id}
+   ```
 
 4. Commit all remaining changes:
    ```

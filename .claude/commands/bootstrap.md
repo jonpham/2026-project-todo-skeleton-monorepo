@@ -6,24 +6,31 @@
 > feature docs into GitHub Issues.
 
 ---
-## Step 0 — Scaffold Project Templates
-Read `CLAUDE.md` before doing anything. All decisions must align with the working agreement and tech stack defined there.
+## Step 0 — Verify Project Templates
 
-If `CLAUDE.md` and `README.md` are not at the repo root, flag this as an error. 
+Check whether `CLAUDE.md` and `README.md` exist at the repo root.
 
-Run the following to create starter files from your global templates:
+**If both files exist:**
+Read `CLAUDE.md` fully. All decisions must align with the working agreement and tech stack defined there. Continue to Step 1.
+
+**If either file is missing:**
+Create the missing file(s) using global templates if available:
 
 ```bash
-cp ~/.claude/templates/CLAUDE.md.template ./CLAUDE.md
-cp ~/.claude/templates/README.md.template ./README.md
+cp ~/.claude/templates/CLAUDE.md.template ./CLAUDE.md   # if missing
+cp ~/.claude/templates/README.md.template ./README.md   # if missing
 ```
 
-If `~/.claude/templates/` does not exist or templates are missing, create the files from the inline content below instead (see Fallback Templates section).
+If `~/.claude/templates/` does not exist or templates are missing, create the files from the inline content in the Fallback Templates section at the bottom of this command.
 
-Output to engineer:
-> CLAUDE.md and README.md not found, created ✅ .
-> Open both files and fill in every `[BRACKETED]` placeholder before continuing.
-> Re-Run "/project:bootstrap" when done.
+Then STOP and output:
+```
+CLAUDE.md and/or README.md created from template.
+Open both files and fill in every [BRACKETED] placeholder before continuing.
+Re-run /project:bootstrap when done.
+```
+
+Do not proceed to Step 1 until both files exist and placeholders are filled in.
 
 
 ## Step 1 — Verify Prerequisites
@@ -81,29 +88,29 @@ Output the repo URL, then STOP and wait for explicit approval.
 
 1. Check whether `docs/features/` exists and contains any `*.md` files
    (excluding `_TEMPLATE.md`)
+2. List any feature docs found
 
-**If feature docs exist:** Output a list of the files found, then STOP.
-Output this message:
+Then STOP and output one of the following:
+
+**If feature docs were found:**
 ```
-Feature docs found. Run /project:populate_project to create GitHub Issues
-and the Project board from these docs.
+Bootstrap complete.
+
+Feature docs found:
+  - {list each [STATUS]P{n}_{slug}.md file}
+
+Run /project:plan_project to create GitHub Issues and the Project board
+from these docs, or to add new phases.
 ```
 
-**If no feature docs exist:** Enter plan mode. Do not create any files yet.
-Propose a phase plan for this project based on the project overview in `CLAUDE.md`.
-Structure the plan using the phase groupings defined in the working agreement:
-- One feature doc per phase
-- Each phase has a `## Steps` checklist
-- Use the `_TEMPLATE.md` in `docs/features/` as the format
-
-Present the proposed plan and ask for approval before creating any files.
-Once approved, create the feature doc files using the naming convention:
-`[TODO]P{n}_{feature-slug}.md`
-
-Then STOP and output:
+**If no feature docs were found:**
 ```
-Feature docs created. Review them in docs/features/, then run
-/project:populate_project to create GitHub Issues and the Project board.
+Bootstrap complete.
+
+No feature docs found yet.
+
+Run /project:plan_project to define your first phase and set up the
+GitHub Project board.
 ```
 
 ## Fallback Templates

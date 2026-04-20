@@ -19,9 +19,11 @@
 │   └── PULL_REQUEST_TEMPLATE.md     # PR checklist
 ├── .claude/
 │   └── commands/                    # Custom Claude Code slash commands
-│       ├── bootstrap.md             # /project:bootstrap
-│       ├── populate_project.md      # /project:populate_project
-│       └── develop.md               # /project:develop
+│       ├── bootstrap.md                  # /project:bootstrap
+│       ├── plan_project.md               # /project:plan_project
+│       ├── develop.md                    # /project:develop
+│       ├── update-status-and-commit.md   # /project:update-status-and-commit
+│       └── update-docs-and-push.md       # /project:update-docs-and-push
 ├── package.json                     # Root pnpm workspace config
 ├── pnpm-workspace.yaml
 ├── turbo.json

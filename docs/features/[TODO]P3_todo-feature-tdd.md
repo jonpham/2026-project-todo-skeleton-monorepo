@@ -1,5 +1,5 @@
 ---
-project: "[PROJECT_NAME]"
+project: "Project-BootStrap-Mono-Repo"
 phase: 3
 slug: "todo-feature-tdd"
 status: TODO
