@@ -48,7 +48,7 @@ ESLint/Prettier/Husky (Phase 2), GitHub Issues or Project board (handled by
 - [x] **Step 2** — Create root `package.json` with `"private": true`, correct
       `packageManager` field for current pnpm version, and placeholder Turborepo
       scripts: `dev`, `build`, `test`, `lint`, `format`
-- [ ] **Step 3** — Create `pnpm-workspace.yaml` defining `apps/*` and `packages/*`
+- [x] **Step 3** — Create `pnpm-workspace.yaml` defining `apps/*` and `packages/*`
 - [ ] **Step 4** — Create `turbo.json` with pipeline tasks: `build`, `dev`, `test`,
       `lint`, `format`, `test:e2e`. Configuration notes:
       - `build`: set `outputs: ["dist/**"]`, depends on `^build` (upstream packages first)
