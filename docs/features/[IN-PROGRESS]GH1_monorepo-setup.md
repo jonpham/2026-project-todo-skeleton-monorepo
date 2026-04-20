@@ -43,7 +43,7 @@ ESLint/Prettier/Husky (Phase 2), GitHub Issues or Project board (handled by
 
 ## Steps
 
-- [ ] **Step 1** — Initialize Git repository (`git init`), create `.gitignore`
+- [x] **Step 1** — Initialize Git repository (`git init`), create `.gitignore`
       for Node.js/TypeScript monorepo (node_modules, dist, .turbo, .env*, OS files)
 - [ ] **Step 2** — Create root `package.json` with `"private": true`, correct
       `packageManager` field for current pnpm version, and placeholder Turborepo

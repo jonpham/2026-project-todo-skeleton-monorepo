@@ -1,2 +1,38 @@
-# macOS system files
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+out/
+
+# Turborepo
+.turbo/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Test coverage
+coverage/
+
+# Storybook
+storybook-static/
+
+# Playwright
+playwright-report/
+test-results/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
 .DS_Store
+Thumbs.db
+
+# pnpm
+.pnpm-store/
