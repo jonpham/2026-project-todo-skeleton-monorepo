@@ -39,121 +39,47 @@ Output the following before stopping:
 ## Project Overview
 
 **Project Name:** [PROJECT_NAME]
+
 **Purpose:** [One sentence describing what this project does and why it exists]
+
 **Type:** [e.g. Vite + React PWA / NestJS API / Monorepo]
+
 **GitHub Repo:** [https://github.com/USERNAME/REPO_NAME]
+
 **GitHub Project Board:** [PROJECT_BOARD_URL]
 
 ---
 
-## Repository Structure
+## Project Documentation
 
-```
-[repo-name]/
-├── CLAUDE.md                        # This file
-├── docs/
-│   ├── features/                    # Source of truth for all phases & steps
-│   │   ├── _TEMPLATE.md             # Feature doc template
-│   │   └── [STATUS]GH{n}_{slug}.md  # One file per phase
-│   ├── ARCHITECTURE.md
-│   └── DECISIONS.md                 # Architecture Decision Records
-├── apps/                            # Deployable application packages
-├── packages/                        # Shared libraries
-│   └── types/                       # Shared TypeScript types
-├── .github/
-│   ├── workflows/                   # GitHub Actions CI/CD
-│   └── PULL_REQUEST_TEMPLATE.md     # PR checklist
-├── .claude/
-│   └── commands/                    # Custom Claude Code slash commands
-│       ├── bootstrap.md             # /project:bootstrap
-│       ├── populate_project.md      # /project:populate_project
-│       └── develop.md               # /project:develop
-├── package.json                     # Root pnpm workspace config
-├── pnpm-workspace.yaml
-├── turbo.json
-└── tsconfig.json
-```
-
----
-## Project Environment Prerequisites
-- `node` (expected: v22.x LTS or later)
-- `nvm`
-- `pnpm` (expected: v9.x or later)
-
-## Tech Stack & Toolchain
-
-### Runtime & Package Management
-- **Runtime:** Node.js LTS (managed via NVM)
-- **Package Manager:** pnpm
-- **Monorepo Orchestrator:** Turborepo
-
-### Build & Bundling
-- **App Bundler:** Vite
-- **TypeScript:** v5.x, strict mode enabled
-
-### UI
-- **Framework:** React 19
-- **Styling:** Tailwind CSS v4
-
-### Code Quality
-- **Linter:** ESLint with `@typescript-eslint` (flat config)
-- **Formatter:** Prettier
-- **Git Hooks:** Husky + lint-staged (pre-commit: lint + format staged files)
-
-### Testing
-- **Unit & Component Tests:** Vitest + React Testing Library (RTL)
-- **Component Development & Visual Tests:** Storybook 8
-- **End-to-End (E2E) Tests:** Playwright
-
-### CI/CD & Deployment
-- **CI/CD:** GitHub Actions
-- **Containerization:** Docker (multi-stage builds, Nginx)
-- **Local Container Runtime:** OrbStack
-- **Production:** Cloudflare Pages
-
----
-
-## Development Commands
-
-| Command | Description |
-|---|---|
-| `pnpm install` | Install all workspace dependencies |
-| `pnpm dev` | Start all dev servers via Turborepo |
-| `pnpm build` | Build all packages and apps |
-| `pnpm test` | Run all Vitest unit tests |
-| `pnpm lint` | Run ESLint across the workspace |
-| `pnpm format` | Run Prettier across the workspace |
-| `pnpm storybook` | Start Storybook |
-| `pnpm test:e2e` | Run Playwright E2E tests |
-| `docker compose up --build` | Run production build locally via OrbStack |
+- @docs/STACK.md - System or Project Tech Stack and Coding Standards
+- @docs/ARCHITECTURE.md - System or Project Architecture
+- @docs/CHANGELOG.md - A running changelog of completed features.
+- @docs/PROJECT_STATUS.md - the current in progress state of the project during development
+- Update files in the docs foler after major milestones and additions
+- Run `/project:update-docs-and-push` slash command when pushing commits to the repository
+- Run `/project:update-status-and-commit` slash command to update `docs/PROJECT_STATUS.md` when making git commits
 
 ---
 
 ## Code Standards
 
-### TypeScript
-- Strict mode enabled — no implicit `any`
-- Shared types live in `packages/types` only — never duplicate across packages
-
-### File & Folder Conventions
-- Components: `PascalCase.tsx`
-- Hooks: `useCamelCase.ts`
-- Utilities: `camelCase.ts`
-- Tests: co-located as `ComponentName.test.tsx`
-- Stories: co-located as `ComponentName.stories.tsx`
-- E2E tests: `e2e/` at the app root
-
 ### Git Conventions
 - Branch naming: `feat/GH{n}-short-description`
 - Commit messages: Conventional Commits — `feat:`, `fix:`, `chore:`, `docs:`, `test:`
-- Never commit directly to `main` — always use a feature branch + pull request
+- NEVER commit directly to `main` 
+- NEVER force push to `main`
+— ALWAYS use a feature branch + pull request to request changes to `main`
 - Every PR must include an updated feature doc in `docs/features/`
 
-### Testing Philosophy
-- Every component has a unit test (Vitest + RTL) and a Storybook story
-- Tests assert behavior, not implementation details
-- E2E tests cover critical user flows end-to-end
-- All tests must pass before any commit (enforced by Husky pre-commit hook)
+### Development Workflow
+1. Feature development should start with the creation of a feature branch from `/project:develop` slash command
+2. Develop and commit on the feature branch
+3. Test, lint, and format locally using appropriate development commands before committing.
+4. Run Integration tests before pushing
+5. Update docs when necessary
+6. Push the branch
+6. Create a PR to merge into `main` with tested proposed changes.
 
 ---
 
@@ -181,10 +107,4 @@ Feature docs in `docs/features/` follow this naming pattern:
 
 ## Current Session Context
 
-> Update this section at the start of every new Claude Code session.
-
-**Last completed phase:** None
-**Active feature doc:** None
-**Current step:** None
-**Known blockers:** None
-**Next action:** Run `/project:bootstrap` to initialize the repository
+Read current status and progress to load into context from @docs/PROJECT_STATUS.md

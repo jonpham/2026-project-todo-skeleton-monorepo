@@ -5,15 +5,26 @@
 > After this command completes, run /project:populate_project to sync
 > feature docs into GitHub Issues.
 
-Read `CLAUDE.md` before doing anything. All decisions must align with the
-working agreement and tech stack defined there.
-
-If `CLAUDE.md` is not at the repo root, flag this as an error.
-Copy  and stop with message
-```
-Please use your project Template to populate `CLAUDE.md` before running command.
-```
 ---
+## Step 0 — Scaffold Project Templates
+Read `CLAUDE.md` before doing anything. All decisions must align with the working agreement and tech stack defined there.
+
+If `CLAUDE.md` and `README.md` are not at the repo root, flag this as an error. 
+
+Run the following to create starter files from your global templates:
+
+```bash
+cp ~/.claude/templates/CLAUDE.md.template ./CLAUDE.md
+cp ~/.claude/templates/README.md.template ./README.md
+```
+
+If `~/.claude/templates/` does not exist or templates are missing, create the files from the inline content below instead (see Fallback Templates section).
+
+Output to engineer:
+> CLAUDE.md and README.md not found, created ✅ .
+> Open both files and fill in every `[BRACKETED]` placeholder before continuing.
+> Re-Run "/project:bootstrap" when done.
+
 
 ## Step 1 — Verify Prerequisites
 
@@ -46,8 +57,7 @@ Then STOP and wait for explicit approval before proceeding.
 2. If `.gitignore` does not exist, create one for a `Tech Stack & Toolchain` project as described in `CLAUDE.md`:
    For example for a a Node.js TypeScript monorepo
    (cover: node_modules, dist, .turbo, .env files, OS files, editor files)
-3. If `README.md` does not exist, create one using the project name and purpose
-   from `CLAUDE.md`
+3. If `README.md` does not exist, create one using the project name and purpose from `CLAUDE.md`
 
 Output the summary format required by the Working Agreement, then STOP and
 wait for explicit approval.
@@ -94,4 +104,47 @@ Then STOP and output:
 ```
 Feature docs created. Review them in docs/features/, then run
 /project:populate_project to create GitHub Issues and the Project board.
+```
+
+## Fallback Templates
+
+### CLAUDE.md (create if template missing)
+```
+# [PROJECT NAME] — Claude Code Configuration
+
+## Project Context
+- **Stack:** [e.g. TypeScript, pnpm workspaces, Turborepo]
+- **Repo type:** [monorepo / single package]
+- **Primary engineer:** [name]
+
+## Working Agreements
+- One step at a time. Stop and output `WAITING FOR APPROVAL` after each step.
+- State numbered assumptions before implementing.
+- After each step: list changed files, assumptions, verification commands, next step.
+- Feature doc updated and committed with every PR.
+- Never start next phase without a new Claude Code session.
+
+## Architecture Notes
+[Fill in after bootstrap completes]
+```
+
+### README.md (create if template missing)
+```
+# [PROJECT NAME]
+
+## Overview
+[What this project does in 2-3 sentences]
+
+## Setup
+[How to install and run locally]
+
+## Workflow
+This project uses a Claude Code workflow. See `.claude/commands/` for
+available commands and `docs/features/` for feature specs.
+
+## Contributing
+1. Pick an Issue from the GitHub Project board
+2. Start a new Claude Code session
+3. Run `/project:develop`
+4. Follow the step-gated approval process
 ```
