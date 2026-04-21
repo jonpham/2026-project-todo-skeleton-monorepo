@@ -36,3 +36,5 @@ Thumbs.db
 
 # pnpm
 .pnpm-store/
+
+*storybook.log
