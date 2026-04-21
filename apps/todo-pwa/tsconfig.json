@@ -1,9 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "baseUrl": ".",
-    "paths": {}
+    "jsx": "react-jsx"
   },
   "include": ["src"]
 }

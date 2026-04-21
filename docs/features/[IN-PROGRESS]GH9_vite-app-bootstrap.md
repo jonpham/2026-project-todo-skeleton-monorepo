@@ -55,7 +55,7 @@ configuration (Phase 3), Web Worker (Phase 3), Docker/CI (Phase 4).
 - [x] **Step 3** — Add ESLint flat config (`eslint.config.js`) to `apps/todo-pwa`
       that extends the root config. Add Prettier config (`.prettierrc`) inheriting
       root settings. Install as devDependencies. Add `lint` and `format` scripts.
-- [ ] **Step 4** — Install Husky + lint-staged at the repo root. Configure
+- [x] **Step 4** — Install Husky + lint-staged at the repo root. Configure
       `.husky/pre-commit` to run `pnpm lint-staged`. Configure `lint-staged` in root
       `package.json` for `*.{ts,tsx}` and `*.{js,json,md}` files.
 - [ ] **Step 5** — Install Vitest + React Testing Library in `apps/todo-pwa`.
@@ -92,6 +92,6 @@ configuration (Phase 3), Web Worker (Phase 3), Docker/CI (Phase 4).
 
 ## Change Log
 
-| Date | PR | Status Change | Notes |
-|---|---|---|---|
-| | | | |
+| Date | PR  | Status Change | Notes |
+| ---- | --- | ------------- | ----- |
+|      |     |               |       |
