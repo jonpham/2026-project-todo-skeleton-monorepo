@@ -11,7 +11,21 @@
 │   │   └── [STATUS]GH{n}_{slug}.md  # One file per phase
 │   ├── ARCHITECTURE.md
 │   └── DECISIONS.md                 # Architecture Decision Records
-├── apps/                            # Deployable application packages
+├── apps/
+│   └── todo-pwa/                    # Vite + React 19 PWA
+│       ├── .storybook/              # Storybook config (main.ts, preview.ts)
+│       ├── e2e/                     # Playwright E2E tests
+│       ├── src/
+│       │   ├── App.tsx
+│       │   ├── App.test.tsx         # Vitest unit smoke test
+│       │   ├── App.stories.tsx      # Storybook Default story
+│       │   ├── test-setup.ts        # @testing-library/jest-dom setup
+│       │   ├── main.tsx
+│       │   └── index.css            # Tailwind CSS v4 entry
+│       ├── index.html
+│       ├── playwright.config.ts
+│       ├── vite.config.ts           # Vitest: unit (jsdom) + storybook (Chromium) projects
+│       └── package.json
 ├── packages/                        # Shared libraries
 │   └── types/                       # Shared TypeScript types
 ├── .github/
