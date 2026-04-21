@@ -58,7 +58,7 @@ configuration (Phase 3), Web Worker (Phase 3), Docker/CI (Phase 4).
 - [x] **Step 4** — Install Husky + lint-staged at the repo root. Configure
       `.husky/pre-commit` to run `pnpm lint-staged`. Configure `lint-staged` in root
       `package.json` for `*.{ts,tsx}` and `*.{js,json,md}` files.
-- [ ] **Step 5** — Install Vitest + React Testing Library in `apps/todo-pwa`.
+- [x] **Step 5** — Install Vitest + React Testing Library in `apps/todo-pwa`.
       Configure Vitest in `vite.config.ts` with jsdom test environment. Create
       `src/App.test.tsx` with a smoke test asserting the app renders without crashing.
 - [ ] **Step 6** — Initialize Storybook 8 in `apps/todo-pwa` for Vite + React.
