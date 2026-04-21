@@ -64,7 +64,7 @@ configuration (Phase 3), Web Worker (Phase 3), Docker/CI (Phase 4).
 - [x] **Step 6** — Initialize Storybook 8 in `apps/todo-pwa` for Vite + React.
       Create `src/App.stories.tsx` with a Default story. Verify `pnpm storybook` opens
       and the story is visible.
-- [ ] **Step 7** — Initialize Playwright in `apps/todo-pwa`. Create
+- [x] **Step 7** — Initialize Playwright in `apps/todo-pwa`. Create
       `playwright.config.ts` targeting the local Vite dev server. Create
       `e2e/app.spec.ts` with a smoke test that navigates to the app and asserts the
       page title is present.
