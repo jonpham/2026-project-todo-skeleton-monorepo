@@ -7,7 +7,7 @@ step_gating: true
 issue: 9
 parent_issue: null
 branch: feat/GH9-vite-app-bootstrap
-pr: null
+pr: https://github.com/jonpham/2026-project-todo-skeleton-monorepo/pull/30
 completed_at: 2026-04-20
 ---
 
@@ -92,6 +92,6 @@ configuration (Phase 3), Web Worker (Phase 3), Docker/CI (Phase 4).
 
 ## Change Log
 
-| Date       | PR         | Status Change | Notes                                             |
-| ---------- | ---------- | ------------- | ------------------------------------------------- |
-| 2026-04-20 | PR pending | TODO → DONE   | All 7 steps complete; full toolchain bootstrapped |
+| Date       | PR                                                                            | Status Change | Notes                                             |
+| ---------- | ----------------------------------------------------------------------------- | ------------- | ------------------------------------------------- |
+| 2026-04-20 | [#30](https://github.com/jonpham/2026-project-todo-skeleton-monorepo/pull/30) | TODO → DONE   | All 7 steps complete; full toolchain bootstrapped |

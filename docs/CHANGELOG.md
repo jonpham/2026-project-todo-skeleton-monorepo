@@ -8,7 +8,7 @@
 
 ## Unreleased
 
-### Phase 2 — Vite App Bootstrap (PR pending)
+### Phase 2 — Vite App Bootstrap ([#30](https://github.com/jonpham/2026-project-todo-skeleton-monorepo/pull/30))
 
 - Scaffolded `apps/todo-pwa`: Vite + React 19 + TypeScript PWA shell
 - Installed and configured Tailwind CSS v4 via `@tailwindcss/vite`
