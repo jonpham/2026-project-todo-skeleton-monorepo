@@ -61,7 +61,7 @@ configuration (Phase 3), Web Worker (Phase 3), Docker/CI (Phase 4).
 - [x] **Step 5** — Install Vitest + React Testing Library in `apps/todo-pwa`.
       Configure Vitest in `vite.config.ts` with jsdom test environment. Create
       `src/App.test.tsx` with a smoke test asserting the app renders without crashing.
-- [ ] **Step 6** — Initialize Storybook 8 in `apps/todo-pwa` for Vite + React.
+- [x] **Step 6** — Initialize Storybook 8 in `apps/todo-pwa` for Vite + React.
       Create `src/App.stories.tsx` with a Default story. Verify `pnpm storybook` opens
       and the story is visible.
 - [ ] **Step 7** — Initialize Playwright in `apps/todo-pwa`. Create
