@@ -21,6 +21,7 @@ git status
 ```
 
 Also read:
+
 - The active feature doc in `docs/features/` (the one with `[IN-PROGRESS]` in its filename)
 - The `## Steps` checklist to identify the last completed step and the next unchecked step
 
@@ -41,8 +42,12 @@ Rewrite the file with the following fields updated to reflect current state:
 ```
 
 Rules:
+
 - If no feature doc is `[IN-PROGRESS]`, set Active feature doc and Current step to "None"
-- "Next action" should reference the next unchecked step in the active feature doc, or instruct to run `/project:develop` to begin the next phase
+- "Next action" wording depends on context:
+  - Mid-phase (steps remain): `Begin Step {N} — {short description} (say "proceed" to continue)`
+  - All steps complete: `Review your branch, then run /project:update-docs-and-push to push and open a PR for review`
+  - No active phase: `Run /project:develop to begin the next phase`
 - Keep each field to one line
 
 ---
@@ -64,6 +69,7 @@ EOF
 ```
 
 Commit message rules:
+
 - **Header:** describes the feature work only (e.g. `feat(GH4): scaffold root package.json and turbo.json`). Do not mention PROJECT_STATUS.md in the header.
 - **Body:** list key changes as bullets; include `docs: update PROJECT_STATUS to reflect current step` as the last bullet
 - Use Conventional Commits format: `feat:`, `fix:`, `chore:`, `docs:`, `test:`, `refactor:`

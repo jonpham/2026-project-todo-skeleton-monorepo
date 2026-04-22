@@ -19,6 +19,7 @@ Read `CLAUDE.md` fully before doing anything.
    corresponding feature doc)
 
 3. Present the candidate Issue to the engineer:
+
    ```
    Next issue to develop:
    Issue #N — Phase {n}: {Feature Name}
@@ -68,14 +69,19 @@ Once the engineer confirms the plan:
 4. Update the GitHub Issue status on the Project board to `In Progress`.
    First check `CLAUDE.md` for a `## GitHub Project IDs` section. If present,
    use those cached values. If missing, fetch:
+
    ```bash
    gh project field-list {project-number} --owner {owner} --format json
    ```
+
    Then get the item ID for this Issue:
+
    ```bash
    gh project item-list {project-number} --owner {owner} --format json
    ```
+
    Then update the status:
+
    ```bash
    gh project item-edit \
      --project-id {project-id} \
@@ -107,10 +113,13 @@ Read the `step_gating` field from the active feature doc's frontmatter:
   then stop at the phase boundary for approval
 
 Announce the mode before beginning:
+
 ```
 Step gating: ENABLED — I will stop after each step for your approval.
 ```
+
 or
+
 ```
 Step gating: DISABLED — I will complete all steps, then stop for your approval.
 ```
@@ -133,6 +142,7 @@ reviewable.
 **If a sub-issue is already linked to this step** (e.g. `- [ ] Step 3 — ... #{n}`):
 Always ask the engineer how to proceed, including your assessment of the step's
 size as context:
+
 ```
 Step {i} has a linked sub-issue (#{n}).
 
@@ -144,11 +154,13 @@ How would you like to proceed?
       feature branch
   [2] Implement directly on the feature branch and close #{n}
 ```
+
 Wait for the engineer's response before doing anything.
 
 If [1]: create and checkout `task/GH{sub-issue-number}-{brief-slug}` off the
 current feature branch, then implement on it. After verifying, open a PR from
 `task/*` → `feat/*`:
+
 ```bash
 TASK_PR_URL=$(gh pr create \
   --title "task(GH{sub-issue-number}): {step description}" \
@@ -158,9 +170,11 @@ TASK_PR_URL=$(gh pr create \
   --base feat/GH{parent-issue-number}-{feature-slug})
 echo $TASK_PR_URL
 ```
+
 Note: `Closes #n` in a PR that merges into a non-default branch does NOT
 auto-close the issue. After the task PR is merged, explicitly close the
 sub-issue and switch back to the feature branch:
+
 ```bash
 gh issue close {sub-issue-number} \
   --comment "Resolved in task PR: {TASK_PR_URL}"
@@ -169,12 +183,14 @@ git pull
 ```
 
 If [2]: implement on the feature branch, then explicitly close the sub-issue:
+
 ```bash
 gh issue close {sub-issue-number} \
   --comment "Implemented directly on feat/GH{parent-issue-number} — change was small enough to not warrant a separate branch"
 ```
 
 **If no sub-issue is linked**:
+
 - If the step is large enough to warrant its own branch: propose one:
   ```
   Step {i} looks significant enough for a task branch (adds tests / multiple
@@ -197,6 +213,7 @@ gh issue close {sub-issue-number} \
 - If the step is small: implement directly on the feature branch
 
 After a task branch is merged into the feature branch, switch back and pull:
+
 ```bash
 git checkout feat/GH{parent-issue-number}-{feature-slug}
 git pull
@@ -210,6 +227,7 @@ future steps, even if it seems logical to do so.
 ### 4c — Verify the Step
 
 Run the verification commands appropriate to what was just built:
+
 - If code was added: run lint and test scoped to the changed package:
   ```bash
   pnpm --filter {package-name} lint
@@ -233,6 +251,7 @@ Do not move to the next step with a failing test.
 ### 4e — Output the Working Agreement Summary
 
 Output exactly:
+
 ```
 ✅ Step {i} complete
 
@@ -252,10 +271,10 @@ Next step: {one sentence describing Step i+1}
 ### 4f — Gate Check
 
 If `step_gating: true`:
-  STOP. Do not proceed until the engineer types `proceed` or `next`.
+STOP. Do not proceed until the engineer types `proceed` or `next`.
 
 If `step_gating: false`:
-  Continue immediately to the next unchecked step.
+Continue immediately to the next unchecked step.
 
 Repeat Steps 4a–4f for each remaining unchecked step.
 
@@ -276,10 +295,13 @@ Once all steps are checked off:
 3. Close any remaining open sub-issues linked in the feature doc's `## Steps`
    checklist. Scan each step line for `#{issue-number}` references and check
    their state:
+
    ```bash
    gh issue view {sub-issue-number} --repo {owner}/{repo} --json state
    ```
+
    For any that are still open:
+
    ```bash
    gh issue close {sub-issue-number} \
      --comment "Phase {n} complete — resolved as part of feat/GH{n}-{feature-slug}"
@@ -287,10 +309,13 @@ Once all steps are checked off:
 
 4. Update the GitHub Issue status on the Project board to `Done`.
    Use cached IDs from `CLAUDE.md` (`## GitHub Project IDs`). Get the item ID:
+
    ```bash
    gh project item-list {project-number} --owner {owner} --format json
    ```
+
    Then update:
+
    ```bash
    gh project item-edit \
      --project-id {project-id} \
@@ -301,10 +326,26 @@ Once all steps are checked off:
 
 5. Run `/project:update-status-and-commit` to update `docs/PROJECT_STATUS.md`
    and commit all remaining changes (feature doc rename, frontmatter, Change Log).
-   Then run `/project:update-docs-and-push` to review all project docs
+
+6. Prompt the engineer to review the branch before pushing:
+
+   ```
+   ✅ All steps complete — branch is ready for review.
+
+   Before opening a PR, review your branch:
+     git log main..HEAD --oneline
+     git diff main..HEAD
+
+   When you're satisfied, run /project:update-docs-and-push to push and open a PR.
+   ```
+
+   STOP. Wait for the engineer to confirm they've reviewed the branch before continuing.
+
+7. Run `/project:update-docs-and-push` to review all project docs
    (CHANGELOG, STACK, ARCHITECTURE, etc.), commit any doc updates, and push.
 
-6. Open a Pull Request and capture the URL:
+8. Open a Pull Request and capture the URL:
+
    ```bash
    PR_URL=$(gh pr create \
      --title "feat(GH{n}): Phase {n} — {Feature Name}" \
@@ -325,7 +366,7 @@ Once all steps are checked off:
    echo $PR_URL
    ```
 
-7. Update the feature doc with the PR URL:
+9. Update the feature doc with the PR URL:
    - Set `pr: {pr-url}` in frontmatter
    - Update the `## Change Log` row added in step 1 to replace `PR pending`
      with the PR URL (e.g. `[#28](https://github.com/.../.../pull/28)`)
@@ -336,16 +377,17 @@ Once all steps are checked off:
      ```
    - Run `/project:update-docs-and-push` to finalize and push.
 
-7. Output:
-   ```
-   🎉 Phase {n} complete — {Feature Name}
+10. Output:
 
-   PR: {pr-url}
-   Issue: #{n}
+```
+🎉 Phase {n} complete — {Feature Name}
 
-   Review and merge the PR when ready. After merging, run
-   /project:develop to begin the next phase.
-   ```
+PR: {pr-url}
+Issue: #{n}
+
+Review and merge the PR when ready. After merging, run
+/project:develop to begin the next phase.
+```
 
 Then STOP. Do not begin the next phase. A new session with /project:develop
 is required for each new phase.
