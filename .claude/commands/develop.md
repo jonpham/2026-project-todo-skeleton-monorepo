@@ -224,6 +224,12 @@ git pull
 Implement exactly what the step describes. Do not implement anything from
 future steps, even if it seems logical to do so.
 
+**UI components:** After the component's own unit tests pass, also wire it into
+the nearest live parent (`App.tsx` or equivalent) — even as a placeholder if
+sibling components don't exist yet. Add a Storybook play story or a brief E2E
+assertion demonstrating the component in app context. Commit this as part of
+the same step.
+
 ### 4c — Verify the Step
 
 Run the verification commands appropriate to what was just built:
