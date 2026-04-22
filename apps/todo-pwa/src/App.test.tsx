@@ -43,7 +43,7 @@ test("submitting TodoInput calls createTodo", async () => {
   expect(mockCreateTodo).toHaveBeenCalledWith("New task");
 });
 
-test("renders existing todos as TodoItem components", () => {
+test("renders existing todos via TodoList", () => {
   render(<App />);
   expect(screen.getByText("Buy groceries")).toBeInTheDocument();
   expect(screen.getByRole("checkbox")).toBeInTheDocument();

@@ -66,7 +66,7 @@ accounts, filtering or sorting of To-Do items (future iteration).
 - [x] **Step 4** — Create `src/components/TodoItem.tsx`: checkbox, description text
       (strikethrough when complete), inline edit on click, delete button. Write
       Vitest + RTL unit test and Storybook story.
-- [ ] **Step 5** — Create `src/components/TodoList.tsx`: renders a list of
+- [x] **Step 5** — Create `src/components/TodoList.tsx`: renders a list of
       `TodoItem` components. Write Vitest + RTL unit test and Storybook story.
 - [ ] **Step 6** — Create `src/components/TodoApp.tsx`: root feature component
       consuming `useTodoWorker`, composing `TodoInput` and `TodoList`. Wire into
