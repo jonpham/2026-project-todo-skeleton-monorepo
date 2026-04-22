@@ -68,7 +68,7 @@ accounts, filtering or sorting of To-Do items (future iteration).
       Vitest + RTL unit test and Storybook story.
 - [x] **Step 5** — Create `src/components/TodoList.tsx`: renders a list of
       `TodoItem` components. Write Vitest + RTL unit test and Storybook story.
-- [ ] **Step 6** — Create `src/components/TodoApp.tsx`: root feature component
+- [x] **Step 6** — Create `src/components/TodoApp.tsx`: root feature component
       consuming `useTodoWorker`, composing `TodoInput` and `TodoList`. Wire into
       `src/App.tsx`. Write Vitest + RTL integration test. Write Playwright E2E test
       covering the full user flow: create → complete → edit → delete.
