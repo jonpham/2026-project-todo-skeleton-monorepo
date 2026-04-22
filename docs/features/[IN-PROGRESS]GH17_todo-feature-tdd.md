@@ -54,7 +54,7 @@ accounts, filtering or sorting of To-Do items (future iteration).
       display: standalone, background_color, theme_color). Configure service worker
       for offline caching of app shell assets. Verify browser shows install prompt
       on `pnpm build && pnpm preview`.
-- [ ] **Step 2** — Create `src/workers/todo.worker.ts`: defines `TodoItem` type
+- [x] **Step 2** — Create `src/workers/todo.worker.ts`: defines `TodoItem` type
       (`id`, `description`, `completed`, `createdAt`), handles messages for
       `CREATE_TODO`, `UPDATE_TODO`, `TOGGLE_TODO`, `DELETE_TODO`, `GET_ALL_TODOS`,
       persists to `localStorage`, posts updated list back after each operation.
