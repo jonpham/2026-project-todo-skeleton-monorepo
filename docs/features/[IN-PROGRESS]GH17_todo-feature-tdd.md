@@ -49,7 +49,7 @@ accounts, filtering or sorting of To-Do items (future iteration).
 
 ## Steps
 
-- [ ] **Step 1** — Install and configure `vite-plugin-pwa` in `apps/todo-web`.
+- [x] **Step 1** — Install and configure `vite-plugin-pwa` in `apps/todo-web`.
       Create `public/manifest.webmanifest` with correct PWA metadata (name, icons,
       display: standalone, background_color, theme_color). Configure service worker
       for offline caching of app shell assets. Verify browser shows install prompt
@@ -102,6 +102,6 @@ _None yet — populated during development._
 
 ## Change Log
 
-| Date | PR | Status Change | Notes |
-|---|---|---|---|
-| | | | |
+| Date | PR  | Status Change | Notes |
+| ---- | --- | ------------- | ----- |
+|      |     |               |       |

@@ -2,6 +2,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import { VitePWA } from "vite-plugin-pwa";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
@@ -11,9 +12,18 @@ const dirname =
     ? __dirname
     : path.dirname(fileURLToPath(import.meta.url));
 
-// More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
-  plugins: [tailwindcss(), react()],
+  plugins: [
+    tailwindcss(),
+    react(),
+    VitePWA({
+      registerType: "autoUpdate",
+      manifest: false,
+      workbox: {
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,webmanifest}"],
+      },
+    }),
+  ],
   test: {
     projects: [
       {
@@ -23,6 +33,7 @@ export default defineConfig({
           environment: "jsdom",
           globals: true,
           setupFiles: ["./src/test-setup.ts"],
+          exclude: ["**/node_modules/**", "**/e2e/**"],
         },
       },
       {
