@@ -19,10 +19,11 @@
 - **App Bundler:** Vite
 - **TypeScript:** v5.x, strict mode enabled
 
-### UI
+### UI & PWA
 
 - **Framework:** React 19
 - **Styling:** Tailwind CSS v4
+- **PWA:** `vite-plugin-pwa` v1 (generateSW mode, Workbox asset caching, hand-authored `manifest.webmanifest`)
 
 ### Code Quality
 
@@ -33,7 +34,7 @@
 ### Testing
 
 - **Unit & Component Tests:** Vitest + React Testing Library (RTL)
-- **Component Development & Visual Tests:** Storybook 8
+- **Component Development & Visual Tests:** Storybook 10 (`@storybook/addon-vitest`; test imports from `storybook/test`)
 - **End-to-End (E2E) Tests:** Playwright
 
 ### CI/CD & Deployment

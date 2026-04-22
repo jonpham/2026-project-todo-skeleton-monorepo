@@ -98,10 +98,14 @@ accounts, filtering or sorting of To-Do items (future iteration).
 
 ## Assumptions
 
-_None yet — populated during development._
+- **Worker is a pure state machine** — no localStorage in the worker. The hook (main thread) owns all persistence: reads on mount, sends `LOAD_TODOS` to hydrate the worker, and persists after every worker `onmessage` response.
+- **`LOAD_TODOS` replaces `GET_ALL_TODOS`** — initial hydration is a push from the hook rather than a pull from the worker, because `localStorage` is not available in Web Worker context (Chromium blocks it).
+- **TodoInput placed below TodoList** — matches the expected UX of "list at top, add at bottom". Changed mid-phase from the original "input at top" layout.
+- **Storybook `beforeEach: () => localStorage.clear()`** at meta level for all stories that consume `useTodoWorker` — prevents cross-story state pollution through the localStorage persistence layer.
+- **`storybook/test` not `@storybook/test`** — project uses Storybook v10; the correct import path for test utilities changed in v10.
 
 ## Change Log
 
-| Date | PR  | Status Change | Notes |
-| ---- | --- | ------------- | ----- |
-|      |     |               |       |
+| Date       | PR         | Status Change      | Notes                                                          |
+| ---------- | ---------- | ------------------ | -------------------------------------------------------------- |
+| 2026-04-21 | PR pending | TODO → In Progress | Implemented all 6 steps: PWA, Worker, Hook, UI components, E2E |
