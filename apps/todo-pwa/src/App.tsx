@@ -1,8 +1,10 @@
 import { useTodoWorker } from "./hooks/useTodoWorker";
 import { TodoInput } from "./components/TodoInput";
+import { TodoItem } from "./components/TodoItem";
 
 function App() {
-  const { todos, createTodo } = useTodoWorker();
+  const { todos, createTodo, toggleTodo, updateTodo, deleteTodo } =
+    useTodoWorker();
 
   return (
     <main className="mx-auto min-h-screen max-w-xl bg-gray-50 p-8">
@@ -11,12 +13,13 @@ function App() {
       {/* placeholder list — replaced by TodoList in Step 5 */}
       <ul className="mt-4 space-y-2">
         {todos.map((todo) => (
-          <li
+          <TodoItem
             key={todo.id}
-            className="rounded border bg-white px-4 py-2 text-sm text-gray-800"
-          >
-            {todo.description}
-          </li>
+            todo={todo}
+            onToggle={toggleTodo}
+            onUpdate={updateTodo}
+            onDelete={deleteTodo}
+          />
         ))}
       </ul>
     </main>

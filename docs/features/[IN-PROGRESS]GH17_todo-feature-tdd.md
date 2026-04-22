@@ -63,7 +63,7 @@ accounts, filtering or sorting of To-Do items (future iteration).
       tests for the hook using a mocked worker.
 - [x] **Step 3** — Create `src/components/TodoInput.tsx`: text input + submit button
       to create a new item. Write Vitest + RTL unit test and Storybook story.
-- [ ] **Step 4** — Create `src/components/TodoItem.tsx`: checkbox, description text
+- [x] **Step 4** — Create `src/components/TodoItem.tsx`: checkbox, description text
       (strikethrough when complete), inline edit on click, delete button. Write
       Vitest + RTL unit test and Storybook story.
 - [ ] **Step 5** — Create `src/components/TodoList.tsx`: renders a list of
