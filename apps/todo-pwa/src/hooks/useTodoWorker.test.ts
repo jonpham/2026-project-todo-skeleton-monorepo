@@ -31,6 +31,7 @@ const makeTodo = (overrides: Partial<TodoItem> = {}): TodoItem => ({
 describe("useTodoWorker", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.clear();
   });
 
   it("initializes with an empty todos array", () => {
@@ -38,31 +39,47 @@ describe("useTodoWorker", () => {
     expect(result.current.todos).toEqual([]);
   });
 
-  it("requests all todos on mount", () => {
+  it("sends LOAD_TODOS on mount with empty array when localStorage is empty", () => {
     renderHook(() => useTodoWorker());
     expect(MockWorker.latest.postMessage).toHaveBeenCalledWith({
-      type: "GET_ALL_TODOS",
+      type: "LOAD_TODOS",
+      payload: { todos: [] },
     });
   });
 
-  it("updates todos when the worker responds", () => {
+  it("sends LOAD_TODOS on mount with saved todos from localStorage", () => {
+    const saved = [makeTodo()];
+    localStorage.setItem("todos", JSON.stringify(saved));
+    renderHook(() => useTodoWorker());
+    expect(MockWorker.latest.postMessage).toHaveBeenCalledWith({
+      type: "LOAD_TODOS",
+      payload: { todos: saved },
+    });
+  });
+
+  it("updates todos state when the worker responds", () => {
     const todo = makeTodo();
     const { result } = renderHook(() => useTodoWorker());
-
     act(() => {
       MockWorker.latest.respond([todo]);
     });
-
     expect(result.current.todos).toEqual([todo]);
+  });
+
+  it("persists todos to localStorage when the worker responds", () => {
+    const todo = makeTodo();
+    renderHook(() => useTodoWorker());
+    act(() => {
+      MockWorker.latest.respond([todo]);
+    });
+    expect(JSON.parse(localStorage.getItem("todos") ?? "[]")).toEqual([todo]);
   });
 
   it("createTodo sends CREATE_TODO with description", () => {
     const { result } = renderHook(() => useTodoWorker());
-
     act(() => {
       result.current.createTodo("Buy groceries");
     });
-
     expect(MockWorker.latest.postMessage).toHaveBeenCalledWith({
       type: "CREATE_TODO",
       payload: { description: "Buy groceries" },
@@ -71,11 +88,9 @@ describe("useTodoWorker", () => {
 
   it("toggleTodo sends TOGGLE_TODO with id", () => {
     const { result } = renderHook(() => useTodoWorker());
-
     act(() => {
       result.current.toggleTodo("1");
     });
-
     expect(MockWorker.latest.postMessage).toHaveBeenCalledWith({
       type: "TOGGLE_TODO",
       payload: { id: "1" },
@@ -84,11 +99,9 @@ describe("useTodoWorker", () => {
 
   it("updateTodo sends UPDATE_TODO with id and description", () => {
     const { result } = renderHook(() => useTodoWorker());
-
     act(() => {
       result.current.updateTodo("1", "Updated text");
     });
-
     expect(MockWorker.latest.postMessage).toHaveBeenCalledWith({
       type: "UPDATE_TODO",
       payload: { id: "1", description: "Updated text" },
@@ -97,11 +110,9 @@ describe("useTodoWorker", () => {
 
   it("deleteTodo sends DELETE_TODO with id", () => {
     const { result } = renderHook(() => useTodoWorker());
-
     act(() => {
       result.current.deleteTodo("1");
     });
-
     expect(MockWorker.latest.postMessage).toHaveBeenCalledWith({
       type: "DELETE_TODO",
       payload: { id: "1" },

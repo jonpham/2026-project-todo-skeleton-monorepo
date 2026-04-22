@@ -1,9 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, within } from "@storybook/test";
+import { expect, within } from "storybook/test";
 import App from "./App";
 
 const meta: Meta<typeof App> = {
   component: App,
+  beforeEach: () => {
+    localStorage.clear();
+  },
 };
 export default meta;
 

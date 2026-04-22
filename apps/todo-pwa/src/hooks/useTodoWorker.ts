@@ -3,6 +3,16 @@ import type { TodoItem } from "../workers/todo.worker";
 
 export type { TodoItem };
 
+const STORAGE_KEY = "todos";
+
+function loadFromStorage(): TodoItem[] {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]");
+  } catch {
+    return [];
+  }
+}
+
 export function useTodoWorker() {
   const [todos, setTodos] = useState<TodoItem[]>([]);
   const workerRef = useRef<Worker | null>(null);
@@ -14,11 +24,16 @@ export function useTodoWorker() {
     );
 
     worker.onmessage = (event: MessageEvent<{ todos: TodoItem[] }>) => {
-      setTodos(event.data.todos);
+      const updated = event.data.todos;
+      setTodos(updated);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
     };
 
     workerRef.current = worker;
-    worker.postMessage({ type: "GET_ALL_TODOS" });
+    worker.postMessage({
+      type: "LOAD_TODOS",
+      payload: { todos: loadFromStorage() },
+    });
 
     return () => {
       worker.terminate();
