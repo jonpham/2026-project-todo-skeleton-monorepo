@@ -9,13 +9,13 @@ function App() {
   return (
     <main className="mx-auto min-h-screen max-w-xl bg-gray-50 p-8">
       <h1 className="mb-6 text-3xl font-bold text-gray-900">Todo PWA</h1>
-      <TodoInput onSubmit={createTodo} />
       <TodoList
         todos={todos}
         onToggle={toggleTodo}
         onUpdate={updateTodo}
         onDelete={deleteTodo}
       />
+      <TodoInput onSubmit={createTodo} />
     </main>
   );
 }
