@@ -10,6 +10,58 @@ Read `CLAUDE.md` fully before doing anything.
 
 ---
 
+## Step 0 — PR Awareness Check
+
+Run this check every time `/project:develop` is invoked, before selecting an issue.
+
+### 0a — Check for open PRs
+
+```bash
+gh pr list --repo {owner}/{repo} --state open --json number,title,url,headRefName
+```
+
+If any open PRs exist:
+
+1. Identify whether the next planned phase depends on an unmerged PR (e.g. Phase 4
+   cannot start until Phase 3's feat branch is merged into `main`). Phases are
+   sequential unless the feature doc explicitly states otherwise.
+
+2. Present findings:
+
+   ```
+   ⚠️  Open PR(s) detected:
+     - PR #{n}: {title} ({url})
+
+   The next phase {does / does not} depend on this PR being merged first.
+
+   Options:
+     [1] Wait — I'll merge the PR then re-run /project:develop
+     [2] Proceed anyway — the next phase is independent of the open PR
+   ```
+
+3. Wait for the engineer's response before continuing.
+
+### 0b — Check for stale local branches
+
+```bash
+git fetch --dry-run --prune 2>&1
+```
+
+If the output shows any branches that would be pruned (i.e. deleted on the remote
+and merged to `main`), ask:
+
+```
+The following local branches track remotes that have been deleted (merged to main):
+  - {branch-name}
+
+Can I prune them?  [y/n]
+```
+
+If yes: `git fetch --prune`
+If no: skip.
+
+---
+
 ## Step 1 — Select the Active Issue
 
 1. Query the GitHub Project board for Issues in the `To Do` column:
@@ -292,48 +344,19 @@ Once all steps are checked off:
 
 1. Update the feature doc frontmatter:
    - `status: DONE`
-   - `completed_at: {ISO date}`
+   - `completed_at: {today ISO date}`
    - Append a row to the `## Change Log` table
 
-2. Rename the feature doc:
+2. Rename the feature doc to reflect that implementation is complete:
    e.g. `[IN-PROGRESS]GH4_vite-app-bootstrap.md` → `[DONE]GH4_vite-app-bootstrap.md`
 
-3. Close any remaining open sub-issues linked in the feature doc's `## Steps`
-   checklist. Scan each step line for `#{issue-number}` references and check
-   their state:
+   Note: `[DONE]` means implementation is complete and in review — not necessarily
+   merged yet.
 
-   ```bash
-   gh issue view {sub-issue-number} --repo {owner}/{repo} --json state
-   ```
+3. Run `/project:update-status-and-commit` to commit the feature doc rename,
+   frontmatter update, and Change Log row.
 
-   For any that are still open:
-
-   ```bash
-   gh issue close {sub-issue-number} \
-     --comment "Phase {n} complete — resolved as part of feat/GH{n}-{feature-slug}"
-   ```
-
-4. Update the GitHub Issue status on the Project board to `Done`.
-   Use cached IDs from `CLAUDE.md` (`## GitHub Project IDs`). Get the item ID:
-
-   ```bash
-   gh project item-list {project-number} --owner {owner} --format json
-   ```
-
-   Then update:
-
-   ```bash
-   gh project item-edit \
-     --project-id {project-id} \
-     --id {item-id} \
-     --field-id {status-field-id} \
-     --single-select-option-id {done-option-id}
-   ```
-
-5. Run `/project:update-status-and-commit` to update `docs/PROJECT_STATUS.md`
-   and commit all remaining changes (feature doc rename, frontmatter, Change Log).
-
-6. Prompt the engineer to review the branch before pushing:
+4. Prompt the engineer to review the branch before pushing:
 
    ```
    ✅ All steps complete — branch is ready for review.
@@ -347,15 +370,27 @@ Once all steps are checked off:
 
    STOP. Wait for the engineer to confirm they've reviewed the branch before continuing.
 
-7. Run `/project:update-docs-and-push` to review all project docs
+5. Run `/project:update-docs-and-push` to review all project docs
    (CHANGELOG, STACK, ARCHITECTURE, etc.), commit any doc updates, and push.
 
-8. Open a Pull Request and capture the URL:
+6. Open a Pull Request. Scan the feature doc's `## Steps` checklist for all
+   `#{issue-number}` references (sub-issues) and list every one — plus the parent
+   issue — in the PR body using GitHub's closing keywords. GitHub auto-closes all
+   listed issues when the PR merges to `main`.
+
+   Structure the closing keywords section to distinguish parent from sub-issues:
 
    ```bash
    PR_URL=$(gh pr create \
      --title "feat(GH{n}): Phase {n} — {Feature Name}" \
-     --body "Closes #GH{n}
+     --body "## Closes
+
+   **Phase issue:** Closes #{n}
+
+   **Step sub-issues:**
+   Closes #{sub-issue-1}
+   Closes #{sub-issue-2}
+   ...
 
    ## Summary
    {2-3 sentence summary of what was built}
@@ -372,28 +407,30 @@ Once all steps are checked off:
    echo $PR_URL
    ```
 
-9. Update the feature doc with the PR URL:
+7. Update the feature doc with the PR URL:
    - Set `pr: {pr-url}` in frontmatter
-   - Update the `## Change Log` row added in step 1 to replace `PR pending`
-     with the PR URL (e.g. `[#28](https://github.com/.../.../pull/28)`)
-   - Commit:
+   - Update the `## Change Log` row to replace `PR pending` with the PR URL
+   - Commit and push:
      ```bash
      git add docs/features/
      git commit -m "docs(GH{n}): add PR url to feature doc"
+     git push
      ```
-   - Run `/project:update-docs-and-push` to finalize and push.
 
-10. Output:
+8. Output:
 
-```
-🎉 Phase {n} complete — {Feature Name}
+   ```
+   ⏳ Phase {n} — {Feature Name} — awaiting merge
 
-PR: {pr-url}
-Issue: #{n}
+   PR: {pr-url}
+   Closes on merge:
+     Parent issue: #{n}
+     Sub-issues:   #{sub-1}, #{sub-2}, …
 
-Review and merge the PR when ready. After merging, run
-/project:develop to begin the next phase.
-```
+   Implementation is complete. After the PR is merged, run /project:develop —
+   it will detect the open PR, offer to prune the deleted branch, and guide
+   you into Phase {n+1}.
+   ```
 
 Then STOP. Do not begin the next phase. A new session with /project:develop
 is required for each new phase.
