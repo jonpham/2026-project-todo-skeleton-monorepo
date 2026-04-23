@@ -2,13 +2,13 @@
 project: "Project-BootStrap-Mono-Repo"
 phase: 3
 slug: "todo-feature-tdd"
-status: IN-PROGRESS
+status: DONE
 step_gating: true
 issue: 17
 parent_issue: null
 branch: feat/GH17-todo-feature-tdd
-pr: null
-completed_at: null
+pr: https://github.com/jonpham/2026-project-todo-skeleton-monorepo/pull/31
+completed_at: 2026-04-22
 ---
 
 # Phase 3 — To-Do Feature (TDD)
