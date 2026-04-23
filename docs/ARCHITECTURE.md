@@ -22,11 +22,17 @@
 │       │   ├── App.tsx              # Thin shell — renders TodoApp inside <main>
 │       │   ├── App.test.tsx         # Vitest unit tests (mocks useTodoWorker)
 │       │   ├── App.stories.tsx      # Storybook stories
-│       │   ├── components/          # Feature UI components (co-located tests + stories)
-│       │   │   ├── TodoApp.tsx      # Root feature component — composes list + input
-│       │   │   ├── TodoInput.tsx
-│       │   │   ├── TodoItem.tsx
-│       │   │   └── TodoList.tsx
+│       │   ├── components/          # Feature UI components — one folder per component
+│       │   │   ├── TodoApp/
+│       │   │   │   ├── TodoApp.tsx          # Root feature component — composes list + input
+│       │   │   │   ├── TodoApp.test.tsx
+│       │   │   │   ├── TodoApp.stories.tsx
+│       │   │   │   └── index.ts             # Re-exports component for clean imports
+│       │   │   ├── TodoInput/               # (same structure)
+│       │   │   ├── TodoItem/                # (same structure)
+│       │   │   └── TodoList/                # (same structure)
+│       │   ├── types/
+│       │   │   └── todo.ts                  # App-local TypeScript types (TodoItem)
 │       │   ├── hooks/
 │       │   │   └── useTodoWorker.ts # Owns localStorage; hydrates worker on mount
 │       │   ├── workers/

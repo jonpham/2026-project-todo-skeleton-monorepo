@@ -1,9 +1,4 @@
-export type TodoItem = {
-  id: string;
-  description: string;
-  completed: boolean;
-  createdAt: string;
-};
+import type { TodoItem } from "../types/todo";
 
 type WorkerMessage =
   | { type: "LOAD_TODOS"; payload: { todos: TodoItem[] } }

@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { vi } from "vitest";
 import App from "./App";
-import type { TodoItem } from "./workers/todo.worker";
+import type { TodoItem } from "./types/todo";
 
 const mockCreateTodo = vi.fn();
 const mockToggleTodo = vi.fn();

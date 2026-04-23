@@ -73,11 +73,25 @@
 
 ### File & Folder Conventions
 
-- Components: `PascalCase.tsx`
-- Hooks: `useCamelCase.ts`
+Each component lives in its own folder under `src/components/`. This is intentional
+template scaffolding — projects derived from this repo are expected to grow, and the
+folder-per-component pattern keeps tests, stories, and logic co-located as the
+component grows in complexity.
+
+```
+src/components/
+└── MyComponent/
+    ├── MyComponent.tsx          # Component implementation
+    ├── MyComponent.test.tsx     # Vitest + RTL unit tests
+    ├── MyComponent.stories.tsx  # Storybook stories
+    ├── hooks/                   # Component-local hooks (if any)
+    └── index.ts                 # Re-exports: export { MyComponent } from "./MyComponent"
+```
+
+- Hooks (app-level): `src/hooks/useCamelCase.ts`
+- App-local types: `src/types/{domain}.ts`
+- Shared types (cross-package): `packages/types/`
 - Utilities: `camelCase.ts`
-- Tests: co-located as `ComponentName.test.tsx`
-- Stories: co-located as `ComponentName.stories.tsx`
 - E2E tests: `e2e/` at the app root
 
 ### Testing Philosophy

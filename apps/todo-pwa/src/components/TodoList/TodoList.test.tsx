@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import { TodoList } from "./TodoList";
-import type { TodoItem } from "../workers/todo.worker";
+import type { TodoItem } from "../../types/todo";
 
 const makeTodo = (overrides: Partial<TodoItem> = {}): TodoItem => ({
   id: "1",

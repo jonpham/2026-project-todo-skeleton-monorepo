@@ -1,5 +1,5 @@
-import type { TodoItem } from "../workers/todo.worker";
-import { TodoItem as TodoItemComponent } from "./TodoItem";
+import type { TodoItem } from "../../types/todo";
+import { TodoItem as TodoItemComponent } from "../TodoItem";
 
 interface TodoListProps {
   todos: TodoItem[];

@@ -1,7 +1,7 @@
 import { renderHook, act } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { useTodoWorker } from "./useTodoWorker";
-import type { TodoItem } from "../workers/todo.worker";
+import type { TodoItem } from "../types/todo";
 
 class MockWorker {
   static latest: MockWorker;

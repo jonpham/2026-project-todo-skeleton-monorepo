@@ -1,6 +1,6 @@
-import { useTodoWorker } from "../hooks/useTodoWorker";
-import { TodoInput } from "./TodoInput";
-import { TodoList } from "./TodoList";
+import { useTodoWorker } from "../../hooks/useTodoWorker";
+import { TodoInput } from "../TodoInput";
+import { TodoList } from "../TodoList";
 
 export function TodoApp() {
   const { todos, createTodo, toggleTodo, updateTodo, deleteTodo } =

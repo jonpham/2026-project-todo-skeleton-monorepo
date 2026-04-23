@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import type { TodoItem } from "../workers/todo.worker";
+import type { TodoItem } from "../types/todo";
 
 export type { TodoItem };
 

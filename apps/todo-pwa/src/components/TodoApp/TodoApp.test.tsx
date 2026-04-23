@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { TodoApp } from "./TodoApp";
-import type { TodoItem } from "../workers/todo.worker";
+import type { TodoItem } from "../../types/todo";
 
 // Reactive MockWorker — mirrors worker logic in-memory so the full hook + UI can be tested together
 class MockWorker {
