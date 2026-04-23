@@ -15,10 +15,28 @@
 │   └── todo-pwa/                    # Vite + React 19 PWA
 │       ├── .storybook/              # Storybook config (main.ts, preview.ts)
 │       ├── e2e/                     # Playwright E2E tests
+│       ├── public/
+│       │   ├── manifest.webmanifest # PWA manifest
+│       │   └── icons/               # PWA icons (192×192, 512×512)
 │       ├── src/
-│       │   ├── App.tsx
-│       │   ├── App.test.tsx         # Vitest unit smoke test
-│       │   ├── App.stories.tsx      # Storybook Default story
+│       │   ├── App.tsx              # Thin shell — renders TodoApp inside <main>
+│       │   ├── App.test.tsx         # Vitest unit tests (mocks useTodoWorker)
+│       │   ├── App.stories.tsx      # Storybook stories
+│       │   ├── components/          # Feature UI components — one folder per component
+│       │   │   ├── TodoApp/
+│       │   │   │   ├── TodoApp.tsx          # Root feature component — composes list + input
+│       │   │   │   ├── TodoApp.test.tsx
+│       │   │   │   ├── TodoApp.stories.tsx
+│       │   │   │   └── index.ts             # Re-exports component for clean imports
+│       │   │   ├── TodoInput/               # (same structure)
+│       │   │   ├── TodoItem/                # (same structure)
+│       │   │   └── TodoList/                # (same structure)
+│       │   ├── types/
+│       │   │   └── todo.ts                  # App-local TypeScript types (TodoItem)
+│       │   ├── hooks/
+│       │   │   └── useTodoWorker.ts # Owns localStorage; hydrates worker on mount
+│       │   ├── workers/
+│       │   │   └── todo.worker.ts   # Pure in-memory state machine (no localStorage)
 │       │   ├── test-setup.ts        # @testing-library/jest-dom setup
 │       │   ├── main.tsx
 │       │   └── index.css            # Tailwind CSS v4 entry
