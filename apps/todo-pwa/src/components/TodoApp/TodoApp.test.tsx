@@ -87,7 +87,7 @@ describe("TodoApp integration", () => {
     render(<TodoApp />);
     await userEvent.type(screen.getByRole("textbox"), "Buy groceries{Enter}");
     await userEvent.click(screen.getByText("Buy groceries"));
-    const editInput = screen.getAllByRole("textbox")[0];
+    const editInput = screen.getByRole("textbox", { name: /edit todo/i });
     await userEvent.clear(editInput);
     await userEvent.type(editInput, "Buy organic groceries{Enter}");
     expect(screen.getByText("Buy organic groceries")).toBeInTheDocument();

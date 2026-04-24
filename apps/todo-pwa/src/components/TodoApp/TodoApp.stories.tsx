@@ -18,6 +18,8 @@ export const FullFlow: Story = {
     const input = canvas.getByRole("textbox");
     await ue.type(input, "Buy groceries{Enter}");
     await ue.type(input, "Walk the dog{Enter}");
-    await ue.click(canvas.getAllByRole("checkbox")[0]);
+    await ue.click(
+      canvas.getByRole("checkbox", { name: 'Toggle "Buy groceries"' })
+    );
   },
 };
