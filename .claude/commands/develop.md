@@ -303,8 +303,13 @@ Do not move to the next step with a failing test.
 
 1. Check off the completed step in the `## Steps` checklist
 2. Append any non-obvious decisions to the `## Assumptions` section
-3. Run `/project:update-status-and-commit` to update `docs/PROJECT_STATUS.md`
-   and commit the implementation + updated feature doc + status doc together.
+3. Spawn a foreground subagent with this prompt:
+
+   > Read and follow `.claude/commands/update-status-and-commit.md` exactly.
+   > Context: active feature doc is `{filename}`, step just completed is Step {i} — {description},
+   > modified files are `{list from 4b/4c}`. Do not stop for approval. Output the `Committed:` summary when done.
+
+   Wait for the subagent to complete before continuing to step 4e.
 
 ### 4e — Output the Working Agreement Summary
 
@@ -353,8 +358,13 @@ Once all steps are checked off:
    Note: `[DONE]` means implementation is complete and in review — not necessarily
    merged yet.
 
-3. Run `/project:update-status-and-commit` to commit the feature doc rename,
-   frontmatter update, and Change Log row.
+3. Spawn a foreground subagent with this prompt:
+
+   > Read and follow `.claude/commands/update-status-and-commit.md` exactly.
+   > Context: feature doc just renamed to [DONE]: `{new filename}`. Phase complete — all steps checked off.
+   > Stage the renamed feature doc and `docs/PROJECT_STATUS.md` only. Do not stop for approval. Output the `Committed:` summary when done.
+
+   Wait for the subagent to complete before continuing to item 4.
 
 4. Prompt the engineer to review the branch before pushing:
 
@@ -370,8 +380,13 @@ Once all steps are checked off:
 
    STOP. Wait for the engineer to confirm they've reviewed the branch before continuing.
 
-5. Run `/project:update-docs-and-push` to review all project docs
-   (CHANGELOG, STACK, ARCHITECTURE, etc.), commit any doc updates, and push.
+5. Spawn a foreground subagent with this prompt:
+
+   > Read and follow `.claude/commands/update-docs-and-push.md` exactly.
+   > Context: branch is `{branch-name}`, Phase {n} — {Feature Name} just completed, feature doc is [DONE].
+   > Do not stop for approval. Output the `Pushed:` summary when done.
+
+   Wait for the subagent to complete (confirming push succeeded) before opening the PR in step 6.
 
 6. Open a Pull Request. Scan the feature doc's `## Steps` checklist for all
    `#{issue-number}` references (sub-issues) and list every one — plus the parent
