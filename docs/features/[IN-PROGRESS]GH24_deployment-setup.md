@@ -59,7 +59,7 @@ API token, monitoring/observability (future iteration).
 
 ## Steps
 
-- [ ] **Step 0** — Create `docs/deployment-setup-guide.md`: a manual prerequisites
+- [x] **Step 0** — Create `docs/deployment-setup-guide.md`: a manual prerequisites
       guide covering Cloudflare account setup, adding `witty-m.com` as a Cloudflare
       zone, updating NameCheap nameservers to Cloudflare's NS records, creating a
       Cloudflare API token (scopes: Pages Edit, Account Settings Read, Zone Read,
