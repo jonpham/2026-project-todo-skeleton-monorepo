@@ -4,6 +4,7 @@
 > GitHub Issues and the Project board.
 >
 > Use it to:
+>
 > - Create feature docs for new phases (if none exist or to add more)
 > - Sync existing feature docs into GitHub Issues and the Project board
 >
@@ -11,6 +12,23 @@
 > (`issue` field is not null in frontmatter).
 
 Read `CLAUDE.md` before doing anything.
+
+## GitHub MCP Server Dependency
+
+This command uses the **GitHub MCP Server** for issue creation and updates.
+MCP tools return structured JSON — no URL parsing or `--json` workarounds needed.
+
+Install if not already connected:
+
+```
+claude mcp add-json github '{"type":"stdio","command":"npx","args":["-y","@github/mcp-server"],"env":{"GITHUB_PERSONAL_ACCESS_TOKEN":"<YOUR_GITHUB_PAT>"}}'
+```
+
+Operations that remain on `gh` CLI (no MCP equivalent):
+
+- Project board mutations: `gh project item-add`, `gh project item-edit`
+- Label creation: `gh label create`
+- Milestone creation: `gh api repos/.../milestones`
 
 ---
 
@@ -25,6 +43,7 @@ Read `CLAUDE.md` before doing anything.
    The owner is the GitHub username or org from the `GitHub Repo` URL in `CLAUDE.md`.
 
 If no project exists, create one:
+
 ```bash
 gh project create --owner {owner} --title "{Project Name from CLAUDE.md}" --format json
 ```
@@ -35,10 +54,13 @@ fail with a "Name has already been taken" error.
 
 Instead, add the missing `Blocked` option to the existing Status field using
 the `updateProjectV2Field` GraphQL mutation. First get the Status field ID:
+
 ```bash
 gh project field-list {project-number} --owner {owner} --format json
 ```
+
 Then update the field, preserving existing options and appending Blocked:
+
 ```bash
 gh api graphql -f query='
 mutation {
@@ -77,6 +99,7 @@ List all `*.md` files in `docs/features/` excluding `_TEMPLATE.md`.
 **If no feature docs exist (or the engineer wants to add a new phase):**
 
 Ask the engineer what they want to build:
+
 ```
 No feature docs found (or adding a new phase). What would you like to build?
 
@@ -88,11 +111,13 @@ Wait for the engineer's response.
 
 Draft a single phase feature doc proposal inline using `docs/features/_TEMPLATE.md`
 as the format. Keep scope tight — one focused deliverable. Include:
+
 - Phase number (next available: N)
 - Slug, context, acceptance criteria (testable outcomes)
 - 5–7 ordered steps
 
 Output the draft, then ask:
+
 ```
 Does this look right? Reply with changes, or say "approve" to create the file.
 ```
@@ -102,16 +127,17 @@ Once approved, create `docs/features/[TODO]P{n}_{feature-slug}.md`.
 **If feature docs exist:**
 
 Parse the frontmatter of each file and classify:
+
 - **Needs Issue:** `issue` is null
 - **Has Issue:** `issue` is not null (skip creation, verify Issue still open)
 - **Invalid:** missing required frontmatter fields — flag and skip
 
 Output a table:
 
-| File | Phase | Status | Issue | Action |
-|---|---|---|---|---|
-| [TODO]P1_monorepo-setup.md | 1 | TODO | null | Create Issue |
-| [TODO]GH4_vite-app-bootstrap.md | 2 | TODO | 4 | Skip (exists) |
+| File                            | Phase | Status | Issue | Action        |
+| ------------------------------- | ----- | ------ | ----- | ------------- |
+| [TODO]P1_monorepo-setup.md      | 1     | TODO   | null  | Create Issue  |
+| [TODO]GH4_vite-app-bootstrap.md | 2     | TODO   | 4     | Skip (exists) |
 
 Then STOP and wait for explicit approval before creating any Issues.
 
@@ -127,19 +153,23 @@ Check `CLAUDE.md` for a `## GitHub Project IDs` section. If it exists and all
 required IDs are present, use those cached values — skip the API fetch.
 
 If the section is missing or incomplete, fetch from the API:
+
 ```bash
 gh project field-list {project-number} --owner {owner} --format json
 ```
 
 From the output, record:
+
 - `status_field_id` — the ID of the Status field
 - `todo_option_id` — the ID of the "To Do" option
 - `in_progress_option_id` — the ID of the "In Progress" option
 - `done_option_id` — the ID of the "Done" option
 
 Write or update the `## GitHub Project IDs` section in `CLAUDE.md`:
+
 ```markdown
 ## GitHub Project IDs
+
 <!-- project-number: {n} -->
 <!-- project-id: {id} -->
 <!-- status-field-id: {id} -->
@@ -168,45 +198,103 @@ Confirm this version or provide an override before I create Issues.
 ```
 
 Create the milestone once confirmed:
+
 ```bash
 gh api repos/{owner}/{repo}/milestones -X POST \
   -f title="v{X.Y.Z}" \
   -f description="{one sentence rationale}"
 ```
 
-### 3c — Create the Parent Issue
+Capture the `number` field from the JSON response — this is the milestone number
+required by the `mcp__github__issue_write` `milestone` parameter in step 3c.
 
-Create the `phase-{n}`, `feature`, and `step` labels if they don't exist:
-```bash
-gh label create "phase-{n}" --color "0075ca" --description "Phase {n}"
-gh label create "feature" --color "a2eeef" --description "Phase-level feature"
-gh label create "step" --color "e4e669" --description "Step-level sub-issue"
-```
+### 3-pre — Create Shared Labels (sequential, runs once)
 
-For each feature doc needing an Issue:
+Create the shared labels before spawning parallel agents to avoid race conditions:
 
 ```bash
-gh issue create \
-  --title "Phase {n} — {Feature Name}" \
-  --body "$(cat <<'EOF'
-## Context
-{content of ## Context section from feature doc}
-
-## Acceptance Criteria
-{content of ## Acceptance Criteria section from feature doc}
-
-## Steps
-{content of ## Steps section from feature doc}
-EOF
-)" \
-  --label "phase-{n}" --label "feature" \
-  --milestone "v{X.Y.Z}"
+gh label create "feature" --color "a2eeef" --description "Phase-level feature" --force
+gh label create "step" --color "e4e669" --description "Step-level sub-issue" --force
 ```
 
-Note: `gh issue create` does not support a `--json` flag. Capture the returned
-URL and parse the issue number from it (last path segment).
+Using `--force` makes these idempotent — safe to re-run if they already exist.
 
-### 3d — Identify Steps That Warrant Sub-Issues
+---
+
+### 3-parallel — Per-Doc Issue Creation
+
+Once 3a, 3b, and the shared label setup above are complete, spawn one foreground
+subagent per feature doc that needs an Issue. **Spawn all in a single message**
+so they run simultaneously.
+
+**Subagent prompt template (fill in values for each doc):**
+
+> Read `.claude/commands/plan_project.md` for full context on the workflow.
+> Execute only steps 3c, 3d, and 3e for this one doc:
+>
+> - Feature doc: `docs/features/{filename}`
+> - Phase: {n} | Feature: {Feature Name}
+> - Milestone: `v{X.Y.Z}` (already created — do not recreate it)
+>
+> Project IDs already resolved — use these, do not re-fetch:
+>
+> - project-number: {n}, project-id: {id}
+> - status-field-id: {id}, todo-option-id: {id}, owner: {owner}
+>
+> Labels `feature` and `step` already exist — do not recreate them.
+> Create only the `phase-{n}` label for this doc's phase.
+>
+> Output one line when done: `DONE: {filename} → Issue #{n}, sub-issues: #{x}, #{y}`
+
+Wait for **all** subagents to complete, then the main agent (not a subagent) commits:
+
+```bash
+git add docs/features/ CLAUDE.md
+git commit -m "docs: sync feature docs with GitHub Issues"
+```
+
+Then spawn a foreground subagent to review docs and push:
+
+> Read and follow `.claude/commands/update-docs-and-push.md` exactly.
+> Context: just synced feature docs with GitHub Issues. Do not stop for approval.
+> Output the `Pushed:` summary when done.
+
+Wait for the subagent to complete, then output the summary table and STOP.
+
+---
+
+### 3c — Create the Parent Issue _(executed by per-doc subagents)_
+
+Create the `phase-{n}` label for this doc's phase (labels `feature` and `step`
+are already created in 3-pre — do not recreate them):
+
+```bash
+gh label create "phase-{n}" --color "0075ca" --description "Phase {n}" --force
+```
+
+For this feature doc, use the `mcp__github__issue_write` tool:
+
+```
+method: "create"
+owner: {owner}
+repo: {repo}
+title: "Phase {n} — {Feature Name}"
+body: |
+  ## Context
+  {content of ## Context section from feature doc}
+
+  ## Acceptance Criteria
+  {content of ## Acceptance Criteria section from feature doc}
+
+  ## Steps
+  {content of ## Steps section from feature doc}
+labels: ["phase-{n}", "feature"]
+milestone: {milestone-number}   ← integer from Step 3b response
+```
+
+The response includes the issue number as `.number` — no URL parsing needed.
+
+### 3d — Identify Steps That Warrant Sub-Issues _(executed by per-doc subagents)_
 
 Not every step needs a GitHub sub-issue. Only create a sub-issue for steps that
 would produce significant, independently reviewable changes — specifically those
@@ -214,43 +302,51 @@ that **add or update tests** in the codebase. These are the steps worth tracking
 on a branch of their own.
 
 For each step in `## Steps`, evaluate:
+
 - **Create a sub-issue if:** the step adds new source files with co-located
   tests, adds a new Storybook story, or adds/updates Playwright E2E tests
 - **Skip sub-issue if:** the step is purely configuration, installs packages,
   creates boilerplate without tests, or is a one-liner that will be committed
   alongside a larger step
 
-For steps that qualify, create a linked issue:
+For steps that qualify, use the `mcp__github__issue_write` tool:
 
-```bash
-gh issue create \
-  --title "[Phase {n}] Step {i} — {step description, first ~60 chars}" \
-  --body "Part of #{parent-issue-number}
+```
+method: "create"
+owner: {owner}
+repo: {repo}
+title: "[Phase {n}] Step {i} — {step description, first ~60 chars}"
+body: |
+  Part of #{parent-issue-number}
 
-{full step description from the checklist item}" \
-  --label "phase-{n}" --label "step"
+  {full step description from the checklist item}
+labels: ["phase-{n}", "step"]
 ```
 
-After creating sub-issues, edit the parent issue body to update the `## Steps`
-checklist with issue references for sub-issued steps only:
+The response includes the sub-issue number as `.number`.
 
-```bash
-gh issue edit {parent-issue-number} --body "$(cat <<'EOF'
-## Context
-...
+After creating sub-issues, update the parent issue body to add issue references
+for sub-issued steps. Use the `mcp__github__issue_write` tool:
 
-## Acceptance Criteria
-...
+```
+method: "update"
+owner: {owner}
+repo: {repo}
+issue_number: {parent-issue-number}
+body: |
+  ## Context
+  ...
 
-## Steps
-- [ ] Step 1 — {description}              ← no sub-issue (config only)
-- [ ] Step 2 — {description} #{sub-issue} ← sub-issue (adds tests)
-...
-EOF
-)"
+  ## Acceptance Criteria
+  ...
+
+  ## Steps
+  - [ ] Step 1 — {description}              ← no sub-issue (config only)
+  - [ ] Step 2 — {description} #{sub-issue} ← sub-issue (adds tests)
+  ...
 ```
 
-### 3e — Update Feature Doc and Add to Project Board
+### 3e — Update Feature Doc and Add to Project Board _(executed by per-doc subagents)_
 
 After creating parent + sub-issues:
 
@@ -274,20 +370,11 @@ After creating parent + sub-issues:
      --single-select-option-id {todo-option-id}
    ```
 
-Process all docs before stopping.
-
-After all Issues are created, commit the renamed and updated feature docs:
-```bash
-git add docs/features/ CLAUDE.md
-git commit -m "docs: sync feature docs with GitHub Issues"
-```
-Then run `/project:update-docs-and-push` to review all project docs and push.
-
 Output a summary table:
 
-| Phase | Feature | Parent Issue | Step Issues | Milestone | Project Board |
-|---|---|---|---|---|---|
-| 1 | Monorepo Setup | #1 | #2, #3, #4, #5, #6, #7 | v0.1.0 | Added (To Do) |
+| Phase | Feature        | Parent Issue | Step Issues            | Milestone | Project Board |
+| ----- | -------------- | ------------ | ---------------------- | --------- | ------------- |
+| 1     | Monorepo Setup | #1           | #2, #3, #4, #5, #6, #7 | v0.1.0    | Added (To Do) |
 
 Then STOP and wait for explicit approval.
 
@@ -299,15 +386,22 @@ Skip this step if the `GitHub Project Board` URL is already filled in `CLAUDE.md
 
 1. Update the `GitHub Project Board` URL field in `CLAUDE.md` with the actual project board URL
 2. Commit and push:
+
    ```bash
    git add CLAUDE.md
    git commit -m "docs: update CLAUDE.md with project board URL"
    ```
-   Then run `/project:update-docs-and-push`.
+
+   Then spawn a foreground subagent:
+
+   > Read and follow `.claude/commands/update-docs-and-push.md` exactly.
+   > Context: updated CLAUDE.md with project board URL. Do not stop for approval.
+   > Output the `Pushed:` summary when done.
 
 Output the project board URL and confirm the commit was pushed.
 
 Then STOP. Output:
+
 ```
 Project board is ready. All feature docs are synced with GitHub Issues.
 Run /project:develop to begin development on the next phase.

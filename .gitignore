@@ -5,6 +5,8 @@ node_modules/
 dist/
 build/
 out/
+infra/bin/
+apps/*/infra/bin/
 
 # Turborepo
 .turbo/

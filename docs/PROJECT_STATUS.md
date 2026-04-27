@@ -1,7 +1,7 @@
 # Project and Feature Status
 
-**Last completed phase:** Phase 2 — Vite App Bootstrap (PR #30, merged)
-**Active feature doc:** [IN-PROGRESS]GH17_todo-feature-tdd.md
-**Current step:** Step 6 — Create TodoApp component, wire into App.tsx, RTL integration test, Playwright E2E
+**Last completed phase:** Phase 3 — To-Do Feature TDD (PR #31, merged)
+**Active feature doc:** [IN-PROGRESS]GH24_deployment-setup.md
+**Current step:** Step 4 — Create `apps/todo-pwa/infra/` Pulumi TypeScript project for Cloudflare Pages
 **Known blockers:** None
-**Next action:** Review your branch, then run /project:update-docs-and-push to push and open a PR for review
+**Next action:** Begin Step 5 — Update playwright.config.ts and create cd-preview.yml CD workflow (say "proceed" to continue)

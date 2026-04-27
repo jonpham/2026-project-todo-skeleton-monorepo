@@ -28,8 +28,8 @@ export const TogglingAndDeleting: Story = {
     const canvas = within(canvasElement);
     // Add an item
     await ue.type(canvas.getByRole("textbox"), "Walk the dog{Enter}");
-    // Toggle it complete
-    await ue.click(canvas.getByRole("checkbox"));
+    // Wait for the item to render before interacting
+    await ue.click(await canvas.findByRole("checkbox"));
     // Delete it
     await ue.click(canvas.getByRole("button", { name: /delete/i }));
   },

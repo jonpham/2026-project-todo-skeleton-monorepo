@@ -39,6 +39,7 @@ export function TodoItem({
         type="checkbox"
         checked={todo.completed}
         onChange={() => onToggle(todo.id)}
+        aria-label={`Toggle "${todo.description}"`}
         className="h-4 w-4 accent-indigo-500"
       />
 
@@ -50,6 +51,7 @@ export function TodoItem({
           onKeyDown={handleKeyDown}
           onBlur={commitEdit}
           autoFocus
+          aria-label="Edit todo"
           className="flex-1 rounded border border-indigo-300 px-2 py-0.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
         />
       ) : (

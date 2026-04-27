@@ -9,7 +9,9 @@
     "test": "turbo run test",
     "lint": "turbo run lint",
     "format": "turbo run format",
-    "prepare": "husky"
+    "prepare": "husky",
+    "deploy:local": "docker compose up --build -d",
+    "deploy:local:stop": "docker compose stop"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
@@ -26,6 +28,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
     "prettier": "^3.8.3",
+    "turbo": "^2.9.6",
     "typescript-eslint": "^8.59.0"
   }
 }

@@ -1,0 +1,13 @@
+{
+  "name": "monorepo-infra",
+  "private": true,
+  "version": "0.0.0",
+  "dependencies": {
+    "dotenv": "^16"
+  },
+  "devDependencies": {
+    "@pulumi/pulumi": "^3",
+    "ts-node": "^10",
+    "typescript": "^5"
+  }
+}

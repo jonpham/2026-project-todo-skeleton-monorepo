@@ -1,0 +1,6 @@
+name: monorepo-infra
+runtime: nodejs
+description: >
+  Central infrastructure orchestration for the monorepo.
+  Drives each app's co-located Pulumi program via the Automation API.
+  Run individual app deployments directly from apps/*/infra/ for granular control.
