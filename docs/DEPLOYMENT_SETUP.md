@@ -1,9 +1,14 @@
 # Deployment Setup Guide
 
-Manual prerequisites for Phase 4 — Deployment Setup (GH24).
+Shared prerequisites for deploying any app in this monorepo to Cloudflare Pages.
 
 Complete every section in order before running `pulumi up` or triggering any
 GitHub Actions workflow. Each section ends with a verification step.
+
+App-specific deployment instructions (local Docker, standalone `pulumi up`,
+CI/CD workflows, custom domain verification) live in each app's own docs:
+
+- [`apps/todo-pwa/docs/DEPLOYMENT.md`](../apps/todo-pwa/docs/DEPLOYMENT.md)
 
 ---
 
@@ -142,77 +147,53 @@ pulumi login --local
 
 ## 8. Run `pulumi up` for the First Time
 
-Two options depending on scope:
+Each app has its own Pulumi stack in `apps/{app}/infra/`. The root `infra/`
+orchestrator drives all of them via the Pulumi Automation API. You can deploy
+everything at once (Option A) or a single app in isolation (Option B).
+
+See [`docs/ARCHITECTURE.md — Infrastructure Design`](ARCHITECTURE.md#infrastructure-design)
+for the full rationale.
+
+**Before running either option**, populate the repo root `.env` file:
+
+```bash
+cp .env.example .env
+# Edit .env — fill in CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID, PULUMI_STACK
+```
+
+Both `infra/index.ts` and `apps/todo-pwa/infra/index.ts` load this file
+automatically on startup.
 
 ### Option A — Deploy all apps (monorepo orchestration)
 
 From the repo root `infra/` directory. Uses the Pulumi Automation API to drive
-each app's co-located Pulumi program. Shared config (e.g. `CLOUDFLARE_API_TOKEN`)
-is passed automatically to each app stack.
+each app's co-located Pulumi program. Shared config is loaded from `.env` and
+passed automatically to each app stack.
 
 ```bash
 cd infra
 npm install
-
-# Deploy all apps
-CLOUDFLARE_API_TOKEN=<your-token> PULUMI_STACK=prod npx ts-node index.ts
+npx ts-node index.ts
 ```
 
-### Option B — Deploy todo-pwa only (standalone)
+### Option B — Deploy a single app (standalone)
 
-Useful for iterating on a single app or when the app has been extracted to its
-own repository.
+See the app's own deployment doc, e.g.:
 
-```bash
-cd apps/todo-pwa/infra
-npm install
-
-# Set required config secrets (only needed once per stack)
-pulumi config set cloudflareAccountId <your-account-id> --secret
-
-# Dry run — review the plan before applying
-CLOUDFLARE_API_TOKEN=<your-token> pulumi preview
-
-# Apply
-CLOUDFLARE_API_TOKEN=<your-token> pulumi up
-```
-
-**Verify:** `pulumi up` completes with 2 resources created:
-
-- `cloudflare:index:PagesProject` — `todo-pwa`
-- `cloudflare:index:PagesDomain` — `app.todo.witty-m.com`
-
-Confirm in the Cloudflare dashboard under **Workers & Pages** → `todo-pwa`.
+- [`apps/todo-pwa/docs/DEPLOYMENT.md`](../apps/todo-pwa/docs/DEPLOYMENT.md)
 
 ---
 
-## 9. Verify HTTPS Certificate Provisioning
+## 9. Shared Prerequisites Verification Checklist
 
-After `pulumi up` binds the custom domain, Cloudflare automatically provisions
-a TLS certificate. This typically completes within 5–15 minutes.
+Complete before running any app-specific deployment:
 
-1. In the Cloudflare dashboard: **Workers & Pages** → `todo-pwa` →
-   **Custom Domains** tab. Wait for status to show **Active**.
-2. Verify from the CLI (run after a production deploy exists):
-   ```bash
-   curl -I https://app.todo.witty-m.com
-   # HTTP/2 200 confirms TLS and routing are working
-   ```
-
----
-
-## 10. End-to-End Verification Checklist
-
-Complete in this order after all setup steps are done:
-
-- [ ] `witty-m.com` zone shows **Active** in Cloudflare dashboard
+- [ ] Cloudflare zone shows **Active** in the Cloudflare dashboard
 - [ ] NameCheap nameservers point to Cloudflare (confirmed via `dig NS`)
 - [ ] Cloudflare API token verified with `curl` (status: active)
 - [ ] GitHub secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` set
 - [ ] Pulumi CLI installed and logged in (`pulumi whoami`)
-- [ ] `pulumi up` succeeds — `todo-pwa` Pages project visible in Cloudflare
-- [ ] `docker compose up --build` from repo root → `localhost:3000` loads app
-- [ ] Push a feature branch → CI workflow passes in GitHub Actions
-- [ ] Open a PR → `cd-preview.yml` runs, preview URL posted to PR, E2E passes
-- [ ] Merge PR → `cd-prod.yml` runs, production deployment succeeds
-- [ ] `https://app.todo.witty-m.com` loads with valid TLS certificate
+
+Then follow the app-specific verification checklist:
+
+- [`apps/todo-pwa/docs/DEPLOYMENT.md — Verification Checklist`](../apps/todo-pwa/docs/DEPLOYMENT.md#verification-checklist)

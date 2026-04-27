@@ -1,13 +1,83 @@
 # 2026-PROJECT-TODO-SKELETON-MONOREPO
 
+## Monorepo Structure
+
+```
+.
+├── apps/
+│   └── todo-pwa/           # Vite + React PWA (the reference app)
+│       ├── docs/           # App-specific docs (STACK.md, DEPLOYMENT.md)
+│       └── infra/          # App-specific Pulumi program (Cloudflare Pages)
+├── infra/                  # Monorepo-level Pulumi Automation API orchestrator
+├── .github/
+│   └── workflows/
+│       ├── ci.yml          # Lint + test + build on every PR / push
+│       ├── cd-preview.yml  # Deploy preview + E2E on PR open/update
+│       └── cd-prod.yml     # Deploy to production on merge to main
+├── docs/                   # Monorepo-level docs (architecture, stack, deployment prereqs)
+└── package.json            # Root scripts (see below)
+```
+
+**Docs index:**
+
+| Doc                                                                    | What's in it                                               |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------- |
+| [`docs/STACK.md`](docs/STACK.md)                                       | Monorepo toolchain, root scripts, CI/CD overview           |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)                         | Full repo structure                                        |
+| [`docs/DEPLOYMENT_SETUP.md`](docs/DEPLOYMENT_SETUP.md)                 | Shared prerequisites: Cloudflare, DNS, secrets, Pulumi CLI |
+| [`apps/todo-pwa/docs/STACK.md`](apps/todo-pwa/docs/STACK.md)           | todo-pwa tech stack, dev commands, conventions             |
+| [`apps/todo-pwa/docs/DEPLOYMENT.md`](apps/todo-pwa/docs/DEPLOYMENT.md) | Local Docker, Pulumi infra, CI/CD, custom domain           |
+
+---
+
+## Root Scripts
+
+| Script              | Command                  | Description                                                         |
+| ------------------- | ------------------------ | ------------------------------------------------------------------- |
+| `dev`               | `pnpm dev`               | Start all apps in development mode (via Turborepo)                  |
+| `build`             | `pnpm build`             | Build all apps                                                      |
+| `test`              | `pnpm test`              | Run all unit + integration tests                                    |
+| `lint`              | `pnpm lint`              | Lint all workspaces                                                 |
+| `deploy:local`      | `pnpm deploy:local`      | Build and start the production Docker container at `localhost:3000` |
+| `deploy:local:stop` | `pnpm deploy:local:stop` | Stop the local Docker container                                     |
+
+---
+
+## Infrastructure & Deployment
+
+Infrastructure is managed with [Pulumi](https://www.pulumi.com/) and targets [Cloudflare Pages](https://pages.cloudflare.com/).
+
+Each app owns its own Pulumi stack in `apps/{app}/infra/` — fully self-contained and deployable standalone. The root `infra/` is a Pulumi Automation API orchestrator that drives all app stacks in one command, passing shared config automatically. This separation means any app can be extracted into its own repo with its infrastructure intact.
+
+| Layer                 | Path                   | Purpose                                                                            |
+| --------------------- | ---------------------- | ---------------------------------------------------------------------------------- |
+| App stack             | `apps/todo-pwa/infra/` | Declares this app's cloud resources. Deployable standalone with `pulumi up`.       |
+| Monorepo orchestrator | `infra/`               | Drives all app stacks via Pulumi Automation API. Full-monorepo deploy entry point. |
+
+Full design rationale: [`docs/ARCHITECTURE.md — Infrastructure Design`](docs/ARCHITECTURE.md#infrastructure-design)
+
+**Quick start:** copy `.env.example` → `.env` and fill in your Cloudflare credentials — both infra entry points load it automatically, so no inline env vars are needed.
+
+**Setup and first deploy:** [`docs/DEPLOYMENT_SETUP.md`](docs/DEPLOYMENT_SETUP.md) → [`apps/todo-pwa/docs/DEPLOYMENT.md`](apps/todo-pwa/docs/DEPLOYMENT.md)
+
+### CI/CD Workflows
+
+| Workflow         | Trigger                              | What it does                                                          |
+| ---------------- | ------------------------------------ | --------------------------------------------------------------------- |
+| `ci.yml`         | Push / PR to any branch              | Lint, test, build                                                     |
+| `cd-preview.yml` | PR opened / updated targeting `main` | Deploy preview to Cloudflare Pages, run E2E tests against preview URL |
+| `cd-prod.yml`    | Push to `main`                       | Deploy to production Cloudflare Pages + custom domain                 |
+
+---
+
+## Feature Documentation & Workflow
+
 This project is expected to use Claude Code Guided Development.
 |Step| Claude Command | Description |
 |---|---|---|
 | 1 | `/project:bootstrap` |Initialize the Project|
 | 2 | `/project:plan_project` |Plan your next features and populate this repo's GitHub Project with issues|
 | 3 | `/project:develop` |Iteratively develop according to plan|
-
-## Feature Documentation & Workflow
 
 ### Feature Docs — Source of Truth
 

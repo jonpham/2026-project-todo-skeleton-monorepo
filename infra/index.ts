@@ -7,16 +7,22 @@
  * full monorepo.
  *
  * Usage:
+ *   cp .env.example .env  # repo root — fill in values
  *   cd infra && npm install
- *   CLOUDFLARE_API_TOKEN=<token> npx ts-node index.ts
+ *   npx ts-node index.ts
  *
  * To deploy a single app's infra directly:
  *   cd apps/todo-pwa/infra && npm install
- *   CLOUDFLARE_API_TOKEN=<token> pulumi up
+ *   pulumi up
  */
 
-import * as auto from "@pulumi/pulumi/automation";
+import * as dotenv from "dotenv";
 import * as path from "path";
+
+// Load .env from repo root (one level up from infra/)
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
+
+import * as auto from "@pulumi/pulumi/automation";
 
 const STACK_NAME = process.env.PULUMI_STACK ?? "prod";
 
@@ -44,13 +50,18 @@ async function deployApp(
 
 async function main() {
   const cloudflareApiToken = process.env.CLOUDFLARE_API_TOKEN;
+  const cloudflareAccountId = process.env.CLOUDFLARE_ACCOUNT_ID;
   if (!cloudflareApiToken) {
     throw new Error("CLOUDFLARE_API_TOKEN environment variable is required");
+  }
+  if (!cloudflareAccountId) {
+    throw new Error("CLOUDFLARE_ACCOUNT_ID environment variable is required");
   }
 
   // Shared config — applied to every app stack
   const sharedConfig: Record<string, auto.ConfigValue> = {
     "cloudflare:apiToken": { value: cloudflareApiToken, secret: true },
+    cloudflareAccountId: { value: cloudflareAccountId, secret: true },
   };
 
   // Deploy each app's infra in order.

@@ -2,6 +2,9 @@
   "name": "todo-pwa-infra",
   "private": true,
   "version": "0.0.0",
+  "dependencies": {
+    "dotenv": "^16"
+  },
   "devDependencies": {
     "@pulumi/cloudflare": "^5",
     "@pulumi/pulumi": "^3",

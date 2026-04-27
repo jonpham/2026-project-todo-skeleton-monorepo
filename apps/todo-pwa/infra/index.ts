@@ -1,3 +1,12 @@
+import * as dotenv from "dotenv";
+import * as path from "path";
+
+// Load .env from repo root (three levels up from apps/todo-pwa/infra/)
+// When run standalone via `pulumi up`, this makes CLOUDFLARE_API_TOKEN available
+// without needing to prefix the command. When driven by infra/index.ts, the
+// token is already in the environment and this is a no-op.
+dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
+
 import * as pulumi from "@pulumi/pulumi";
 import * as cloudflare from "@pulumi/cloudflare";
 
