@@ -2,13 +2,13 @@
 project: "Project-BootStrap-Mono-Repo"
 phase: 4
 slug: "deployment-setup"
-status: IN-PROGRESS
+status: DONE
 step_gating: true
 issue: 24
 parent_issue: null
 branch: feat/GH24-deployment-setup
-pr: null
-completed_at: null
+pr: https://github.com/jonpham/2026-project-todo-skeleton-monorepo/pull/32
+completed_at: 2026-04-27
 ---
 
 # Phase 4 — Deployment Setup
@@ -168,6 +168,6 @@ API token, monitoring/observability (future iteration).
 
 ## Change Log
 
-| Date | PR  | Status Change | Notes |
-| ---- | --- | ------------- | ----- |
-|      |     |               |       |
+| Date       | PR  | Status Change      | Notes                                |
+| ---------- | --- | ------------------ | ------------------------------------ |
+| 2026-04-27 | #32 | IN-PROGRESS → DONE | All 6 steps complete; merged to main |
