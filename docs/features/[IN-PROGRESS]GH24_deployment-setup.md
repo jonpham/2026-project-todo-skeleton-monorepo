@@ -110,7 +110,7 @@ API token, monitoring/observability (future iteration).
       chromium install, `pnpm --filter todo-pwa test:e2e` with
       `PLAYWRIGHT_BASE_URL` set to the preview URL, upload `playwright-report/`
       artifact. Secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`.
-- [ ] **Step 6** — Create `.github/workflows/cd-prod.yml`: triggers on push to
+- [x] **Step 6** — Create `.github/workflows/cd-prod.yml`: triggers on push to
       `main` only. Steps: checkout, setup pnpm/node, install, build, deploy via
       `cloudflare/pages-action@v1` with `branch: main` (marks as production deploy,
       activates custom domain routing). Write `$GITHUB_STEP_SUMMARY` with production
