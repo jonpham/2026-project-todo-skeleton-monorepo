@@ -1,0 +1,9 @@
+# Never copy local build artifacts or platform-specific binaries into the image.
+# The Dockerfile runs pnpm install inside the container to get linux-compatible deps.
+
+**/node_modules
+**/dist
+**/*.tsbuildinfo
+
+.git
+.gitignore

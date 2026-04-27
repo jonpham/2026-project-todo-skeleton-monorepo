@@ -158,7 +158,9 @@ API token, monitoring/observability (future iteration).
 
 ## Assumptions
 
-_None yet — populated during development._
+- `tsc -b` is skipped in the Dockerfile; Vite uses esbuild internally so tsc is type-checking only. The app tsconfig includes `vitest/globals` types which cause tsc to fail in Docker (vitest's internal `.d.ts` files reference ES2015+ globals not in scope). Type checking runs in CI instead.
+- Root `tsconfig.json` must be copied into the Docker build context because `apps/todo-pwa/tsconfig.json` extends `../../tsconfig.json`, and `vite-plugin-pwa` resolves the full extends chain at build time.
+- `.dockerignore` excludes `**/node_modules`, `**/dist`, and `**/*.tsbuildinfo` to prevent local macOS binaries from overwriting pnpm's Linux install inside the container.
 
 ## Change Log
 

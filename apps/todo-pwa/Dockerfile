@@ -8,7 +8,7 @@ RUN npm install -g pnpm@10.33.0
 
 # Copy workspace manifests first to maximise Docker layer caching.
 # pnpm needs the root workspace files to resolve monorepo dependencies.
-COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
+COPY pnpm-workspace.yaml package.json pnpm-lock.yaml tsconfig.json ./
 COPY apps/todo-pwa/package.json ./apps/todo-pwa/
 
 RUN pnpm install --frozen-lockfile
@@ -16,7 +16,11 @@ RUN pnpm install --frozen-lockfile
 # Copy application source and build
 COPY apps/todo-pwa/ ./apps/todo-pwa/
 
-RUN pnpm --filter todo-pwa build
+# Skip tsc — Vite uses esbuild internally; tsc is type-checking only, not build output.
+# Type checking runs in CI (ci.yml). Here we just produce the artifact.
+# The app tsconfig includes vitest/globals types which cause tsc to fail in Docker
+# when vitest's internal .d.ts files reference ES2015+ globals not in scope.
+RUN pnpm --filter todo-pwa exec vite build
 
 # Stage 2: Server
 FROM nginx:alpine AS server
