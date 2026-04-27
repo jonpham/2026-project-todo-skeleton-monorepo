@@ -10,6 +10,7 @@
     "lint": "turbo run lint",
     "format": "turbo run format",
     "prepare": "husky",
+    "postinstall": "pnpm --filter=todo-api-nestjs exec prisma generate",
     "deploy:local": "docker compose up --build -d",
     "deploy:local:stop": "docker compose stop"
   },
