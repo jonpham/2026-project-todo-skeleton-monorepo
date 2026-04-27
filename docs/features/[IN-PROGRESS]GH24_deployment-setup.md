@@ -99,7 +99,7 @@ API token, monitoring/observability (future iteration).
       `productionUrl`, `pagesUrl`. Files: `apps/todo-pwa/infra/Pulumi.yaml`,
       `apps/todo-pwa/infra/package.json`, `apps/todo-pwa/infra/tsconfig.json`
       (CommonJS), `apps/todo-pwa/infra/index.ts`.
-- [ ] **Step 5** — Update `apps/todo-pwa/playwright.config.ts`: use
+- [x] **Step 5** — Update `apps/todo-pwa/playwright.config.ts`: use
       `process.env.PLAYWRIGHT_BASE_URL || "http://localhost:5173"` as `baseURL`;
       conditionally omit `webServer` when `PLAYWRIGHT_BASE_URL` is set.
       Create `.github/workflows/cd-preview.yml`: triggers on `pull_request`
