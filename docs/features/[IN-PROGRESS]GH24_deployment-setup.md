@@ -91,7 +91,7 @@ API token, monitoring/observability (future iteration).
       project), `pnpm lint`, `pnpm test`, `pnpm build`. Optional Turborepo remote
       caching via `TURBO_TOKEN`/`TURBO_TEAM` env vars. No E2E step — E2E runs only
       in `cd-preview.yml` against the deployed preview.
-- [ ] **Step 4** — Create `infra/` Pulumi TypeScript project (standalone Node/CommonJS,
+- [x] **Step 4** — Create `infra/` Pulumi TypeScript project (standalone Node/CommonJS,
       not a pnpm workspace member). Provider: `@pulumi/cloudflare` v5. Resources:
       `cloudflare.PagesProject` (name `todo-pwa`, production branch `main`) and
       `cloudflare.PagesDomain` (`app.todo.witty-m.com`). Secrets via
