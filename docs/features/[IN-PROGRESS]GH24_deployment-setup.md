@@ -68,11 +68,11 @@ API token, monitoring/observability (future iteration).
       `TURBO_TOKEN`/`TURBO_TEAM`), Pulumi state backend setup (Pulumi Cloud free
       tier recommended), running `pulumi up` for the first time, verifying HTTPS
       certificate provisioning, and an ordered end-to-end verification checklist.
-- [ ] **Step 1** — Follow `docs/deployment-setup-guide.md`: complete all manual
+- [x] **Step 1** — Follow `docs/deployment-setup-guide.md`: complete all manual
       setup steps (Cloudflare zone active, NameCheap NS updated, API token created,
       GitHub secrets configured, Pulumi CLI installed and logged in). Verify each
       prerequisite before proceeding to Step 2.
-- [ ] **Step 2** — Create `apps/todo-pwa/Dockerfile` using a multi-stage build:
+- [x] **Step 2** — Create `apps/todo-pwa/Dockerfile` using a multi-stage build:
       Stage 1 (builder): `node:22-alpine`, install pnpm (pin to `10.33.0`), copy
       full monorepo context (root `package.json`, `pnpm-workspace.yaml`,
       `pnpm-lock.yaml`, then `apps/todo-pwa/package.json`), run
