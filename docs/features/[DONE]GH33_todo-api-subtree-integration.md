@@ -7,7 +7,7 @@ step_gating: false
 issue: 33
 parent_issue: null
 branch: feat/GH33-todo-api-subtree-integration
-pr: null
+pr: "https://github.com/jonpham/2026-project-todo-skeleton-monorepo/pull/34"
 completed_at: "2026-04-27"
 ---
 
