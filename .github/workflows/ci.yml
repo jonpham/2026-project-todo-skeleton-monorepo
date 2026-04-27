@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [main]
+
+# Cancel superseded runs on the same branch to avoid wasted minutes
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: Lint · Test · Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: "10.33.0"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Required even though E2E tests are excluded: the vitest storybook project
+      # uses @vitest/browser-playwright (Chromium) for component story tests.
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Test
+        run: pnpm test
+        env:
+          # Turborepo remote caching — silently ignored when secrets are absent
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+
+      - name: Build
+        run: pnpm build
+        env:
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}

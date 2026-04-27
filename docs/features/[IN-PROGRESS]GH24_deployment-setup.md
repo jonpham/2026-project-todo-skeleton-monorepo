@@ -83,7 +83,7 @@ API token, monitoring/observability (future iteration).
       Create `docker-compose.yml` at repo root: `todo-pwa` service,
       `context: .`, `dockerfile: apps/todo-pwa/Dockerfile`, port `3000:80`,
       wget healthcheck on `/`. Add `deploy:local` script to root `package.json`.
-- [ ] **Step 3** — Create `.github/workflows/ci.yml`: triggers on PR to `main` and
+- [x] **Step 3** — Create `.github/workflows/ci.yml`: triggers on PR to `main` and
       push to any branch (with concurrency group to cancel superseded runs). Steps:
       checkout, `pnpm/action-setup@v4` (pin `10.33.0`), `actions/setup-node@v4`
       (Node 22, `cache: pnpm`), `pnpm install --frozen-lockfile`,
