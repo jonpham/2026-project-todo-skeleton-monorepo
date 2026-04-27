@@ -14,3 +14,19 @@ services:
       timeout: 5s
       retries: 3
       start_period: 5s
+
+  todo-api-nestjs:
+    build:
+      context: apps/todo-api-nestjs
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3000"
+    environment:
+      - DATABASE_URL=file:./dev.db
+      - CORS_ALLOWED_ORIGINS=http://localhost:5173,https://app.todo.witty-m.com
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/v1/todos"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s

@@ -12,42 +12,68 @@
 │   ├── ARCHITECTURE.md
 │   └── DECISIONS.md                 # Architecture Decision Records
 ├── apps/
-│   └── todo-pwa/                    # Vite + React 19 PWA
+│   ├── todo-pwa/                    # Vite + React 19 PWA
+│   │   ├── docs/                    # App-specific docs (stack, deployment)
+│   │   │   ├── STACK.md             # React, Vite, Tailwind, testing, conventions
+│   │   │   └── DEPLOYMENT.md        # Local Docker, Pulumi infra, CI/CD, custom domain
+│   │   ├── infra/                   # App-specific Pulumi program (Cloudflare Pages)
+│   │   ├── .storybook/              # Storybook config (main.ts, preview.ts)
+│   │   ├── e2e/                     # Playwright E2E tests
+│   │   ├── public/
+│   │   │   ├── manifest.webmanifest # PWA manifest
+│   │   │   └── icons/               # PWA icons (192×192, 512×512)
+│   │   ├── src/
+│   │   │   ├── App.tsx              # Thin shell — renders TodoApp inside <main>
+│   │   │   ├── App.test.tsx         # Vitest unit tests (mocks useTodoWorker)
+│   │   │   ├── App.stories.tsx      # Storybook stories
+│   │   │   ├── components/          # Feature UI components — one folder per component
+│   │   │   │   ├── TodoApp/
+│   │   │   │   │   ├── TodoApp.tsx          # Root feature component — composes list + input
+│   │   │   │   │   ├── TodoApp.test.tsx
+│   │   │   │   │   ├── TodoApp.stories.tsx
+│   │   │   │   │   └── index.ts             # Re-exports component for clean imports
+│   │   │   │   ├── TodoInput/               # (same structure)
+│   │   │   │   ├── TodoItem/                # (same structure)
+│   │   │   │   └── TodoList/                # (same structure)
+│   │   │   ├── types/
+│   │   │   │   └── todo.ts                  # App-local TypeScript types (TodoItem)
+│   │   │   ├── hooks/
+│   │   │   │   └── useTodoWorker.ts # Owns localStorage; hydrates worker on mount
+│   │   │   ├── workers/
+│   │   │   │   └── todo.worker.ts   # Pure in-memory state machine (no localStorage)
+│   │   │   ├── test-setup.ts        # @testing-library/jest-dom setup
+│   │   │   ├── main.tsx
+│   │   │   └── index.css            # Tailwind CSS v4 entry
+│   │   ├── index.html
+│   │   ├── playwright.config.ts
+│   │   ├── vite.config.ts           # Vitest: unit (jsdom) + storybook (Chromium) projects
+│   │   └── package.json
+│   └── todo-api-nestjs/             # NestJS REST API (standalone repo via Git Subtree)
 │       ├── docs/                    # App-specific docs (stack, deployment)
-│       │   ├── STACK.md             # React, Vite, Tailwind, testing, conventions
-│       │   └── DEPLOYMENT.md        # Local Docker, Pulumi infra, CI/CD, custom domain
-│       ├── infra/                   # App-specific Pulumi program (Cloudflare Pages)
-│       ├── .storybook/              # Storybook config (main.ts, preview.ts)
-│       ├── e2e/                     # Playwright E2E tests
-│       ├── public/
-│       │   ├── manifest.webmanifest # PWA manifest
-│       │   └── icons/               # PWA icons (192×192, 512×512)
+│       │   ├── STACK.md             # NestJS, Prisma, SQLite, Vitest, conventions
+│       │   ├── ARCHITECTURE.md      # REST API design, Prisma schema, module structure
+│       │   └── DEPLOYMENT.md        # Local Docker, CI/CD
 │       ├── src/
-│       │   ├── App.tsx              # Thin shell — renders TodoApp inside <main>
-│       │   ├── App.test.tsx         # Vitest unit tests (mocks useTodoWorker)
-│       │   ├── App.stories.tsx      # Storybook stories
-│       │   ├── components/          # Feature UI components — one folder per component
-│       │   │   ├── TodoApp/
-│       │   │   │   ├── TodoApp.tsx          # Root feature component — composes list + input
-│       │   │   │   ├── TodoApp.test.tsx
-│       │   │   │   ├── TodoApp.stories.tsx
-│       │   │   │   └── index.ts             # Re-exports component for clean imports
-│       │   │   ├── TodoInput/               # (same structure)
-│       │   │   ├── TodoItem/                # (same structure)
-│       │   │   └── TodoList/                # (same structure)
-│       │   ├── types/
-│       │   │   └── todo.ts                  # App-local TypeScript types (TodoItem)
-│       │   ├── hooks/
-│       │   │   └── useTodoWorker.ts # Owns localStorage; hydrates worker on mount
-│       │   ├── workers/
-│       │   │   └── todo.worker.ts   # Pure in-memory state machine (no localStorage)
-│       │   ├── test-setup.ts        # @testing-library/jest-dom setup
-│       │   ├── main.tsx
-│       │   └── index.css            # Tailwind CSS v4 entry
-│       ├── index.html
-│       ├── playwright.config.ts
-│       ├── vite.config.ts           # Vitest: unit (jsdom) + storybook (Chromium) projects
-│       └── package.json
+│       │   ├── main.ts              # NestJS bootstrap: versioning, validation, CORS, Swagger
+│       │   ├── app.module.ts
+│       │   ├── todos/               # Todo domain module
+│       │   │   ├── todos.controller.ts    # REST endpoints
+│       │   │   ├── todos.service.ts       # Business logic
+│       │   │   ├── dto/                   # CreateTodoDto, UpdateTodoDto
+│       │   │   ├── entities/              # Todo entity (Swagger)
+│       │   │   └── *.spec.ts              # Unit tests
+│       │   └── prisma/               # Prisma client module
+│       ├── prisma/
+│       │   ├── schema.prisma         # SQLite datasource + Todo model
+│       │   └── migrations/           # Database migration history
+│       ├── test/                     # Integration/E2E tests
+│       │   └── *.e2e-spec.ts         # Supertest + Vitest
+│       ├── .github/
+│       │   └── workflows/            # CI workflow
+│       ├── Dockerfile                # Multi-stage: builder + runtime
+│       ├── docker-compose.yml        # Local container deployment
+│       ├── package.json              # NestJS app (pnpm)
+│       └── tsconfig.json             # Strict TypeScript
 ├── infra/                           # Monorepo Pulumi orchestrator (Automation API)
 │   ├── index.ts                     # Drives all apps/*/infra/ stacks in sequence
 │   ├── package.json                 # Standalone npm project (not a pnpm workspace member)
@@ -114,5 +140,40 @@ register a `deployApp(...)` call in `infra/index.ts`.
 1. Create `apps/{app}/infra/` with `Pulumi.yaml`, `package.json`, `tsconfig.json`, `index.ts`
 2. Add `deployApp("app-name", path.join(__dirname, "..", "apps", "app-name", "infra"), sharedConfig)` to `infra/index.ts`
 3. Document the app's resources and deploy steps in `apps/{app}/docs/DEPLOYMENT.md`
+
+---
+
+## Git Subtree — NestJS API
+
+The `todo-api-nestjs` app is **pulled into this monorepo via Git Subtree** from its
+own GitHub repository (`github.com/jonpham/2026-project-todo-api-nestjs`).
+
+### Why Git Subtree?
+
+The NestJS API is developed as a standalone repository because:
+
+1. **Extractability** — It can be cloned directly without the monorepo
+2. **Reusability** — Serves as a template project for other NestJS applications
+3. **Decoupled CI/CD** — Deploys independently
+4. **Clean history** — Monorepo history stays clean via squash-merge
+
+### Pull Workflow
+
+To pull the latest changes from the standalone API repo into the monorepo:
+
+```bash
+# From monorepo root
+git subtree pull --prefix=apps/todo-api-nestjs todo-api-nestjs main --squash
+```
+
+This creates a single commit in the monorepo containing all API updates since
+the last pull. No commits from the standalone repo appear in the monorepo history.
+
+### Initial Setup (Completed)
+
+```bash
+git remote add todo-api-nestjs https://github.com/jonpham/2026-project-todo-api-nestjs.git
+git subtree add --prefix=apps/todo-api-nestjs todo-api-nestjs main --squash
+```
 
 ---

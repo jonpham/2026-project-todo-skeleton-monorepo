@@ -2,13 +2,13 @@
 project: "2026-project-todo-skeleton-monorepo"
 phase: 5
 slug: "todo-api-subtree-integration"
-status: IN-PROGRESS
+status: DONE
 step_gating: false
 issue: 33
 parent_issue: null
 branch: feat/GH33-todo-api-subtree-integration
 pr: null
-completed_at: null
+completed_at: "2026-04-27"
 ---
 
 # Phase 5 — Monorepo Git Subtree Integration
@@ -53,14 +53,14 @@ The standalone repo remains the source of truth. The monorepo consumes it via `g
 
 ## Steps
 
-- [ ] **Step 1** — Add `todo-api-nestjs` as a git remote and run `git subtree add --prefix=apps/todo-api-nestjs todo-api-nestjs main --squash`
-- [ ] **Step 2** — Add `apps/todo-api-nestjs` to `pnpm-workspace.yaml`
-- [ ] **Step 3** — Update `turbo.json` to include `todo-api-nestjs` in `build`, `test`, and `lint` pipeline tasks
-- [ ] **Step 4** — Add `todo-api-nestjs` service to root `docker-compose.yml` (build context `apps/todo-api-nestjs/`, port `3001:3000`, ephemeral SQLite)
-- [ ] **Step 5** — Update `docs/ARCHITECTURE.md`: add `apps/todo-api-nestjs/` to repo structure tree; add Git Subtree section
-- [ ] **Step 6** — Update `docs/STACK.md`: add NestJS, Prisma, Vitest (API) rows
-- [ ] **Step 7** — Update `README.md`: add Git Subtree pull instructions; add `todo-api-nestjs` to infrastructure table
-- [ ] **Step 8** — Update this feature doc to DONE
+- [x] **Step 1** — Add `todo-api-nestjs` as a git remote and run `git subtree add --prefix=apps/todo-api-nestjs todo-api-nestjs main --squash`
+- [x] **Step 2** — Add `apps/todo-api-nestjs` to `pnpm-workspace.yaml`
+- [x] **Step 3** — Update `turbo.json` to include `todo-api-nestjs` in `build`, `test`, and `lint` pipeline tasks
+- [x] **Step 4** — Add `todo-api-nestjs` service to root `docker-compose.yml` (build context `apps/todo-api-nestjs/`, port `3001:3000`, ephemeral SQLite)
+- [x] **Step 5** — Update `docs/ARCHITECTURE.md`: add `apps/todo-api-nestjs/` to repo structure tree; add Git Subtree section
+- [x] **Step 6** — Update `docs/STACK.md`: add NestJS, Prisma, Vitest (API) rows
+- [x] **Step 7** — Update `README.md`: add Git Subtree pull instructions; add `todo-api-nestjs` to infrastructure table
+- [x] **Step 8** — Update this feature doc to DONE
 
 ## Technical Notes
 

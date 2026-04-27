@@ -51,6 +51,17 @@ App-specific stacks live in each app's own `docs/` directory (e.g. `apps/todo-pw
 
 ---
 
+## App-Specific Stacks
+
+Each app defines its own stack in `apps/{app-name}/docs/STACK.md`.
+
+| App               | Framework       | Database        | Testing            | Documentation                        |
+| ----------------- | --------------- | --------------- | ------------------ | ------------------------------------ |
+| `todo-pwa`        | Vite + React 19 | localStorage    | Vitest + Storybook | `apps/todo-pwa/docs/STACK.md`        |
+| `todo-api-nestjs` | NestJS v11      | Prisma + SQLite | Vitest + Supertest | `apps/todo-api-nestjs/docs/STACK.md` |
+
+---
+
 ## Code Standards
 
 ### TypeScript
