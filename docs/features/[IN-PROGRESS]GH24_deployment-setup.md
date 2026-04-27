@@ -91,13 +91,14 @@ API token, monitoring/observability (future iteration).
       project), `pnpm lint`, `pnpm test`, `pnpm build`. Optional Turborepo remote
       caching via `TURBO_TOKEN`/`TURBO_TEAM` env vars. No E2E step — E2E runs only
       in `cd-preview.yml` against the deployed preview.
-- [x] **Step 4** — Create `infra/` Pulumi TypeScript project (standalone Node/CommonJS,
-      not a pnpm workspace member). Provider: `@pulumi/cloudflare` v5. Resources:
-      `cloudflare.PagesProject` (name `todo-pwa`, production branch `main`) and
-      `cloudflare.PagesDomain` (`app.todo.witty-m.com`). Secrets via
-      `pulumi config set --secret`: `cloudflareAccountId`, `cloudflareZoneId`.
-      Export `projectName`, `previewUrl`, `productionUrl`. Files: `infra/Pulumi.yaml`,
-      `infra/package.json`, `infra/tsconfig.json` (CommonJS), `infra/index.ts`.
+- [x] **Step 4** — Create `apps/todo-pwa/infra/` Pulumi TypeScript project (standalone
+      Node/CommonJS, not a pnpm workspace member). Provider: `@pulumi/cloudflare` v5.
+      Resources: `cloudflare.PagesProject` (name `todo-pwa`, production branch `main`)
+      and `cloudflare.PagesDomain` (`app.todo.witty-m.com`). Secrets via
+      `pulumi config set --secret`: `cloudflareAccountId`. Export `projectName`,
+      `productionUrl`, `pagesUrl`. Files: `apps/todo-pwa/infra/Pulumi.yaml`,
+      `apps/todo-pwa/infra/package.json`, `apps/todo-pwa/infra/tsconfig.json`
+      (CommonJS), `apps/todo-pwa/infra/index.ts`.
 - [ ] **Step 5** — Update `apps/todo-pwa/playwright.config.ts`: use
       `process.env.PLAYWRIGHT_BASE_URL || "http://localhost:5173"` as `baseURL`;
       conditionally omit `webServer` when `PLAYWRIGHT_BASE_URL` is set.
@@ -137,9 +138,12 @@ API token, monitoring/observability (future iteration).
 - **`pnpm test` in CI requires Playwright browser binaries** even though E2E tests
   are excluded. The vitest storybook project uses `@vitest/browser-playwright`
   (Chromium). Add `npx playwright install --with-deps chromium` before `pnpm test`.
-- **`infra/` is not a pnpm workspace member.** It is a standalone CommonJS Node
-  project (`"module": "commonjs"` in its tsconfig — do not inherit from the root
-  ESM tsconfig). Managed via `npm install` inside `infra/`. Do not add to
+- **Infra is split into two layers.** `infra/` at the repo root is the central
+  orchestration layer — uses the Pulumi Automation API (`@pulumi/pulumi/automation`)
+  to drive each app stack with shared config (e.g. `CLOUDFLARE_API_TOKEN`).
+  `apps/todo-pwa/infra/` is the app-specific Pulumi program — deployable standalone
+  (`pulumi up`) or driven by the central orchestrator. Neither is a pnpm workspace
+  member; each is managed with its own `npm install`. Do not add either to
   `pnpm-workspace.yaml`.
 - **`cloudflare/pages-action` auto-posts preview URL to PR** when `gitHubToken` is
   passed — no custom notification step needed.

@@ -142,16 +142,33 @@ pulumi login --local
 
 ## 8. Run `pulumi up` for the First Time
 
-From the `infra/` directory:
+Two options depending on scope:
+
+### Option A — Deploy all apps (monorepo orchestration)
+
+From the repo root `infra/` directory. Uses the Pulumi Automation API to drive
+each app's co-located Pulumi program. Shared config (e.g. `CLOUDFLARE_API_TOKEN`)
+is passed automatically to each app stack.
 
 ```bash
 cd infra
 npm install
 
-# Set required config secrets
+# Deploy all apps
+CLOUDFLARE_API_TOKEN=<your-token> PULUMI_STACK=prod npx ts-node index.ts
+```
+
+### Option B — Deploy todo-pwa only (standalone)
+
+Useful for iterating on a single app or when the app has been extracted to its
+own repository.
+
+```bash
+cd apps/todo-pwa/infra
+npm install
+
+# Set required config secrets (only needed once per stack)
 pulumi config set cloudflareAccountId <your-account-id> --secret
-pulumi config set cloudflareZoneId <zone-id-for-witty-m.com> --secret
-# Zone ID is visible in the Cloudflare dashboard on the witty-m.com overview page
 
 # Dry run — review the plan before applying
 CLOUDFLARE_API_TOKEN=<your-token> pulumi preview

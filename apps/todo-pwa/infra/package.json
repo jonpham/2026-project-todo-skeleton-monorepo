@@ -1,8 +1,9 @@
 {
-  "name": "monorepo-infra",
+  "name": "todo-pwa-infra",
   "private": true,
   "version": "0.0.0",
   "devDependencies": {
+    "@pulumi/cloudflare": "^5",
     "@pulumi/pulumi": "^3",
     "ts-node": "^10",
     "typescript": "^5"
