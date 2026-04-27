@@ -10,7 +10,8 @@
     "lint": "turbo run lint",
     "format": "turbo run format",
     "prepare": "husky",
-    "deploy:local": "docker compose up --build"
+    "deploy:local": "docker compose up --build -d",
+    "deploy:local:stop": "docker compose stop"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
