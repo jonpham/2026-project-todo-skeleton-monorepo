@@ -13,6 +13,23 @@
 
 Read `CLAUDE.md` before doing anything.
 
+## GitHub MCP Server Dependency
+
+This command uses the **GitHub MCP Server** for issue creation and updates.
+MCP tools return structured JSON — no URL parsing or `--json` workarounds needed.
+
+Install if not already connected:
+
+```
+claude mcp add-json github '{"type":"stdio","command":"npx","args":["-y","@github/mcp-server"],"env":{"GITHUB_PERSONAL_ACCESS_TOKEN":"<YOUR_GITHUB_PAT>"}}'
+```
+
+Operations that remain on `gh` CLI (no MCP equivalent):
+
+- Project board mutations: `gh project item-add`, `gh project item-edit`
+- Label creation: `gh label create`
+- Milestone creation: `gh api repos/.../milestones`
+
 ---
 
 ## Step 1 — Verify GitHub CLI and Project Access
@@ -188,6 +205,9 @@ gh api repos/{owner}/{repo}/milestones -X POST \
   -f description="{one sentence rationale}"
 ```
 
+Capture the `number` field from the JSON response — this is the milestone number
+required by the `mcp__github__issue_write` `milestone` parameter in step 3c.
+
 ### 3-pre — Create Shared Labels (sequential, runs once)
 
 Create the shared labels before spawning parallel agents to avoid race conditions:
@@ -252,28 +272,27 @@ are already created in 3-pre — do not recreate them):
 gh label create "phase-{n}" --color "0075ca" --description "Phase {n}" --force
 ```
 
-For this feature doc:
+For this feature doc, use the `mcp__github__issue_write` tool:
 
-```bash
-gh issue create \
-  --title "Phase {n} — {Feature Name}" \
-  --body "$(cat <<'EOF'
-## Context
-{content of ## Context section from feature doc}
+```
+method: "create"
+owner: {owner}
+repo: {repo}
+title: "Phase {n} — {Feature Name}"
+body: |
+  ## Context
+  {content of ## Context section from feature doc}
 
-## Acceptance Criteria
-{content of ## Acceptance Criteria section from feature doc}
+  ## Acceptance Criteria
+  {content of ## Acceptance Criteria section from feature doc}
 
-## Steps
-{content of ## Steps section from feature doc}
-EOF
-)" \
-  --label "phase-{n}" --label "feature" \
-  --milestone "v{X.Y.Z}"
+  ## Steps
+  {content of ## Steps section from feature doc}
+labels: ["phase-{n}", "feature"]
+milestone: {milestone-number}   ← integer from Step 3b response
 ```
 
-Note: `gh issue create` does not support a `--json` flag. Capture the returned
-URL and parse the issue number from it (last path segment).
+The response includes the issue number as `.number` — no URL parsing needed.
 
 ### 3d — Identify Steps That Warrant Sub-Issues _(executed by per-doc subagents)_
 
@@ -290,34 +309,41 @@ For each step in `## Steps`, evaluate:
   creates boilerplate without tests, or is a one-liner that will be committed
   alongside a larger step
 
-For steps that qualify, create a linked issue:
+For steps that qualify, use the `mcp__github__issue_write` tool:
 
-```bash
-gh issue create \
-  --title "[Phase {n}] Step {i} — {step description, first ~60 chars}" \
-  --body "Part of #{parent-issue-number}
+```
+method: "create"
+owner: {owner}
+repo: {repo}
+title: "[Phase {n}] Step {i} — {step description, first ~60 chars}"
+body: |
+  Part of #{parent-issue-number}
 
-{full step description from the checklist item}" \
-  --label "phase-{n}" --label "step"
+  {full step description from the checklist item}
+labels: ["phase-{n}", "step"]
 ```
 
-After creating sub-issues, edit the parent issue body to update the `## Steps`
-checklist with issue references for sub-issued steps only:
+The response includes the sub-issue number as `.number`.
 
-```bash
-gh issue edit {parent-issue-number} --body "$(cat <<'EOF'
-## Context
-...
+After creating sub-issues, update the parent issue body to add issue references
+for sub-issued steps. Use the `mcp__github__issue_write` tool:
 
-## Acceptance Criteria
-...
+```
+method: "update"
+owner: {owner}
+repo: {repo}
+issue_number: {parent-issue-number}
+body: |
+  ## Context
+  ...
 
-## Steps
-- [ ] Step 1 — {description}              ← no sub-issue (config only)
-- [ ] Step 2 — {description} #{sub-issue} ← sub-issue (adds tests)
-...
-EOF
-)"
+  ## Acceptance Criteria
+  ...
+
+  ## Steps
+  - [ ] Step 1 — {description}              ← no sub-issue (config only)
+  - [ ] Step 2 — {description} #{sub-issue} ← sub-issue (adds tests)
+  ...
 ```
 
 ### 3e — Update Feature Doc and Add to Project Board _(executed by per-doc subagents)_

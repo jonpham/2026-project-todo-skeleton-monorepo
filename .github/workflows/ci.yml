@@ -34,7 +34,7 @@ jobs:
       # Required even though E2E tests are excluded: the vitest storybook project
       # uses @vitest/browser-playwright (Chromium) for component story tests.
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+        run: pnpm --filter todo-pwa exec playwright install --with-deps chromium
 
       - name: Lint
         run: pnpm lint

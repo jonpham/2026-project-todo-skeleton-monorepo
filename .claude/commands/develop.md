@@ -8,6 +8,23 @@
 
 Read `CLAUDE.md` fully before doing anything.
 
+## GitHub MCP Server Dependency
+
+This command uses the **GitHub MCP Server** for PR and issue operations.
+MCP tools return structured JSON — no output capturing or URL parsing needed.
+
+Install if not already connected:
+
+```
+claude mcp add-json github '{"type":"stdio","command":"npx","args":["-y","@github/mcp-server"],"env":{"GITHUB_PERSONAL_ACCESS_TOKEN":"<YOUR_GITHUB_PAT>"}}'
+```
+
+Operations that remain on `gh` CLI (no MCP equivalent):
+
+- Project board mutations: `gh project item-add`, `gh project item-edit`, `gh project item-list`
+- Label creation: `gh label create`
+- Issue close with inline comment: `gh issue close --comment`
+
 ---
 
 ## Step 0 — PR Awareness Check
@@ -16,9 +33,15 @@ Run this check every time `/project:develop` is invoked, before selecting an iss
 
 ### 0a — Check for open PRs
 
-```bash
-gh pr list --repo {owner}/{repo} --state open --json number,title,url,headRefName
+Use the `mcp__github__list_pull_requests` tool:
+
 ```
+owner: {owner}
+repo: {repo}
+state: "open"
+```
+
+The response is structured JSON — fields include `number`, `title`, `html_url`, `head.ref`.
 
 If any open PRs exist:
 
@@ -211,17 +234,21 @@ Wait for the engineer's response before doing anything.
 
 If [1]: create and checkout `task/GH{sub-issue-number}-{brief-slug}` off the
 current feature branch, then implement on it. After verifying, open a PR from
-`task/*` → `feat/*`:
+`task/*` → `feat/*` using the `mcp__github__create_pull_request` tool:
 
-```bash
-TASK_PR_URL=$(gh pr create \
-  --title "task(GH{sub-issue-number}): {step description}" \
-  --body "Part of #{parent-issue-number}
-
-{brief description of what was implemented}" \
-  --base feat/GH{parent-issue-number}-{feature-slug})
-echo $TASK_PR_URL
 ```
+owner: {owner}
+repo: {repo}
+title: "task(GH{sub-issue-number}): {step description}"
+head: "task/GH{sub-issue-number}-{brief-slug}"
+base: "feat/GH{parent-issue-number}-{feature-slug}"
+body: |
+  Part of #{parent-issue-number}
+
+  {brief description of what was implemented}
+```
+
+The response includes the PR URL as `.html_url` — store this as `TASK_PR_URL`.
 
 Note: `Closes #n` in a PR that merges into a non-default branch does NOT
 auto-close the issue. After the task PR is merged, explicitly close the
@@ -249,14 +276,18 @@ gh issue close {sub-issue-number} \
   new files). Create a sub-issue and task/GH* branch for it?
   ```
   If the engineer approves:
-  1. Create the sub-issue:
-     ```bash
-     gh issue create \
-       --title "[Phase {n}] Step {i} — {step description, first ~60 chars}" \
-       --body "Part of #{parent-issue-number}
-     {full step description}" \
-       --label "phase-{n}" --label "step"
+  1. Create the sub-issue using the `mcp__github__issue_write` tool:
      ```
+     method: "create"
+     owner: {owner}
+     repo: {repo}
+     title: "[Phase {n}] Step {i} — {step description, first ~60 chars}"
+     body: |
+       Part of #{parent-issue-number}
+       {full step description}
+     labels: ["phase-{n}", "step"]
+     ```
+     The response includes the issue number as `.number`.
   2. Update the feature doc step line to reference the new issue number
   3. Create and checkout the task branch:
      ```bash
@@ -393,34 +424,37 @@ Once all steps are checked off:
    issue — in the PR body using GitHub's closing keywords. GitHub auto-closes all
    listed issues when the PR merges to `main`.
 
-   Structure the closing keywords section to distinguish parent from sub-issues:
+   Use the `mcp__github__create_pull_request` tool:
 
-   ```bash
-   PR_URL=$(gh pr create \
-     --title "feat(GH{n}): Phase {n} — {Feature Name}" \
-     --body "## Closes
-
-   **Phase issue:** Closes #{n}
-
-   **Step sub-issues:**
-   Closes #{sub-issue-1}
-   Closes #{sub-issue-2}
-   ...
-
-   ## Summary
-   {2-3 sentence summary of what was built}
-
-   ## Verification
-   - [ ] \`pnpm test\` passes
-   - [ ] \`pnpm lint\` passes
-   - [ ] \`pnpm build\` passes
-   - [ ] Feature doc updated in \`docs/features/\`
-   - [ ] Storybook stories present (if applicable)
-   - [ ] Playwright E2E test passes (if applicable)
-   " \
-     --base main)
-   echo $PR_URL
    ```
+   owner: {owner}
+   repo: {repo}
+   title: "feat(GH{n}): Phase {n} — {Feature Name}"
+   head: "feat/GH{n}-{feature-slug}"
+   base: "main"
+   body: |
+     ## Closes
+
+     **Phase issue:** Closes #{n}
+
+     **Step sub-issues:**
+     Closes #{sub-issue-1}
+     Closes #{sub-issue-2}
+     ...
+
+     ## Summary
+     {2-3 sentence summary of what was built}
+
+     ## Verification
+     - [ ] `pnpm test` passes
+     - [ ] `pnpm lint` passes
+     - [ ] `pnpm build` passes
+     - [ ] Feature doc updated in `docs/features/`
+     - [ ] Storybook stories present (if applicable)
+     - [ ] Playwright E2E test passes (if applicable)
+   ```
+
+   The response includes the PR URL as `.html_url` and PR number as `.number`.
 
 7. Update the feature doc with the PR URL:
    - Set `pr: {pr-url}` in frontmatter
