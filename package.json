@@ -15,7 +15,17 @@
     "format": "prettier --write .",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{js,json,md}": [
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "react": "^19.1.0",
@@ -41,6 +51,8 @@
     "@vitest/coverage-v8": "^4.1.4",
     "eslint": "^10.2.1",
     "eslint-config-prettier": "^9.1.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
     "globals": "^15.10.0",
     "typescript-eslint": "^8.0.0",
     "eslint-plugin-react-hooks": "^7.1.1",
