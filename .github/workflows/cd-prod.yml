@@ -35,7 +35,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: todo-pwa
-          directory: apps/todo-pwa/dist
+          directory: apps/todo-pwa-vite/dist
           branch: main
 
       - name: Write job summary

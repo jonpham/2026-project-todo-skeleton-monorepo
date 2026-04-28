@@ -5,9 +5,12 @@
 ```
 .
 ├── apps/
-│   └── todo-pwa/           # Vite + React PWA (the reference app)
+│   ├── todo-pwa/           # Vite + React PWA
+│   │   ├── docs/           # App-specific docs (STACK.md, DEPLOYMENT.md)
+│   │   └── infra/          # App-specific Pulumi program (Cloudflare Pages)
+│   └── todo-api-nestjs/    # NestJS REST API (via Git Subtree from standalone repo)
 │       ├── docs/           # App-specific docs (STACK.md, DEPLOYMENT.md)
-│       └── infra/          # App-specific Pulumi program (Cloudflare Pages)
+│       └── ...             # (Full NestJS project structure)
 ├── infra/                  # Monorepo-level Pulumi Automation API orchestrator
 ├── .github/
 │   └── workflows/
@@ -20,13 +23,15 @@
 
 **Docs index:**
 
-| Doc                                                                    | What's in it                                               |
-| ---------------------------------------------------------------------- | ---------------------------------------------------------- |
-| [`docs/STACK.md`](docs/STACK.md)                                       | Monorepo toolchain, root scripts, CI/CD overview           |
-| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)                         | Full repo structure                                        |
-| [`docs/DEPLOYMENT_SETUP.md`](docs/DEPLOYMENT_SETUP.md)                 | Shared prerequisites: Cloudflare, DNS, secrets, Pulumi CLI |
-| [`apps/todo-pwa/docs/STACK.md`](apps/todo-pwa/docs/STACK.md)           | todo-pwa tech stack, dev commands, conventions             |
-| [`apps/todo-pwa/docs/DEPLOYMENT.md`](apps/todo-pwa/docs/DEPLOYMENT.md) | Local Docker, Pulumi infra, CI/CD, custom domain           |
+| Doc                                                                                  | What's in it                                                 |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------ |
+| [`docs/STACK.md`](docs/STACK.md)                                                     | Monorepo toolchain, root scripts, CI/CD overview, app stacks |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)                                       | Full repo structure, Git Subtree workflow                    |
+| [`docs/DEPLOYMENT_SETUP.md`](docs/DEPLOYMENT_SETUP.md)                               | Shared prerequisites: Cloudflare, DNS, secrets, Pulumi CLI   |
+| [`apps/todo-pwa/docs/STACK.md`](apps/todo-pwa/docs/STACK.md)                         | todo-pwa tech stack, dev commands, conventions               |
+| [`apps/todo-pwa/docs/DEPLOYMENT.md`](apps/todo-pwa/docs/DEPLOYMENT.md)               | Local Docker, Pulumi infra, CI/CD, custom domain             |
+| [`apps/todo-api-nestjs/docs/STACK.md`](apps/todo-api-nestjs/docs/STACK.md)           | todo-api-nestjs tech stack, dev commands, conventions        |
+| [`apps/todo-api-nestjs/docs/DEPLOYMENT.md`](apps/todo-api-nestjs/docs/DEPLOYMENT.md) | Local Docker, NestJS/Prisma setup, CI/CD                     |
 
 ---
 
@@ -59,6 +64,18 @@ Full design rationale: [`docs/ARCHITECTURE.md — Infrastructure Design`](docs/A
 **Quick start:** copy `.env.example` → `.env` and fill in your Cloudflare credentials — both infra entry points load it automatically, so no inline env vars are needed.
 
 **Setup and first deploy:** [`docs/DEPLOYMENT_SETUP.md`](docs/DEPLOYMENT_SETUP.md) → [`apps/todo-pwa/docs/DEPLOYMENT.md`](apps/todo-pwa/docs/DEPLOYMENT.md)
+
+### Git Subtree — NestJS API
+
+The `todo-api-nestjs` app is pulled into this monorepo from its standalone GitHub repository ([jonpham/2026-project-todo-api-nestjs](https://github.com/jonpham/2026-project-todo-api-nestjs)) using Git Subtree. This keeps the API extractable and independently deployable while making it available in the monorepo.
+
+**To pull the latest API updates into the monorepo:**
+
+```bash
+git subtree pull --prefix=apps/todo-api-nestjs todo-api-nestjs main --squash
+```
+
+This creates a single commit containing all API changes since the last pull. For full details, see [`docs/ARCHITECTURE.md — Git Subtree`](docs/ARCHITECTURE.md#git-subtree--nestjs-api).
 
 ### CI/CD Workflows
 

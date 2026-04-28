@@ -1,0 +1,30 @@
+name: Sync PWA Subtree
+
+on:
+  repository_dispatch:
+    types: [pwa-updated]
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.PAT_TOKEN }}
+
+      - name: Configure git
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+      - name: Add subtree remote
+        run: git remote add todo-pwa-vite https://github.com/jonpham/2026-project-todo-pwa-vite.git || true
+
+      - name: Pull subtree update
+        run: ./scripts/subtree-pull.sh todo-pwa-vite main
+
+      - name: Push to main
+        run: git push origin main

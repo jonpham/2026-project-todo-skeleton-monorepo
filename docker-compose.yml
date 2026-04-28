@@ -1,15 +1,30 @@
 services:
   todo-pwa:
     build:
-      # Context must be the repo root so pnpm can resolve workspace dependencies
-      # (needs pnpm-workspace.yaml, pnpm-lock.yaml, and root package.json).
-      context: .
-      dockerfile: apps/todo-pwa/Dockerfile
+      # Build context is now the standalone app directory since PWA has its own Dockerfile
+      context: apps/todo-pwa-vite
+      dockerfile: Dockerfile
     ports:
       - "3000:80"
     healthcheck:
       # nginx:alpine ships wget but not curl
       test: ["CMD", "wget", "-qO-", "http://localhost/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  todo-api-nestjs:
+    build:
+      context: apps/todo-api-nestjs
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3000"
+    environment:
+      - DATABASE_URL=file:./dev.db
+      - CORS_ALLOWED_ORIGINS=http://localhost:5173,https://app.todo.witty-m.com
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/v1/todos"]
       interval: 10s
       timeout: 5s
       retries: 3
