@@ -1,10 +1,8 @@
 import * as dotenv from "dotenv";
 import * as path from "path";
 
-// Load .env from monorepo root (three levels up from apps/todo-pwa-vite/infra/)
-// When run from monorepo, config is passed via Automation API.
-// When run standalone in the standalone repo, this loads the env.
-dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
+// Load .env from standalone repo root (one level up from infra/)
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 import * as cloudflare from "@pulumi/cloudflare";
 
@@ -33,3 +31,6 @@ const pagesProject = new cloudflare.PagesProject(
 
 export const projectName = pagesProject.name;
 export const pagesUrl = pagesProject.subdomain.apply((s) => `https://${s}`);
+
+// Note: Custom domain binding is configured in the monorepo's Pulumi stack
+// to use the main todo-pwa project at app.todo.witty-m.com

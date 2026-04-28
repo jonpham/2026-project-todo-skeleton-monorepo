@@ -1,7 +1,3 @@
 config:
-  cloudflare:apiToken:
-    secure: AAABAA7M0Drd3eW4kRzZfZKsE5/1u2y33Xo9eGBmdc54zop6UAc1cbbHHTfVik0Gg8WLXkIIeajKsqhNnuydLz9uuo7NUqTxsTJO2ihpg+9fvaNg/Q==
-  todo-pwa-infra:cloudflareAccountId:
-    secure: AAABAImZY2xBu7N3VHWnKPaWGLyKBM/czWu8k33gFnVgY2qkK7hfWXbqi1nNUXtdSuC8Zt0z3urOEBFRu/l1+Q==
-  todo-pwa-infra:cloudflareZoneId:
-    secure: AAABAKooT5wCvcScqnBsKJBRiiu2KlKMy5n6mHZZYg+pM/wd+/z/J4l+JvmfxDk7str9uXSe30M8M75E6jqdTg==
+  # Set these via environment or CLI, never commit secrets!
+  # See infra/README.md for setup instructions
