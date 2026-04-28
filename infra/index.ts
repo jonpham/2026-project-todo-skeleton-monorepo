@@ -21,8 +21,6 @@ import * as path from "path";
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 import * as auto from "@pulumi/pulumi/automation";
-import * as pulumi from "@pulumi/pulumi";
-import * as cloudflare from "@pulumi/cloudflare";
 
 const STACK_NAME = process.env.PULUMI_STACK ?? "prod";
 
@@ -57,24 +55,7 @@ async function deployMonorepoInfra(
 
   const stack = await auto.LocalWorkspace.createOrSelectStack({
     stackName: STACK_NAME,
-    projectName: "monorepo-infra",
-    program: async () => {
-      const config = new pulumi.Config();
-      const accountId = config.requireSecret("cloudflareAccountId");
-      config.requireSecret("cloudflareZoneId"); // Validates zone ID is set
-
-      // Bind production domain to todo-pwa-vite Pages project
-      const pagesDomain = new cloudflare.PagesDomain(
-        "todo-pwa-production-domain",
-        {
-          accountId: accountId,
-          projectName: "todo-pwa-vite",
-          domain: "app.todo.witty-m.com",
-        }
-      );
-
-      pulumi.export("productionDomain", pagesDomain.domain);
-    },
+    workDir: __dirname,
   });
 
   await stack.setAllConfig({
