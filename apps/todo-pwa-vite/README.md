@@ -1,4 +1,4 @@
-# todo-pwa-vite
+# TODO-PWA-VITE
 
 A progressive web application (PWA) todo list built with React, TypeScript, and Vite. Designed as a standalone application with integrated monorepo support for coordinated deployments.
 
