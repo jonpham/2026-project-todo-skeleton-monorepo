@@ -41,7 +41,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: todo-pwa
+          projectName: todo-pwa-vite
           directory: apps/todo-pwa-vite/dist
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
@@ -63,10 +63,10 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - run: pnpm --filter todo-pwa exec playwright install --with-deps chromium
+      - run: pnpm --filter todo-pwa-vite exec playwright install --with-deps chromium
 
       - name: Run E2E tests against preview URL
-        run: pnpm --filter todo-pwa test:e2e
+        run: pnpm --filter todo-pwa-vite test:e2e
         env:
           PLAYWRIGHT_BASE_URL: ${{ needs.deploy-preview.outputs.preview-url }}
 

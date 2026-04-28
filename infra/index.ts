@@ -1,19 +1,17 @@
 /**
  * Monorepo Infrastructure Orchestration
  *
- * Uses the Pulumi Automation API to drive each app's co-located Pulumi program.
- * Each app owns its own Pulumi program in apps/{app}/infra/ and can be deployed
- * independently. This file provides the "deploy everything" entry point for the
- * full monorepo.
+ * Coordinates infrastructure for all monorepo apps:
+ * 1. Deploys each app's co-located Pulumi program via Automation API
+ * 2. Manages shared infrastructure (custom domains, etc.)
+ *
+ * The todo-pwa-vite project is created by the standalone repo's Pulumi program.
+ * This orchestrator adds the production domain binding.
  *
  * Usage:
  *   cp .env.example .env  # repo root — fill in values
  *   cd infra && npm install
  *   npx ts-node index.ts
- *
- * To deploy a single app's infra directly:
- *   cd apps/todo-pwa/infra && npm install
- *   pulumi up
  */
 
 import * as dotenv from "dotenv";
@@ -51,36 +49,48 @@ async function deployApp(
 async function main() {
   const cloudflareApiToken = process.env.CLOUDFLARE_API_TOKEN;
   const cloudflareAccountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+  const cloudflareZoneId = process.env.CLOUDFLARE_ZONE_ID;
   if (!cloudflareApiToken) {
     throw new Error("CLOUDFLARE_API_TOKEN environment variable is required");
   }
   if (!cloudflareAccountId) {
     throw new Error("CLOUDFLARE_ACCOUNT_ID environment variable is required");
   }
+  if (!cloudflareZoneId) {
+    throw new Error(
+      "CLOUDFLARE_ZONE_ID environment variable is required (zone ID for witty-m.com)"
+    );
+  }
 
   // Shared config — applied to every app stack
   const sharedConfig: Record<string, auto.ConfigValue> = {
     "cloudflare:apiToken": { value: cloudflareApiToken, secret: true },
     cloudflareAccountId: { value: cloudflareAccountId, secret: true },
+    cloudflareZoneId: { value: cloudflareZoneId, secret: true },
   };
 
   // Deploy each app's infra in order.
-  // Add entries here as new apps/* are introduced to the monorepo.
-  const todoPwaOutputs = await deployApp(
-    "todo-pwa",
-    path.join(__dirname, "..", "apps", "todo-pwa", "infra"),
+  // todo-pwa-vite is now in the standalone repo but called from monorepo
+  const todoPwaViteOutputs = await deployApp(
+    "todo-pwa-vite",
+    path.join(__dirname, "..", "apps", "todo-pwa-vite", "infra"),
     sharedConfig
   );
 
-  console.log("\n── Monorepo deployment complete ──");
+  console.log("\n── App deployment complete ──");
   console.log("Outputs:");
   for (const [appName, outputs] of Object.entries({
-    "todo-pwa": todoPwaOutputs,
+    "todo-pwa-vite": todoPwaViteOutputs,
   })) {
     for (const [key, val] of Object.entries(outputs)) {
       console.log(`  ${appName}.${key}: ${val.value}`);
     }
   }
+
+  console.log(
+    "\n── To deploy monorepo infrastructure (domain binding), run: ──"
+  );
+  console.log("   cd infra && pulumi up");
 }
 
 main().catch((err) => {
