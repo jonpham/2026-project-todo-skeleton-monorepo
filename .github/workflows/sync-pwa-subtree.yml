@@ -30,8 +30,23 @@ jobs:
       - name: Add subtree remote
         run: git remote add todo-pwa-vite https://github.com/jonpham/2026-project-todo-pwa-vite.git || true
 
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
       - name: Pull subtree update
         run: ./scripts/subtree-pull.sh todo-pwa-vite main
+
+      - name: Update lockfile
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Stage lockfile update
+        run: git add pnpm-lock.yaml && git diff --cached --quiet || git commit -m "chore: update pnpm lockfile after pwa-vite sync"
 
       - name: Push branch
         run: |
