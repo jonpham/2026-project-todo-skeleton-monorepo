@@ -1,10 +1,9 @@
 services:
   todo-pwa:
     build:
-      # Context must be the repo root so pnpm can resolve workspace dependencies
-      # (needs pnpm-workspace.yaml, pnpm-lock.yaml, and root package.json).
-      context: .
-      dockerfile: apps/todo-pwa/Dockerfile
+      # Build context is now the standalone app directory since PWA has its own Dockerfile
+      context: apps/todo-pwa-vite
+      dockerfile: Dockerfile
     ports:
       - "3000:80"
     healthcheck:
