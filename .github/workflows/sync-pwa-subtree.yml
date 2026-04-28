@@ -50,27 +50,21 @@ jobs:
           git add pnpm-lock.yaml
           git diff --cached --quiet || git commit -m "chore: update pnpm lockfile after pwa-vite sync"
 
-      - name: Push branch
+      - name: Push branch and open PR
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           BRANCH=$(cat /tmp/branch_name)
           git push -u origin "$BRANCH"
-          echo "BRANCH=$BRANCH" >> $GITHUB_ENV
+          gh pr create \
+            --head "$BRANCH" \
+            --base main \
+            --title "chore: sync PWA Vite subtree with latest changes" \
+            --body "Automated sync of \`apps/todo-pwa-vite\` subtree from upstream repository.
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.PAT_TOKEN }}
-          commit-message: "chore: sync apps/todo-pwa-vite from upstream main"
-          title: "chore: sync PWA Vite subtree with latest changes"
-          body: |
-            Automated sync of `apps/todo-pwa-vite` subtree from upstream repository.
+This PR will:
+- Deploy preview to Cloudflare Pages
+- Run E2E tests against preview
+- Allow manual review before merging to production
 
-            This PR will:
-            - Deploy preview to Cloudflare Pages
-            - Run E2E tests against preview
-            - Allow manual review before merging to production
-
-            🤖 Triggered by PWA repo push to main
-          branch: ${{ env.BRANCH }}
-          base: main
-          delete-branch: true
+🤖 Triggered by PWA repo push to main"
