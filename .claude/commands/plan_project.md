@@ -132,12 +132,19 @@ Parse the frontmatter of each file and classify:
 - **Has Issue:** `issue` is not null (skip creation, verify Issue still open)
 - **Invalid:** missing required frontmatter fields — flag and skip
 
+For each doc that needs an issue, also check `upstream_repos` in frontmatter:
+
+- **Monorepo-only:** `upstream_repos` is null — issue goes to the platform monorepo
+- **Cross-repo:** `upstream_repos` is set — upstream issues must be created first in that
+  repo, then a system-level parent issue is created in the monorepo referencing them
+
 Output a table:
 
-| File                            | Phase | Status | Issue | Action        |
-| ------------------------------- | ----- | ------ | ----- | ------------- |
-| [TODO]P1_monorepo-setup.md      | 1     | TODO   | null  | Create Issue  |
-| [TODO]GH4_vite-app-bootstrap.md | 2     | TODO   | 4     | Skip (exists) |
+| File                            | Phase | Status | Issue | Upstream Repo                        | Action                            |
+| ------------------------------- | ----- | ------ | ----- | ------------------------------------ | --------------------------------- |
+| [TODO]P1_monorepo-setup.md      | 1     | TODO   | null  | null                                 | Create Issue                      |
+| [TODO]GH4_vite-app-bootstrap.md | 2     | TODO   | 4     | null                                 | Skip (exists)                     |
+| [TODO]P8_nestjs-parity.md       | 8     | TODO   | null  | jonpham/2026-project-todo-api-nestjs | Create upstream + monorepo parent |
 
 Then STOP and wait for explicit approval before creating any Issues.
 
@@ -221,6 +228,68 @@ Using `--force` makes these idempotent — safe to re-run if they already exist.
 
 ---
 
+### 3-upstream — Create Upstream Repo Issues (sequential, before 3-parallel)
+
+For each feature doc where `upstream_repos` is set in frontmatter, create issues
+in the upstream repo **before** creating the monorepo parent. This preserves the
+UPSTREAM FIRST principle: upstream changes tracked in their own repo, referenced
+from the platform monorepo.
+
+**For each upstream step or group of upstream steps:**
+
+1. Identify which steps in `## Steps` are upstream-destined. These are steps
+   explicitly marked as "upstream-first" in the doc's Technical Notes, or steps
+   that modify code owned by the upstream repo (e.g. NestJS API changes when
+   `upstream_repo: jonpham/2026-project-todo-api-nestjs`).
+
+2. Create a label in the upstream repo if it doesn't exist:
+
+   ```bash
+   gh label create "from-monorepo" --color "f9d0c4" \
+     --description "Tracked from platform monorepo" \
+     --repo {upstream_repo} --force
+   ```
+
+3. Create an issue in the upstream repo using `mcp__github__issue_write`:
+
+   ```
+   method: "create"
+   owner: {upstream_owner}   ← e.g. "jonpham"
+   repo: {upstream_repo_name} ← e.g. "todo-api-nestjs"
+   title: "{upstream feature name}"
+   body: |
+     ## Context
+     Tracked from platform monorepo phase {n} — {monorepo_repo}.
+
+     {description of the upstream-specific work}
+
+     ## Steps
+     {upstream-only steps from the feature doc}
+
+     ## Acceptance Criteria
+     {upstream-specific criteria}
+
+     ## Cross-repo reference
+     System-level tracking issue: {monorepo_repo} (to be linked after monorepo issue creation)
+   labels: ["from-monorepo"]
+   ```
+
+4. Capture the upstream issue number from the response `.number`.
+
+5. Update the feature doc frontmatter:
+   - Append to `upstream_issues`: `"{upstream_repo}#{issue_number}"`
+
+6. Commit the frontmatter update:
+   ```bash
+   git add docs/features/
+   git commit -m "docs: record upstream issue reference in feature doc"
+   ```
+
+After all upstream issues are created, proceed to 3-parallel with the upstream
+issue numbers available for embedding in monorepo parent issue bodies.
+
+---
+
 ### 3-parallel — Per-Doc Issue Creation
 
 Once 3a, 3b, and the shared label setup above are complete, spawn one foreground
@@ -265,13 +334,6 @@ Wait for the subagent to complete, then output the summary table and STOP.
 
 ### 3c — Create the Parent Issue _(executed by per-doc subagents)_
 
-Create the `phase-{n}` label for this doc's phase (labels `feature` and `step`
-are already created in 3-pre — do not recreate them):
-
-```bash
-gh label create "phase-{n}" --color "0075ca" --description "Phase {n}" --force
-```
-
 For this feature doc, use the `mcp__github__issue_write` tool:
 
 ```
@@ -288,7 +350,12 @@ body: |
 
   ## Steps
   {content of ## Steps section from feature doc}
-labels: ["phase-{n}", "feature"]
+
+  ## Upstream Issues
+  {if upstream_issues is non-empty, list each reference:}
+  - {upstream_repo}#{upstream_issue_number} — {one-line description of that upstream issue}
+  {omit this section entirely if upstream_issues is empty}
+labels: ["feature"]
 milestone: {milestone-number}   ← integer from Step 3b response
 ```
 
@@ -320,7 +387,7 @@ body: |
   Part of #{parent-issue-number}
 
   {full step description from the checklist item}
-labels: ["phase-{n}", "step"]
+labels: ["step"]
 ```
 
 The response includes the sub-issue number as `.number`.
@@ -352,6 +419,8 @@ After creating parent + sub-issues:
 
 1. Update the feature doc frontmatter:
    - `issue: {parent-issue-number}`
+   - `upstream_issues: [{upstream_repo}#{upstream_issue_number}, ...]` — if any
+     upstream issues were created in 3-upstream; otherwise leave as `[]`
 2. Rename the file: replace `P{n}` with `GH{parent-issue-number}`
    e.g. `[TODO]P1_monorepo-setup.md` → `[TODO]GH1_monorepo-setup.md`
 3. Add the parent Issue to the Project board and capture the item ID:

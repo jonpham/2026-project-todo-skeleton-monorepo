@@ -5,7 +5,10 @@ slug: "feature-slug"
 status: TODO
 step_gating: true
 issue: null
+epic_issue: null
 parent_issue: null
+upstream_repos: [] # e.g. ["jonpham/todo-api-nestjs"] — empty if monorepo-only; list if multi-repo
+upstream_issues: [] # e.g. ["jonpham/todo-api-nestjs#42"] — populated after upstream issues are created
 branch: null
 pr: null
 completed_at: null
@@ -75,6 +78,6 @@ _None yet — populated during development._
 
 > Updated by Claude Code after each PR that touches this phase.
 
-| Date | PR | Status Change | Notes |
-|---|---|---|---|
-| | | | |
+| Date | PR  | Status Change | Notes |
+| ---- | --- | ------------- | ----- |
+|      |     |               |       |
