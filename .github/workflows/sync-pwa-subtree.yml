@@ -46,7 +46,9 @@ jobs:
         run: pnpm install --no-frozen-lockfile
 
       - name: Stage lockfile update
-        run: git add pnpm-lock.yaml && git diff --cached --quiet || git commit -m "chore: update pnpm lockfile after pwa-vite sync"
+        run: |
+          git add pnpm-lock.yaml
+          git diff --cached --quiet || git commit -m "chore: update pnpm lockfile after pwa-vite sync"
 
       - name: Push branch
         run: |
