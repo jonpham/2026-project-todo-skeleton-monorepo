@@ -1,5 +1,7 @@
 config:
   cloudflare:apiToken:
-    secure: AAABACrlCQU63pG9qfb9RR6KwuN5zxYa9kNyQ9venuKL+jfFDUMtGjC1alNWnYaeeX/59R/rg7Er8GvX3ikIFJ8GkDGQ+F3b32nTPNrbOI9uyQHKnA==
+    secure: AAABAA7M0Drd3eW4kRzZfZKsE5/1u2y33Xo9eGBmdc54zop6UAc1cbbHHTfVik0Gg8WLXkIIeajKsqhNnuydLz9uuo7NUqTxsTJO2ihpg+9fvaNg/Q==
   todo-pwa-infra:cloudflareAccountId:
-    secure: AAABAHXXDmkdr5u4Ia9MGyFRKiBNUIcbDzkW7YNgyC946jG5xqR74dVQGQnDj0ayK8wtFq2RVElSWSQ9iTLuOQ==
+    secure: AAABAImZY2xBu7N3VHWnKPaWGLyKBM/czWu8k33gFnVgY2qkK7hfWXbqi1nNUXtdSuC8Zt0z3urOEBFRu/l1+Q==
+  todo-pwa-infra:cloudflareZoneId:
+    secure: AAABAKooT5wCvcScqnBsKJBRiiu2KlKMy5n6mHZZYg+pM/wd+/z/J4l+JvmfxDk7str9uXSe30M8M75E6jqdTg==

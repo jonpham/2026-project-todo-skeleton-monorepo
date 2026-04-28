@@ -46,30 +46,6 @@ async function deployApp(
   return result.outputs;
 }
 
-async function deployMonorepoInfra(
-  cloudflareAccountId: string,
-  cloudflareApiToken: string,
-  cloudflareZoneId: string
-): Promise<void> {
-  console.log(`\n── Deploying monorepo infrastructure ──`);
-
-  const stack = await auto.LocalWorkspace.createOrSelectStack({
-    stackName: STACK_NAME,
-    workDir: __dirname,
-  });
-
-  await stack.setAllConfig({
-    "cloudflare:apiToken": { value: cloudflareApiToken, secret: true },
-    cloudflareAccountId: { value: cloudflareAccountId, secret: true },
-    cloudflareZoneId: { value: cloudflareZoneId, secret: true },
-  });
-
-  await stack.up({
-    onOutput: process.stdout.write.bind(process.stdout),
-  });
-  console.log(`\n✓ Monorepo infrastructure deployed`);
-}
-
 async function main() {
   const cloudflareApiToken = process.env.CLOUDFLARE_API_TOKEN;
   const cloudflareAccountId = process.env.CLOUDFLARE_ACCOUNT_ID;
@@ -101,14 +77,7 @@ async function main() {
     sharedConfig
   );
 
-  // Deploy monorepo-level infrastructure (custom domains, etc.)
-  await deployMonorepoInfra(
-    cloudflareAccountId,
-    cloudflareApiToken,
-    cloudflareZoneId
-  );
-
-  console.log("\n── Monorepo deployment complete ──");
+  console.log("\n── App deployment complete ──");
   console.log("Outputs:");
   for (const [appName, outputs] of Object.entries({
     "todo-pwa-vite": todoPwaViteOutputs,
@@ -117,6 +86,11 @@ async function main() {
       console.log(`  ${appName}.${key}: ${val.value}`);
     }
   }
+
+  console.log(
+    "\n── To deploy monorepo infrastructure (domain binding), run: ──"
+  );
+  console.log("   cd infra && pulumi up");
 }
 
 main().catch((err) => {
