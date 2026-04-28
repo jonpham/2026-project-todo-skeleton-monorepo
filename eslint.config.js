@@ -1,13 +1,19 @@
-// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
+import tseslint from "typescript-eslint";
+import globals from "globals";
 import storybook from "eslint-plugin-storybook";
-
-import rootConfig from "../../eslint.config.js";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 
-export default [
-  ...rootConfig,
+export default tseslint.config(
+  { ignores: ["**/dist/**", "**/node_modules/**", "**/.storybook/**"] },
   {
+    extends: [...tseslint.configs.recommended],
+    languageOptions: {
+      globals: { ...globals.browser, ...globals.node },
+    },
+  },
+  {
+    files: ["**/*.tsx", "**/*.jsx"],
     plugins: {
       "react-hooks": reactHooks,
       "react-refresh": reactRefresh,
@@ -20,5 +26,5 @@ export default [
       ],
     },
   },
-  ...storybook.configs["flat/recommended"],
-];
+  ...storybook.configs["flat/recommended"]
+);
