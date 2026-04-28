@@ -1,4 +1,4 @@
-# todo-pwa-vite
+# TODO-PWA-VITE
 
 A progressive web application (PWA) todo list built with React, TypeScript, and Vite. Designed as a standalone application with integrated monorepo support for coordinated deployments.
 
@@ -7,6 +7,7 @@ A progressive web application (PWA) todo list built with React, TypeScript, and 
 This is a **standalone repository** that can be developed, tested, and deployed independently, while also being integrated into the [2026-project-todo-skeleton-monorepo](https://github.com/jonpham/2026-project-todo-skeleton-monorepo) via Git Subtree.
 
 **Key characteristics:**
+
 - **Standalone Development**: Full development environment with independent CI/CD
 - **Monorepo Integration**: Automatically synced to monorepo for coordinated deployments
 - **Production PWA**: Vite-optimized build with service workers and offline support
@@ -15,19 +16,20 @@ This is a **standalone repository** that can be developed, tested, and deployed 
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| **Framework** | React 19 + TypeScript |
-| **Build Tool** | Vite 6 |
-| **Testing** | Vitest, Storybook, Playwright |
-| **Package Manager** | pnpm 10.33 |
-| **Linting** | ESLint 10 |
-| **Formatting** | Prettier 3 |
-| **Deployment** | Cloudflare Pages + Docker |
+| Layer               | Technology                    |
+| ------------------- | ----------------------------- |
+| **Framework**       | React 19 + TypeScript         |
+| **Build Tool**      | Vite 6                        |
+| **Testing**         | Vitest, Storybook, Playwright |
+| **Package Manager** | pnpm 10.33                    |
+| **Linting**         | ESLint 10                     |
+| **Formatting**      | Prettier 3                    |
+| **Deployment**      | Cloudflare Pages + Docker     |
 
 ## Setup
 
 ### Prerequisites
+
 - Node.js 22+
 - pnpm 10.33+
 
@@ -142,7 +144,6 @@ docker-compose up todo-api-nestjs
 1. **Push feature branch** → GitHub Actions runs:
    - **CI** (all branches): Lint, unit tests, build verification
    - **Preview Deploy** (PRs & main): Build → Deploy to Cloudflare Pages preview → Run E2E tests
-   
 2. **Preview + E2E pass** → Safe to merge to `main`
    - Preview URL appears in PR comments
    - E2E test results visible in PR checks
@@ -163,6 +164,7 @@ docker-compose up todo-api-nestjs
 **Triggers on**: Push to any branch, PR to main
 
 **Steps**:
+
 1. Install dependencies with pnpm
 2. Run ESLint (code quality)
 3. Run Vitest unit + component tests
@@ -177,12 +179,14 @@ docker-compose up todo-api-nestjs
 **Triggers on**: Pull requests and push to main
 
 **Steps**:
+
 1. Build PWA with Vite
 2. Deploy to Cloudflare Pages (preview channel)
 3. Run Playwright E2E tests against preview URL
 4. Upload test artifacts and report results
 
-**Result**: 
+**Result**:
+
 - Preview URL posted to PR
 - Test results visible in PR checks
 - Blocks merge if E2E tests fail (on PR)
@@ -194,6 +198,7 @@ docker-compose up todo-api-nestjs
 **Triggers on**: Successful CI + merge to main in this repo
 
 **Steps**:
+
 1. Repository dispatch event sent to monorepo
 2. Monorepo creates subtree sync PR
 3. Monorepo's preview workflow validates integration
@@ -209,6 +214,7 @@ docker-compose up todo-api-nestjs
 **Development**: Developers work locally with `pnpm dev`
 
 **Preview**: Automatic preview builds in monorepo PR (Cloudflare Pages)
+
 - Triggered when: Subtree sync PR created
 - URL: `https://<pr-number>.todo-pwa.pages.dev`
 - Test: E2E tests run against preview
@@ -216,6 +222,7 @@ docker-compose up todo-api-nestjs
 **Staging**: Manual `pnpm build && pnpm preview` locally before pushing
 
 **Production**: Via Monorepo → Cloudflare Pages
+
 - Domain: `https://app.todo.witty-m.com`
 - Triggered when: Changes merged to monorepo `main`
 - Status: Monitored via GitHub deployments
@@ -235,6 +242,7 @@ docker run -p 3000:80 todo-pwa:latest
 ```
 
 The Dockerfile uses a two-stage build:
+
 1. **Builder**: Node alpine, installs deps, runs `pnpm build`
 2. **Server**: Nginx alpine, serves `dist/` with SPA routing configured
 
@@ -360,6 +368,7 @@ pnpm test:e2e
 ```
 
 Tests cover:
+
 - Component rendering and interactions
 - Form submission and validation
 - Todo CRUD operations
