@@ -9,9 +9,9 @@
 **Status update (2026-04-29):** W1 is mostly implemented. Upstream API changes are merged and visible in the monorepo subtree (`/health`, `findOrFail`, and `CreateTodoDto.id?`). Monorepo Docker Compose parity is present (`pwa`/`api` services, nginx `/api/` proxy, SQLite named volume, `/health` healthcheck). The original automated CI/CD subtree sync workflow is deprecated; subtree syncs should be initiated manually with `scripts/subtree-pull.sh`, reviewed in a normal PR, and verified by CI before merge.
 
 **Remaining W1 work:**
-- [ ] Run and record full-stack Docker Compose verification from Task 11 (`docker compose up --build --wait`, `/api/health`, PWA HTML, CRUD through nginx, client UUID create, SQLite persistence after API restart).
-- [ ] Update/close the W1 feature tracking doc after verification (`docs/features/[TODO]GH39_nestjs-monorepo-parity.md`).
-- [ ] Optional cleanup: reconcile this implementation plan's old worktree path and original root-level `subtree-sync.sh` naming with the implemented `scripts/subtree-pull.sh` helper.
+- [x] Run and record full-stack Docker Compose verification from Task 11 (`docker compose up --build --wait`, `/api/health`, PWA HTML, CRUD through nginx, client UUID create, SQLite persistence after API restart). Verified manually by user on 2026-04-29.
+- [x] Update/close the W1 feature tracking doc after verification (`docs/features/[DONE]GH39_nestjs-monorepo-parity.md`).
+- [x] Optional cleanup: reconcile this implementation plan's old worktree path and helper-script references with the implemented `scripts/subtree-pull.sh` helper.
 
 **Completed W1 work:**
 - [x] Upstream API parity: `/health`, `findOrFail`, and optional client UUID support.
@@ -19,6 +19,7 @@
 - [x] Monorepo nginx proxy config.
 - [x] Monorepo Docker Compose parity with named SQLite volume and health checks.
 - [x] Manual subtree pull helper at `scripts/subtree-pull.sh`.
+- [x] Full-stack Docker Compose verification completed manually by user.
 
 **CI/CD subtree sync decision (2026-04-29):**
 - Automated `repository_dispatch` subtree sync workflows are deprecated for this project phase.
@@ -642,77 +643,34 @@ git commit -m "feat: update docker-compose with nginx proxy, SQLite volume, heal
 
 ---
 
-### Task 8: Create subtree-sync.sh
+### Task 8: Use `scripts/subtree-pull.sh`
 
 **Files:**
-- Create: `subtree-sync.sh`
+- Use: `scripts/subtree-pull.sh`
 
-- [ ] **Step 1: Create the script**
+- [x] **Step 1: Confirm the script exists**
 
-Create `subtree-sync.sh` at the monorepo root:
+Use the implemented helper at `scripts/subtree-pull.sh`.
+
+- [x] **Step 2: Confirm it is executable**
 
 ```bash
-#!/usr/bin/env bash
-# subtree-sync.sh — Pull upstream changes from a subtree remote into this monorepo.
-#
-# Usage:
-#   ./subtree-sync.sh <package> [branch]
-#
-# Examples:
-#   ./subtree-sync.sh todo-pwa-vite              # pull todo-pwa-vite@main
-#   ./subtree-sync.sh todo-api-nestjs            # pull todo-api-nestjs@main
-#   ./subtree-sync.sh todo-api-nestjs feat/foo   # pull a feature branch
-#
-# Prerequisites:
-#   The remote must be added before first use:
-#     git remote add todo-pwa-vite https://github.com/jonpham/2026-project-todo-pwa-vite.git
-#     git remote add todo-api-nestjs https://github.com/jonpham/2026-project-todo-api-nestjs.git
-#
-# After running this script:
-#   1. Resolve any merge conflicts
-#   2. Run: pnpm install --no-frozen-lockfile  (lockfile may need updating)
-#   3. Open a PR — do NOT commit subtree syncs directly to main
-#
-# To push a change back upstream (rare):
-#   git subtree push --prefix=apps/<package> <remote> <branch>
-#
-set -euo pipefail
-
-PACKAGE="${1:?Usage: ./subtree-sync.sh <package> [branch]}"
-BRANCH="${2:-main}"
-
-# Ensure the remote exists
-if ! git remote get-url "$PACKAGE" &>/dev/null; then
-  echo "ERROR: remote '$PACKAGE' not found."
-  echo "Add it with: git remote add $PACKAGE https://github.com/jonpham/$PACKAGE.git"
-  exit 1
-fi
-
-./scripts/subtree-pull.sh "$PACKAGE" "$BRANCH"
-echo ""
-echo "Sync complete: apps/$PACKAGE updated from $PACKAGE@$BRANCH"
-echo "Next: pnpm install --no-frozen-lockfile && git add pnpm-lock.yaml && git commit -m 'chore: update lockfile after $PACKAGE sync'"
+test -x scripts/subtree-pull.sh
 ```
 
-- [ ] **Step 2: Make it executable**
+- [x] **Step 3: Use it for manual subtree syncs**
 
 ```bash
-chmod +x subtree-sync.sh
+./scripts/subtree-pull.sh todo-api-nestjs main
 ```
 
-- [ ] **Step 3: Test it prints the error message for unknown remote**
+Expected: subtree pull completes and verifies the subtree matches upstream.
+
+- [x] **Step 4: Commit**
 
 ```bash
-./subtree-sync.sh unknown-package 2>&1 | grep "ERROR"
-```
-
-Expected: `ERROR: remote 'unknown-package' not found.`
-
-- [ ] **Step 4: Commit**
-
-```bash
-git add subtree-sync.sh
-git commit -m "chore: add subtree-sync.sh helper for pulling upstream changes"
+git add scripts/subtree-pull.sh
+git commit -m "chore: add subtree pull helper"
 ```
 
 ---
@@ -748,17 +706,15 @@ Monorepo-side changes for Workstream 1. Upstream changes (health endpoint, findO
 
 ## Changes
 
-- **`.github/workflows/sync-nestjs-subtree.yml`** — mirrors `sync-pwa-subtree.yml`; triggered by `repository_dispatch: nestjs-api-updated`
 - **`infra/nginx/nginx.conf`** — proxies `/api/` → `http://api:3000/` (strips prefix via trailing slash); serves PWA from `/usr/share/nginx/html`
 - **`docker-compose.yml`** — renamed services to `pwa`/`api`; nginx config mounted as volume override; `todo-db-data` named volume at `/data`; healthcheck updated to `/health`; `pwa` depends on `api` being healthy before starting
-- **`subtree-sync.sh`** — documents pull workflow with remote existence check and next-step guidance
+- **`scripts/subtree-pull.sh`** — documents and verifies manual subtree pull workflow
 
 ## Acceptance criteria
 
 - [ ] `docker compose config` passes
 - [ ] `nginx -t` passes on `infra/nginx/nginx.conf`
-- [ ] Sync workflow YAML is valid
-- [ ] Task 10 (subtree pull) can run once upstream PR merges
+- [ ] Task 10 manual subtree pull can run once upstream PR merges
 
 ## Blocked by
 
@@ -795,7 +751,7 @@ git -C /Users/jp/code/_boilerplate/2026-project-todo/worktree-w1-nestjs-parity r
 
 ```bash
 cd /Users/jp/code/_boilerplate/2026-project-todo/worktree-w1-nestjs-parity
-./subtree-sync.sh todo-api-nestjs main
+./scripts/subtree-pull.sh todo-api-nestjs main
 ```
 
 Expected: subtree pull completes, squash commit created with message `chore: sync apps/todo-api-nestjs from todo-api-nestjs@main`.
@@ -832,7 +788,7 @@ git -C /Users/jp/code/_boilerplate/2026-project-todo/worktree-w1-nestjs-parity p
 
 ### Task 11: Full-stack verification
 
-- [ ] **Step 1: Build and start the full stack**
+- [x] **Step 1: Build and start the full stack**
 
 ```bash
 cd /Users/jp/code/_boilerplate/2026-project-todo/worktree-w1-nestjs-parity
@@ -841,7 +797,7 @@ docker compose up --build --wait
 
 Expected: both services start healthy. `--wait` blocks until all healthchecks pass.
 
-- [ ] **Step 2: Verify health endpoint through nginx proxy**
+- [x] **Step 2: Verify health endpoint through nginx proxy**
 
 ```bash
 curl http://localhost:3000/api/health
@@ -852,7 +808,7 @@ Expected:
 {"status":"ok","info":{},"error":{},"details":{}}
 ```
 
-- [ ] **Step 3: Verify PWA is served**
+- [x] **Step 3: Verify PWA is served**
 
 ```bash
 curl -s http://localhost:3000/ | grep -i "<!doctype html"
@@ -860,7 +816,7 @@ curl -s http://localhost:3000/ | grep -i "<!doctype html"
 
 Expected: HTML response containing `<!doctype html` (case-insensitive).
 
-- [ ] **Step 4: Create a todo via the API**
+- [x] **Step 4: Create a todo via the API**
 
 ```bash
 curl -s -X POST http://localhost:3000/api/v1/todos \
@@ -870,7 +826,7 @@ curl -s -X POST http://localhost:3000/api/v1/todos \
 
 Expected: JSON with `id` (server-generated UUID), `description`, `completed: false`.
 
-- [ ] **Step 5: Create a todo with a client-generated UUID**
+- [x] **Step 5: Create a todo with a client-generated UUID**
 
 ```bash
 curl -s -X POST http://localhost:3000/api/v1/todos \
@@ -880,7 +836,7 @@ curl -s -X POST http://localhost:3000/api/v1/todos \
 
 Expected: response `id` equals `550e8400-e29b-41d4-a716-446655440001`.
 
-- [ ] **Step 6: Verify SQLite persistence across API restart**
+- [x] **Step 6: Verify SQLite persistence across API restart**
 
 ```bash
 # Restart only the API service (data must survive)
@@ -895,7 +851,7 @@ curl -s http://localhost:3000/api/v1/todos | python3 -m json.tool
 
 Expected: JSON array containing both todos created in Steps 4 and 5.
 
-- [ ] **Step 7: Tear down**
+- [x] **Step 7: Tear down**
 
 ```bash
 docker compose down
@@ -908,6 +864,8 @@ git -C /Users/jp/code/_boilerplate/2026-project-todo/worktree-w1-nestjs-parity p
 ```
 
 Update the PR description to indicate full-stack verification passed.
+
+> Verification note: Task 11 Steps 1-7 were completed manually by the user on 2026-04-29. The local Docker rerun was skipped by request.
 
 ---
 
@@ -925,8 +883,8 @@ Update the PR description to indicate full-stack verification passed.
 | curl localhost/api/health returns ok | Verified Task 11 Step 2 |
 | curl localhost/ serves PWA HTML | Verified Task 11 Step 3 |
 | SQLite persists after restart | Verified Task 11 Step 6 |
-| subtree-sync.sh is executable and documented | Task 8 |
-| NestJS sync workflow mirrors PWA pattern | Task 5 |
+| scripts/subtree-pull.sh is executable and documented | Task 8 |
+| Automated NestJS sync workflow deprecated | Task 5 |
 
 All acceptance criteria from the feature doc are covered.
 

@@ -1,10 +1,10 @@
 # Project and Feature Status
 
-**Last completed phase:** Phase 5 — Monorepo Git Subtree Integration (Issue #33, branch complete)
-**Active feature doc:** None
-**Active spec:** None
-**Active skill:** None
-**Current step:** None
-**Current task:** None
+**Last completed phase:** Phase 8 — NestJS Monorepo Parity (W1, branch complete)
+**Active feature doc:** `docs/features/[DONE]GH39_nestjs-monorepo-parity.md`
+**Active spec:** `docs/specs/MonorepoPwaApiIntegration/2026-04-28-w1-nestjs-monorepo-parity.md`
+**Active skill:** `superpowers:executing-plans`
+**Current step:** W1 Task 11 complete
+**Current task:** Prepare W1 branch for PR
 **Known blockers:** None
-**Next action:** Review branch, then push and open a PR
+**Next action:** Review and commit W1 documentation closure, then push/open PR.
