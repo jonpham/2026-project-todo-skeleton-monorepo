@@ -4,11 +4,7 @@ phase: 6
 slug: "pwa-offline-first-api-sync"
 status: TODO
 step_gating: false
-issue: 37
 epic_issue: null
-parent_issue: null
-upstream_repos: ["jonpham/2026-project-todo-pwa-vite"]
-upstream_issues: ["jonpham/2026-project-todo-pwa-vite#2"]
 branch: null
 pr: null
 completed_at: null

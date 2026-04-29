@@ -65,7 +65,16 @@ Output the following before stopping:
 
 ## Project Documentation
 
-Docs live in `docs/`: STACK, ARCHITECTURE, CHANGELOG, PROJECT_STATUS.
+Docs live in `docs/`:
+
+| Path | Purpose |
+|---|---|
+| `docs/features/` | Phase task tracking — frontmatter + step checklists are the source of truth |
+| `docs/initiatives/{name}/` | gstack / GSD / superpowers planning outputs — commit here after skill runs |
+| `docs/ideas/` | Lightweight ADRs and idea capture |
+| `docs/STACK.md`, `ARCHITECTURE.md`, `CHANGELOG.md` | Reference docs |
+
+**No GitHub Issue sync.** Feature docs are the task manager. GitHub Issues are optional for external collaboration only.
 
 - Run `/project:update-status-and-commit` before each commit
 - Run `/project:update-docs-and-push` before each push
@@ -99,17 +108,6 @@ Run `/project:develop` to start or resume a phase. It manages branching, step ex
 
 ---
 
-## GitHub Project IDs
-
-<!-- project-number: 7 -->
-<!-- project-id: PVT_kwHOAIsvKM4BVMxe -->
-<!-- status-field-id: PVTSSF_lAHOAIsvKM4BVMxezhQqPAs -->
-<!-- todo-option-id: 426a8c31 -->
-<!-- in-progress-option-id: 2b2cb0f7 -->
-<!-- done-option-id: 0b5f8eba -->
-<!-- blocked-option-id: 62d09295 -->
-
----
 
 ## gstack
 

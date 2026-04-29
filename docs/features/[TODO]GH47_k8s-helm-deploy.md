@@ -4,11 +4,7 @@ phase: 10
 slug: "k8s-helm-deploy"
 status: TODO
 step_gating: true
-issue: 47
 epic_issue: null
-parent_issue: null
-upstream_repos: []
-upstream_issues: []
 branch: null
 pr: null
 completed_at: null
