@@ -1,5 +1,13 @@
 # /project:plan_project
 
+> [!WARNING]
+> **DEPRECATED.** Do not use this command.
+> It burns tokens on GitHub API calls (issues, labels, milestones, project board) that are no longer part of the workflow.
+> Use instead: `/plan-eng-review` or `/autoplan` (gstack), `/gsd-plan-phase` (GSD/superpowers).
+> Commit planning outputs directly to `docs/initiatives/{name}/`.
+
+---
+
 > Run this command after /project:bootstrap to plan phases and sync them into
 > GitHub Issues and the Project board.
 >

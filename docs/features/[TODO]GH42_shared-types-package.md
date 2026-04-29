@@ -4,7 +4,6 @@ phase: 9
 slug: "shared-types-package"
 status: TODO
 step_gating: false
-issue: 42
 epic_issue: null
 parent_issue: null
 upstream_repos:
