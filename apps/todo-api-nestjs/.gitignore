@@ -19,6 +19,9 @@ coverage/
 # Turborepo
 .turbo/
 
+# Git worktrees
+.worktrees/
+
 # Editor
 .vscode/
 .idea/

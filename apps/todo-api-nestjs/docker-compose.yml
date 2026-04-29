@@ -1,6 +1,9 @@
 services:
   todo-api:
-    build: .
+    build:
+      context: .
+      secrets:
+        - github_token
     ports:
       - "3001:3000"
     environment:
@@ -10,3 +13,7 @@ services:
     # Reset the database to an empty state on every container start (including
     # `docker compose restart`), then boot the server.
     command: sh -c "node_modules/.bin/prisma migrate reset --force --skip-seed && node dist/main"
+
+secrets:
+  github_token:
+    environment: GITHUB_TOKEN

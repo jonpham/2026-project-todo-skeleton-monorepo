@@ -29,6 +29,7 @@
     "schema": "prisma/schema.prisma"
   },
   "dependencies": {
+    "@jonpham/2026-project-todo-types": "0.1.1",
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
     "@nestjs/mapped-types": "^2.0.0",

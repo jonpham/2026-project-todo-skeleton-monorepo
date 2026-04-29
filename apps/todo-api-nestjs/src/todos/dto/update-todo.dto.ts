@@ -1,9 +1,14 @@
 import { ApiPropertyOptional } from "@nestjs/swagger";
-import { IsBoolean, IsOptional } from "class-validator";
-import { PartialType } from "@nestjs/mapped-types";
-import { CreateTodoDto } from "./create-todo.dto.js";
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import type { UpdateTodoDto as SharedUpdateTodoDto } from "@jonpham/2026-project-todo-types";
 
-export class UpdateTodoDto extends PartialType(CreateTodoDto) {
+export class UpdateTodoDto implements SharedUpdateTodoDto {
+  @ApiPropertyOptional({ example: "Buy milk" })
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  description?: string;
+
   @ApiPropertyOptional()
   @IsBoolean()
   @IsOptional()

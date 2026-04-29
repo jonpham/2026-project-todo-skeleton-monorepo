@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1.7
+
 # Stage 1 — builder
 FROM node:22-alpine AS builder
 
@@ -10,8 +12,14 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 COPY prisma/schema.prisma ./prisma/schema.prisma
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
+# Install dependencies. Private GitHub Packages auth is supplied via BuildKit
+# secret and removed from the image layer before the command exits.
+RUN --mount=type=secret,id=github_token \
+    set -eu; \
+    token="$(cat /run/secrets/github_token)"; \
+    printf '@jonpham:registry=https://npm.pkg.github.com\n//npm.pkg.github.com/:_authToken=%s\n' "$token" > .npmrc; \
+    pnpm install --frozen-lockfile; \
+    rm .npmrc
 
 # Generate Prisma client
 RUN pnpm prisma generate
