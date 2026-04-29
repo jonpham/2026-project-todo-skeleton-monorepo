@@ -34,6 +34,7 @@ git subtree pull \
   "${PACKAGE}" \
   "${BRANCH}" \
   --squash \
+  -X theirs \
   -m "chore: sync apps/${PACKAGE} from ${PACKAGE}@${BRANCH}"
 
 # Verify the subtree matches upstream — catch silent conflict-resolution drops
