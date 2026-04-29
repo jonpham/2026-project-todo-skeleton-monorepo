@@ -36,10 +36,7 @@ jobs:
         run: pnpm lint
 
       - name: Test
-        # Run unit tests only. The storybook browser project requires a running
-        # Storybook dev server and fails in the GH Actions sandbox — it is
-        # covered by a dedicated workflow in the pwa-vite upstream repo.
-        run: pnpm --filter todo-api-nestjs test && pnpm --filter todo-pwa test:unit
+        run: pnpm test
         env:
           # Turborepo remote caching — silently ignored when secrets are absent
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
