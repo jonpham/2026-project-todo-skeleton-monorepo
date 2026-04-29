@@ -1,7 +1,7 @@
 # Project and Feature Status
 
-**Last completed phase:** Phase 5 — Monorepo Git Subtree Integration (Issue #33, branch complete)
+**Last completed phase:** Phase 3 — Docker & Local Container Deploy
 **Active feature doc:** None
 **Current step:** None
 **Known blockers:** None
-**Next action:** Review branch, then run /project:update-docs-and-push to push and open a PR
+**Next action:** Run `/project:develop` to begin Phase 4

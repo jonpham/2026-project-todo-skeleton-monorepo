@@ -1,41 +1,19 @@
 services:
-  pwa:
+  todo-api:
     build:
-      context: apps/todo-pwa-vite
-      dockerfile: Dockerfile
-    ports:
-      - "3000:80"
-    volumes:
-      # Override standalone nginx.conf with monorepo version that proxies /api/
-      - ./infra/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-    depends_on:
-      api:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost/"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 5s
-
-  api:
-    build:
-      context: apps/todo-api-nestjs
-      dockerfile: Dockerfile
+      context: .
+      secrets:
+        - github_token
     ports:
       - "3001:3000"
-    volumes:
-      - todo-db-data:/data
     environment:
-      - DATABASE_URL=file:/data/prod.db
-      - PORT=3000
-      - CORS_ALLOWED_ORIGINS=http://localhost,http://localhost:3000,http://localhost:5173,https://app.todo.witty-m.com
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 15s
+      - DATABASE_URL=file:./dev.db
+      - CORS_ALLOWED_ORIGINS=http://localhost:5173
+      - NODE_ENV=production
+    # Reset the database to an empty state on every container start (including
+    # `docker compose restart`), then boot the server.
+    command: sh -c "node_modules/.bin/prisma migrate reset --force --skip-seed && node dist/main"
 
-volumes:
-  todo-db-data:
+secrets:
+  github_token:
+    environment: GITHUB_TOKEN

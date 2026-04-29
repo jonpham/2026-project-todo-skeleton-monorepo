@@ -1,4 +1,0 @@
-name: monorepo-infra
-runtime: nodejs
-main: ./stack.ts
-description: Monorepo infrastructure — domain bindings and shared resources.

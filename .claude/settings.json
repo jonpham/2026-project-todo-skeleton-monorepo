@@ -3,30 +3,17 @@
     "defaultMode": "acceptEdits",
     "allow": [
       "Bash(pnpm *)",
+      "Bash(npm *)",
       "Bash(git status *)",
       "Bash(git diff *)",
       "Bash(git log *)",
       "Bash(git branch *)",
       "Bash(git stash *)",
       "Bash(git show *)",
-      "Bash(gh project *)",
-      "Bash(gh issue *)",
-      "Bash(gh pr *)",
-      "Bash(gh api *)",
-      "Bash(gh repo *)"
-    ]
-  },
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Skill",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR/.claude/hooks/check-gstack.sh\""
-          }
-        ]
-      }
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(git checkout *)"
     ]
   }
 }

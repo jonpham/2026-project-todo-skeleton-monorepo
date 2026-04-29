@@ -1,7 +1,0 @@
-config:
-  cloudflare:apiToken:
-    secure: AAABAEGVF7iyyVqcDbbTHvMGbpJ2wrQPKI8OuIamBdQiqNgfnUvHYlh6OQEs/z1wv/aueroJ/SkQQ3ExsEwW257j/hjYYDaW/Jbdn0eo+6QIAXZfSA==
-  monorepo-infra:cloudflareAccountId:
-    secure: AAABAFOlJBFITa7izkJImPUzmK71OIXwuY0OvKTbGUUXOV0eBZTgy564ikToYIoPhCq5waRuTgGIsA9z1UetzQ==
-  monorepo-infra:cloudflareZoneId:
-    secure: AAABAF/P388fKwb3doxQRl8ofQTwBSgHGG9JHG4W/qugmWr+t0bYzIkVOeKRmfGTRTFiHcLrLIF1fqxDVXvbfw==

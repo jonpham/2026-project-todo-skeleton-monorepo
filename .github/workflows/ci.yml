@@ -2,51 +2,52 @@ name: CI
 
 on:
   push:
-    branches-ignore:
-      - 'chore/sync-*'
-  pull_request:
-    branches: [main]
+    branches: ["**"]
 
-# Cancel superseded runs on the same branch to avoid wasted minutes
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
+
+permissions:
+  contents: read
+  packages: read
 
 jobs:
   ci:
-    name: Lint · Test · Build
+    name: Lint, Test & Build
     runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-          version: "10.33.0"
+          version: 10.33.0
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: "22"
-          cache: "pnpm"
+          node-version: '22'
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Generate Prisma client
+        run: pnpm prisma:generate
+
       - name: Lint
         run: pnpm lint
 
+      - name: Format check
+        run: pnpm format:check
+
       - name: Test
-        # Run unit tests only. The storybook browser project requires a running
-        # Storybook dev server and fails in the GH Actions sandbox — it is
-        # covered by a dedicated workflow in the pwa-vite upstream repo.
-        run: pnpm --filter todo-api-nestjs test && pnpm --filter todo-pwa test:unit
-        env:
-          # Turborepo remote caching — silently ignored when secrets are absent
-          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+        run: pnpm test
 
       - name: Build
         run: pnpm build
-        env:
-          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}

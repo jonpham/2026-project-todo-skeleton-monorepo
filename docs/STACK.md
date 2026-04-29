@@ -1,78 +1,38 @@
-# Monorepo Tech Stack & Toolchain
+# Stack — todo-api-nestjs
 
-This file covers tools and conventions that apply across the entire monorepo.
-App-specific stacks live in each app's own `docs/` directory (e.g. `apps/todo-pwa/docs/STACK.md`).
+## Runtime
 
----
+| Layer | Choice | Version | Notes |
+|---|---|---|---|
+| Runtime | Node.js | 22 LTS | Required by NestJS v11 |
+| Language | TypeScript | ^5.4 | Strict mode, ES2022, NodeNext |
+| Framework | NestJS | ^11.0 | Decorator-based MVC framework |
+| HTTP Adapter | Express (via platform-express) | bundled | Default NestJS adapter |
 
-## Prerequisites
+## Toolchain
 
-- **Node.js** v22.x LTS (manage with `nvm`)
-- **pnpm** v10.x
+| Tool | Purpose | Config File |
+|---|---|---|
+| pnpm | Package manager | `package.json` (`packageManager`) |
+| tsc | TypeScript compiler | `tsconfig.json`, `tsconfig.build.json` |
+| Vitest | Unit & integration testing | `vitest.config.ts` |
+| ESLint | Linting (flat config) | `eslint.config.js` |
+| Prettier | Code formatting | `.prettierrc` |
+| Husky | Git hooks | `.husky/pre-commit` |
+| lint-staged | Pre-commit lint + format | `package.json` (`lint-staged`) |
 
----
+## Key Design Decisions
 
-## Monorepo Toolchain
+- **NodeNext module resolution** — required for native ESM compatibility with Node.js 22+; imports use `.js` extensions.
+- **Vitest over Jest** — faster, native TypeScript support, compatible with NestJS testing patterns.
+- **ESLint flat config** — `eslint.config.js` (not `.eslintrc`) to align with ESLint v9+ and the monorepo parent.
+- **No ORM yet** — database integration is deferred to Phase 2 (TypeORM + SQLite).
+- **No auth yet** — JWT/auth middleware is deferred to Phase 3.
 
-| Concern              | Tool                                                         |
-| -------------------- | ------------------------------------------------------------ |
-| Package manager      | pnpm workspaces                                              |
-| Monorepo task runner | Turborepo                                                    |
-| Language             | TypeScript v5.x (strict mode)                                |
-| Linter               | ESLint with `@typescript-eslint` (flat config)               |
-| Formatter            | Prettier                                                     |
-| Git hooks            | Husky + lint-staged (pre-commit: lint + format staged files) |
-| CI/CD                | GitHub Actions                                               |
+## Deferred to Later Phases
 
----
-
-## Root Scripts
-
-| Command                  | Description                                                         |
-| ------------------------ | ------------------------------------------------------------------- |
-| `pnpm install`           | Install all workspace dependencies                                  |
-| `pnpm dev`               | Start all apps in dev mode (Turborepo)                              |
-| `pnpm build`             | Build all apps and packages                                         |
-| `pnpm test`              | Run all tests across the workspace                                  |
-| `pnpm lint`              | Lint all workspaces                                                 |
-| `pnpm format`            | Format all workspaces                                               |
-| `pnpm deploy:local`      | Build and start the production Docker container at `localhost:3000` |
-| `pnpm deploy:local:stop` | Stop the local Docker container                                     |
-
----
-
-## CI/CD Workflows
-
-| Workflow                           | Trigger                            | What it does                                                    |
-| ---------------------------------- | ---------------------------------- | --------------------------------------------------------------- |
-| `.github/workflows/ci.yml`         | Push / PR to any branch            | Lint, test, build                                               |
-| `.github/workflows/cd-preview.yml` | PR opened/updated targeting `main` | Deploy preview to Cloudflare Pages, run E2E against preview URL |
-| `.github/workflows/cd-prod.yml`    | Push to `main`                     | Deploy to production Cloudflare Pages + custom domain           |
-
----
-
-## App-Specific Stacks
-
-Each app defines its own stack in `apps/{app-name}/docs/STACK.md`.
-
-| App               | Framework       | Database        | Testing            | Documentation                        |
-| ----------------- | --------------- | --------------- | ------------------ | ------------------------------------ |
-| `todo-pwa`        | Vite + React 19 | localStorage    | Vitest + Storybook | `apps/todo-pwa/docs/STACK.md`        |
-| `todo-api-nestjs` | NestJS v11      | Prisma + SQLite | Vitest + Supertest | `apps/todo-api-nestjs/docs/STACK.md` |
-
----
-
-## Code Standards
-
-### TypeScript
-
-- Strict mode enabled — no implicit `any`
-- Shared types live in `packages/types/` only — never duplicate across packages
-
-### Adding a New App
-
-1. Create `apps/{app-name}/` with its own `package.json`
-2. Add app-specific stack and conventions to `apps/{app-name}/docs/STACK.md`
-3. Add app-specific deployment instructions to `apps/{app-name}/docs/DEPLOYMENT.md`
-4. Add app infra to `apps/{app-name}/infra/` (standalone Pulumi program)
-5. Register the deploy in `infra/index.ts` (monorepo Automation API orchestrator)
+| Phase | Addition |
+|---|---|
+| Phase 2 | TypeORM + SQLite, Todo entity & CRUD endpoints |
+| Phase 3 | JWT authentication, guards, user entity |
+| Phase 4 | Docker, health checks, production deployment |

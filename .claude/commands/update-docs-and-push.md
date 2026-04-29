@@ -28,18 +28,19 @@ If the working tree is clean, continue to Step 2.
 
 Read each of the following files and determine if they need updating based on what was implemented since the last push. Update only what is outdated or missing — do not rewrite sections that are still accurate.
 
-### `docs/features/[IN-PROGRESS]GH{n}_{slug}.md` (Active Feature Doc)
+### `docs/features/[IN-PROGRESS]P{n}_{slug}.md` (Active Feature Doc)
 - Check off any completed steps in `## Steps` not yet marked
 - Add a summary of changes made in the `## Change Log` table:
-  | {today's date} | PR pending | In Progress → In Progress | {brief summary of what was implemented} |
+  | {today's date} | Branch ready | In Progress → Done | {brief summary of what was implemented} |
 - Record any new non-obvious decisions in `## Assumptions`
 
 ### `docs/CHANGELOG.md`
-Add a new entry under `## Unreleased` for work completed since the last entry:
+Add a new entry under the appropriate date or `## Unreleased` for work completed:
+
 ```markdown
 ## [YYYY-MM-DD]
 
-### Phase N — Feature Name (PR pending)
+### Phase N — Feature Name
 - Brief description of what was implemented
 - Notable decisions or deviations from the original plan
 ```
@@ -48,13 +49,10 @@ Add a new entry under `## Unreleased` for work completed since the last entry:
 Update if: new tools, libraries, or versions were added; dev commands changed; coding conventions were established that aren't documented yet.
 
 ### `docs/ARCHITECTURE.md`
-Update if: new directories or packages were created; the repo structure changed; a new app or shared package was added.
-
-### `docs/DECISIONS.md`
-Add a new ADR entry if: a significant non-obvious architectural choice was made during this work. Skip if no new decisions warranting an ADR.
+Update if: new directories or files were created; the repo structure changed significantly.
 
 ### `CLAUDE.md`
-Update if: the working agreement needs a correction; GitHub Repo or Project Board URLs were established and aren't filled in yet; session context is stale.
+Update if: the working agreement needs a correction; GitHub Repo URLs were established and aren't filled in yet; session context is stale.
 
 ### `README.md`
 Update if: setup instructions changed; new commands were added; the project description no longer reflects reality.
@@ -67,7 +65,7 @@ If any docs were updated:
 
 ```bash
 git add docs/ CLAUDE.md README.md
-git commit -m "docs: update project docs ahead of push for Phase {n} — {feature-slug}"
+git commit -m "docs: update project docs for Phase {n} — {feature-slug}"
 ```
 
 If no docs needed updating, skip this step.
@@ -87,5 +85,5 @@ Output:
 ```
 Pushed: {branch-name}
 Docs updated: {list of files changed, or "None"}
-Next: Open a PR or continue development on the next step
+Next: Continue development or begin next phase
 ```

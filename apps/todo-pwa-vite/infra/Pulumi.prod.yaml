@@ -1,3 +1,0 @@
-config:
-  # Set these via environment or CLI, never commit secrets!
-  # See infra/README.md for setup instructions
