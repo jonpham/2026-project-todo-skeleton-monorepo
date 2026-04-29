@@ -10,7 +10,7 @@ upstream_repos:
   - "jonpham/2026-project-todo-pwa-vite"
   - "jonpham/2026-project-todo-api-nestjs"
 upstream_issues: []
-branch: null
+branch: feat/GH42-shared-types-publish
 pr: null
 completed_at: null
 ---
@@ -100,15 +100,15 @@ stays in the API layer.
 
 ## Steps
 
-- [ ] **Step 1** — Finalize `packages/todo-types` as the canonical source package:
+- [x] **Step 1** — Finalize `packages/todo-types` as the canonical source package:
       package metadata, build output, exports, schemas, inferred types, and package-local tests
-- [ ] **Step 2** — Configure `package.json` for GitHub Packages publication, including package
+- [x] **Step 2** — Configure `package.json` for GitHub Packages publication, including package
       name, registry-facing metadata, and versioning expectations for CI-driven patch releases
-- [ ] **Step 3** — Add a GitHub Actions workflow that triggers on pushes to `main` when
+- [x] **Step 3** — Add a GitHub Actions workflow that triggers on pushes to `main` when
       `packages/todo-types/**` changes; build, test, patch-bump, and publish the package
-- [ ] **Step 4** — Keep the committed package manifest at its baseline version and mutate the
+- [x] **Step 4** — Keep the committed package manifest at its baseline version and mutate the
       patch version only inside CI for publication
-- [ ] **Step 5** — Ensure the release flow automatically publishes the commit-scoped reserved
+- [x] **Step 5** — Ensure the release flow automatically publishes the commit-scoped reserved
       patch version for each qualifying push to `main` when `packages/todo-types/**` changes, and
       reruns for the same commit reuse that reserved version and skip publish cleanly if the version
       already exists in GitHub Packages
