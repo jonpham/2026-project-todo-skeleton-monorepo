@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1.7
+
 # Stage 1: Builder
 FROM node:22-alpine AS builder
 
@@ -7,7 +9,11 @@ RUN npm install -g pnpm@10.33.0
 
 COPY package.json pnpm-lock.yaml ./
 
-RUN pnpm install --frozen-lockfile
+RUN --mount=type=secret,id=github_token \
+  GITHUB_TOKEN="$(cat /run/secrets/github_token)" \
+  && printf '@jonpham:registry=https://npm.pkg.github.com\n//npm.pkg.github.com/:_authToken=%s\n' "$GITHUB_TOKEN" > .npmrc \
+  && pnpm install --frozen-lockfile \
+  && rm .npmrc
 
 COPY . .
 

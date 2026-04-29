@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@jonpham/2026-project-todo-types':
+        specifier: 0.1.1
+        version: 0.1.1
       react:
         specifier: ^19.1.0
         version: 19.2.5
@@ -1081,6 +1084,10 @@ packages:
   '@isaacs/cliui@9.0.0':
     resolution: {integrity: sha512-AokJm4tuBHillT+FpMtxQ60n8ObyXBatq7jD2/JA9dxbDDokKQm8KMht5ibGzLVU9IJDIKK4TPKgMHEYMn3lMg==}
     engines: {node: '>=18'}
+
+  '@jonpham/2026-project-todo-types@0.1.1':
+    resolution: {integrity: sha512-e4kAgklU6NwD6ktetbyJPuWKjAHShLx78NHuEm4TF/wWWRvnxkVOaNq2kJcVW8V3Z1sgw8Oww1+HLkj7JzcHyw==, tarball: https://npm.pkg.github.com/download/@jonpham/2026-project-todo-types/0.1.1/51f94379a06b7c4e8cc363b327e9070fcda8eae1}
+    engines: {node: '>=22', pnpm: '>=10'}
 
   '@joshwooding/vite-plugin-react-docgen-typescript@0.7.0':
     resolution: {integrity: sha512-qvsTEwEFefhdirGOPnu9Wp6ChfIwy2dBCRuETU3uE+4cC+PFoxMSiiEhxk4lOluA34eARHA0OxqsEUYDqRMgeQ==}
@@ -4550,6 +4557,10 @@ snapshots:
   '@humanwhocodes/retry@0.4.3': {}
 
   '@isaacs/cliui@9.0.0': {}
+
+  '@jonpham/2026-project-todo-types@0.1.1':
+    dependencies:
+      zod: 4.3.6
 
   '@joshwooding/vite-plugin-react-docgen-typescript@0.7.0(typescript@5.9.3)(vite@6.4.2(@types/node@22.19.17)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.2)(yaml@2.8.3))':
     dependencies:
