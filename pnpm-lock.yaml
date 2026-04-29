@@ -32,6 +32,9 @@ importers:
 
   apps/todo-api-nestjs:
     dependencies:
+      '@jonpham/2026-project-todo-types':
+        specifier: 0.1.1
+        version: 0.1.1
       '@nestjs/common':
         specifier: ^11.0.0
         version: 11.1.19(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -114,6 +117,9 @@ importers:
 
   apps/todo-pwa-vite:
     dependencies:
+      '@jonpham/2026-project-todo-types':
+        specifier: 0.1.1
+        version: 0.1.1
       react:
         specifier: ^19.1.0
         version: 19.2.5
@@ -1246,6 +1252,10 @@ packages:
   '@istanbuljs/schema@0.1.6':
     resolution: {integrity: sha512-+Sg6GCR/wy1oSmQDFq4LQDAhm3ETKnorxN+y5nbLULOR3P0c14f2Wurzj3/xqPXtasLFfHd5iRFQ7AJt4KH2cw==}
     engines: {node: '>=8'}
+
+  '@jonpham/2026-project-todo-types@0.1.1':
+    resolution: {integrity: sha512-e4kAgklU6NwD6ktetbyJPuWKjAHShLx78NHuEm4TF/wWWRvnxkVOaNq2kJcVW8V3Z1sgw8Oww1+HLkj7JzcHyw==, tarball: https://npm.pkg.github.com/download/@jonpham/2026-project-todo-types/0.1.1/51f94379a06b7c4e8cc363b327e9070fcda8eae1}
+    engines: {node: '>=22', pnpm: '>=10'}
 
   '@joshwooding/vite-plugin-react-docgen-typescript@0.7.0':
     resolution: {integrity: sha512-qvsTEwEFefhdirGOPnu9Wp6ChfIwy2dBCRuETU3uE+4cC+PFoxMSiiEhxk4lOluA34eARHA0OxqsEUYDqRMgeQ==}
@@ -5840,6 +5850,10 @@ snapshots:
   '@isaacs/cliui@9.0.0': {}
 
   '@istanbuljs/schema@0.1.6': {}
+
+  '@jonpham/2026-project-todo-types@0.1.1':
+    dependencies:
+      zod: 4.3.6
 
   '@joshwooding/vite-plugin-react-docgen-typescript@0.7.0(typescript@5.9.3)(vite@6.4.2(@types/node@22.19.17)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.2)(tsx@4.21.0)(yaml@2.8.3))':
     dependencies:

@@ -16,7 +16,10 @@ jobs:
     permissions:
       contents: read
       deployments: write
+      packages: read
       pull-requests: write
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     outputs:
       preview-url: ${{ steps.deploy.outputs.url }}
     steps:
@@ -49,6 +52,11 @@ jobs:
     name: E2E (preview)
     needs: deploy-preview
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
 

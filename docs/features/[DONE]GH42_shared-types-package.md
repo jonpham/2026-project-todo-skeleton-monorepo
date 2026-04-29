@@ -2,7 +2,7 @@
 project: "2026-project-todo-skeleton-monorepo"
 phase: 9
 slug: "shared-types-package"
-status: TODO
+status: DONE
 step_gating: false
 epic_issue: null
 parent_issue: null
@@ -10,9 +10,9 @@ upstream_repos:
   - "jonpham/2026-project-todo-pwa-vite"
   - "jonpham/2026-project-todo-api-nestjs"
 upstream_issues: []
-branch: feat/GH42-shared-types-publish
+branch: feat/GH42-upstream-consumers
 pr: null
-completed_at: null
+completed_at: 2026-04-29
 ---
 
 # Phase 9 — Shared Types Package `@jonpham/2026-project-todo-types` (W2)
@@ -76,28 +76,28 @@ stays in the API layer.
 
 ## Acceptance Criteria
 
-- [ ] `packages/todo-types/` exists with `package.json` name `@jonpham/2026-project-todo-types`
-- [ ] Zod schemas exported: `TodoItemSchema`, `CreateTodoDtoSchema`, `UpdateTodoDtoSchema`
-- [ ] TypeScript types exported: `TodoItem`, `CreateTodoDto`, `UpdateTodoDto` (all via `z.infer<>`)
-- [ ] `pnpm --filter @jonpham/2026-project-todo-types test` passes: valid payloads pass, invalid payloads (missing description, wrong types) fail with correct Zod errors
-- [ ] `packages/todo-types/package.json` is configured for GitHub Packages publication
-- [ ] A GitHub Actions workflow publishes on pushes to `main` when package source or publish
+- [x] `packages/todo-types/` exists with `package.json` name `@jonpham/2026-project-todo-types`
+- [x] Zod schemas exported: `TodoItemSchema`, `CreateTodoDtoSchema`, `UpdateTodoDtoSchema`
+- [x] TypeScript types exported: `TodoItem`, `CreateTodoDto`, `UpdateTodoDto` (all via `z.infer<>`)
+- [x] `pnpm --filter @jonpham/2026-project-todo-types test` passes: valid payloads pass, invalid payloads (missing description, wrong types) fail with correct Zod errors
+- [x] `packages/todo-types/package.json` is configured for GitHub Packages publication
+- [x] A GitHub Actions workflow publishes on pushes to `main` when package source or publish
       infrastructure changes
-- [ ] The committed `packages/todo-types/package.json` version remains at the baseline value;
+- [x] The committed `packages/todo-types/package.json` version remains at the baseline value;
       patch version mutation happens only inside CI for publication
-- [ ] The publish job authenticates with the repository `GITHUB_TOKEN` using `contents: write`
+- [x] The publish job authenticates with the repository `GITHUB_TOKEN` using `contents: write`
       and `packages: write`, and emits a consumable package version for downstream repos
-- [ ] Reruns for the same qualifying commit reuse the commit-reserved version and skip publish
+- [x] Reruns for the same qualifying commit reuse the commit-reserved version and skip publish
       cleanly when that version already exists in GitHub Packages
-- [ ] `2026-project-todo-pwa-vite` installs a pinned explicit published version of
+- [x] `2026-project-todo-pwa-vite` installs a pinned explicit published version of
       `@jonpham/2026-project-todo-types` from GitHub Packages, not a floating range or tag, with scoped registry
       config and auth in place, and its build passes against that artifact
-- [ ] `2026-project-todo-api-nestjs` installs a pinned explicit published version of
+- [x] `2026-project-todo-api-nestjs` installs a pinned explicit published version of
       `@jonpham/2026-project-todo-types` from GitHub Packages, not a floating range or tag, with scoped registry
       config and auth in place, and its build passes against that artifact
-- [ ] Subtree sync brings the upstream consumer integration back into the monorepo in the
+- [x] Subtree sync brings the upstream consumer integration back into the monorepo in the
       approved W2 flow
-- [ ] The feature remains documented as a cross-repo W2 slice so Tasks 4-7 can implement
+- [x] The feature remains documented as a cross-repo W2 slice so Tasks 4-7 can implement
       release automation and upstream adoption without reopening scope questions
 
 ## Steps
@@ -116,20 +116,20 @@ stays in the API layer.
       infrastructure changes, and
       reruns for the same commit reuse that reserved version and skip publish cleanly if the version
       already exists in GitHub Packages
-- [ ] **Step 6** — Update `2026-project-todo-pwa-vite` to configure scoped GitHub Packages
+- [x] **Step 6** — Update `2026-project-todo-pwa-vite` to configure scoped GitHub Packages
       registry/auth, install a pinned explicit published version of `@jonpham/2026-project-todo-types`, and
       switch imports to the published package contract
-- [ ] **Step 7** — Update `2026-project-todo-api-nestjs` to configure scoped GitHub Packages
+- [x] **Step 7** — Update `2026-project-todo-api-nestjs` to configure scoped GitHub Packages
       registry/auth, install a pinned explicit published version of `@jonpham/2026-project-todo-types`, and
       switch imports to the published package contract
-- [ ] **Step 8** — Subtree sync the upstream consumer changes back into the monorepo as the
+- [x] **Step 8** — Subtree sync the upstream consumer changes back into the monorepo as the
       approved W2 follow-through
-- [ ] **Step 9** — Verify the publish workflow is scoped only to pushes to `main` when package
+- [x] **Step 9** — Verify the publish workflow is scoped only to pushes to `main` when package
       source or publish infrastructure changes, and verify the standalone repos can authenticate,
       install, and build against the published package
-- [ ] **Step 10** — Monorepo-local consumer wiring or build checks may be used as supporting
+- [x] **Step 10** — Monorepo-local consumer wiring or build checks may be used as supporting
       verification context, but they are not the primary W2 success target
-- [ ] **Step 11** — Update this feature doc to DONE after Tasks 4-7 land
+- [x] **Step 11** — Update this feature doc to DONE after Tasks 4-7 land
 
 ## Technical Notes
 

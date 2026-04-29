@@ -8,6 +8,13 @@
 
 ## Unreleased
 
+### Phase 9 — Shared Types Package and Distribution Workflow (PR pending)
+
+- Published `@jonpham/2026-project-todo-types@0.1.1` to GitHub Packages from monorepo CI
+- Updated the standalone PWA and NestJS upstream repos to consume the pinned published package
+- Synced both upstream consumer integrations back into `apps/todo-pwa-vite` and `apps/todo-api-nestjs`
+- Added monorepo root GitHub Packages registry config so workspace installs resolve private shared packages
+
 ### Phase 3 — To-Do Feature TDD (PR pending)
 
 - Installed `vite-plugin-pwa` v1; added `public/manifest.webmanifest` and placeholder icons; wired `<link rel="manifest">` manually in `index.html` to surface Chrome install prompt

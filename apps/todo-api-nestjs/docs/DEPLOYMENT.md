@@ -5,10 +5,12 @@
 ### Prerequisites
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) or [OrbStack](https://orbstack.dev/) installed and running
+- `GITHUB_TOKEN` with `read:packages` access exported in your shell so Docker can install private GitHub Packages dependencies
 
 ### Start
 
 ```bash
+export GITHUB_TOKEN="$(gh auth token)"
 pnpm deploy:local
 ```
 
@@ -64,10 +66,19 @@ curl http://localhost:3001/v1/todos
 ## Build & Run (Manual, without Docker)
 
 ```bash
+GITHUB_TOKEN="$(gh auth token)" \
 pnpm install --frozen-lockfile
 pnpm prisma:generate
 pnpm build
 node dist/main
+```
+
+For a manual Docker build without Compose, pass the package token as a BuildKit secret:
+
+```bash
+GITHUB_TOKEN="$(gh auth token)" docker build \
+  --secret id=github_token,env=GITHUB_TOKEN \
+  -t todo-api-nestjs .
 ```
 
 ---

@@ -1,6 +1,1 @@
-export type TodoItem = {
-  id: string;
-  description: string;
-  completed: boolean;
-  createdAt: string;
-};
+export type { TodoItem } from "@jonpham/2026-project-todo-types";
