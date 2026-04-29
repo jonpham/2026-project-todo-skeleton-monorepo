@@ -138,7 +138,7 @@ jobs:
 
       - name: Publish package
         if: steps.registry.outputs.already_published != 'true'
-        run: pnpm --dir packages/todo-types publish --no-git-checks
+        run: pnpm --filter @todo-skeleton/types publish --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
