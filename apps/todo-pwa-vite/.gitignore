@@ -2,6 +2,7 @@ node_modules/
 dist/
 .DS_Store
 .turbo/
+.worktrees/
 tsconfig.tsbuildinfo
 
 # Pulumi secrets (always use environment variables instead)
