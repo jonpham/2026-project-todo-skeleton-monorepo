@@ -4,12 +4,8 @@ phase: 7
 slug: "pwa-api-integration-tests"
 status: TODO
 step_gating: false
-issue: 40
 epic_issue: null
-parent_issue: null
-upstream_repos:
   ["jonpham/2026-project-todo-pwa-vite", "jonpham/2026-project-todo-api-nestjs"]
-upstream_issues:
   [
     "jonpham/2026-project-todo-pwa-vite#3",
     "jonpham/2026-project-todo-api-nestjs#2",

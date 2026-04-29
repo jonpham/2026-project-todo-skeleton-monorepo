@@ -1,4 +1,11 @@
 # /project:bootstrap
+
+> [!WARNING]
+> **DEPRECATED.** Do not use this command.
+> Project initialization is handled by gstack (`/plan-eng-review`, `/autoplan`), GSD (`/gsd-new-project`), or superpowers equivalents.
+> GitHub repo and board setup should be done manually or via those tools.
+
+---
 > One-time command. Run once per new repository to initialize Git,
 > create the GitHub repo, and set up the GitHub Project board shell.
 > After this completes, run `/project:plan_project` to sync feature docs into GitHub Issues.

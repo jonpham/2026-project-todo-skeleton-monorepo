@@ -40,3 +40,7 @@ Thumbs.db
 .pnpm-store/
 
 *storybook.log
+.gstack/
+
+# claude 
+.claude/settings.local.json

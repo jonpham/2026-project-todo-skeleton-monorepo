@@ -4,11 +4,7 @@ phase: 8
 slug: "nestjs-monorepo-parity"
 status: TODO
 step_gating: false
-issue: 39
 epic_issue: null
-parent_issue: null
-upstream_repos: ["jonpham/2026-project-todo-api-nestjs"]
-upstream_issues: ["jonpham/2026-project-todo-api-nestjs#1"]
 branch: null
 pr: null
 completed_at: null
