@@ -5,7 +5,10 @@ slug: "nestjs-monorepo-parity"
 status: TODO
 step_gating: false
 epic_issue: null
-branch: null
+parent_issue: null
+upstream_repos: ["jonpham/2026-project-todo-api-nestjs"]
+upstream_issues: ["jonpham/2026-project-todo-api-nestjs#3"]
+branch: feat/w1-nestjs-monorepo-parity
 pr: null
 completed_at: null
 ---
@@ -72,11 +75,11 @@ infrastructure that wires the full stack together via Docker Compose.
 
 ## Steps
 
-- [ ] **Step 1 (UPSTREAM)** — PR to `jonpham/2026-project-todo-api-nestjs`: add `GET /health` via `@nestjs/terminus`; add `findOrFail` private helper to `todos.service.ts`; add `id?: string` to `CreateTodoDto` with `@IsOptional() @IsUUID()`
+- [x] **Step 1 (UPSTREAM)** — PR to `jonpham/2026-project-todo-api-nestjs`: add `GET /health` via `@nestjs/terminus`; add `findOrFail` private helper to `todos.service.ts`; add `id?: string` to `CreateTodoDto` with `@IsOptional() @IsUUID()`
 - [ ] **Step 2** — After upstream PR is merged: `git subtree pull --prefix=apps/todo-api-nestjs git@github.com:jonpham/2026-project-todo-api-nestjs.git main --squash` to sync changes into monorepo
-- [ ] **Step 3** — Create `docker-compose.yml`: `pwa` service (nginx, builds from `apps/todo-pwa-vite`), `api` service (NestJS, builds from `apps/todo-api-nestjs`), named volume `todo-db-data` mounted at `/data` in the API container
-- [ ] **Step 4** — Create `infra/nginx/nginx.conf`: proxy `location /api/` → `http://api:3001/`; serve `location /` from `/usr/share/nginx/html` (PWA build output)
-- [ ] **Step 5** — Create `subtree-sync.sh`: documents `git subtree pull` and `git subtree push` commands for each upstream app; mark executable (`chmod +x`)
+- [x] **Step 3** — Create `docker-compose.yml`: `pwa` service (nginx, builds from `apps/todo-pwa-vite`), `api` service (NestJS, builds from `apps/todo-api-nestjs`), named volume `todo-db-data` mounted at `/data` in the API container
+- [x] **Step 4** — Create `infra/nginx/nginx.conf`: proxy `location /api/` → `http://api:3001/`; serve `location /` from `/usr/share/nginx/html` (PWA build output)
+- [x] **Step 5** — Create `subtree-sync.sh`: documents `git subtree pull` and `git subtree push` commands for each upstream app; mark executable (`chmod +x`)
 - [ ] **Step 6** — Verify full stack: `docker compose up --build`, create a todo via PWA at `http://localhost`, verify it persists in SQLite after `docker compose restart api`
 - [ ] **Step 7** — Update this feature doc to DONE
 
