@@ -40,6 +40,10 @@ Output the following before stopping:
 - Header describes the feature work only — never mention doc/status updates in the header
 - Doc and status updates (`PROJECT_STATUS.md`, feature doc checkmarks) go in body bullets only
 
+### Subtree discipline
+
+- Any git subtrees in /apps/_ or /packages/_ should NEVER! have their files modified, all changes needed in those directories must come from their upstream via a `git subtree pull`.
+
 ### File & Status Discipline
 
 - After completing a step, update the corresponding checklist item in the feature doc
@@ -67,12 +71,12 @@ Output the following before stopping:
 
 Docs live in `docs/`:
 
-| Path | Purpose |
-|---|---|
-| `docs/features/` | Phase task tracking — frontmatter + step checklists are the source of truth |
-| `docs/initiatives/{name}/` | gstack / GSD / superpowers planning outputs — commit here after skill runs |
-| `docs/ideas/` | Lightweight ADRs and idea capture |
-| `docs/STACK.md`, `ARCHITECTURE.md`, `CHANGELOG.md` | Reference docs |
+| Path                                               | Purpose                                                                     |
+| -------------------------------------------------- | --------------------------------------------------------------------------- |
+| `docs/features/`                                   | Phase task tracking — frontmatter + step checklists are the source of truth |
+| `docs/initiatives/{name}/`                         | gstack / GSD / superpowers planning outputs — commit here after skill runs  |
+| `docs/ideas/`                                      | Lightweight ADRs and idea capture                                           |
+| `docs/STACK.md`, `ARCHITECTURE.md`, `CHANGELOG.md` | Reference docs                                                              |
 
 **No GitHub Issue sync.** Feature docs are the task manager. GitHub Issues are optional for external collaboration only.
 
@@ -107,7 +111,6 @@ Run `/project:develop` to start or resume a phase. It manages branching, step ex
 - `ISSUE_REF`: `P{n}` local plan, `GH{n}` once a GitHub Issue exists
 
 ---
-
 
 ## gstack
 
