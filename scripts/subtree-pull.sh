@@ -34,8 +34,34 @@ git subtree pull \
   "${PACKAGE}" \
   "${BRANCH}" \
   --squash \
+  -X theirs \
   -m "chore: sync apps/${PACKAGE} from ${PACKAGE}@${BRANCH}"
 
+# Verify the subtree matches upstream — catch silent conflict-resolution drops
+echo ""
+echo "Verifying subtree matches upstream..."
+UPSTREAM_REF="${PACKAGE}/${BRANCH}"
+MISMATCH=0
+while IFS= read -r -d '' file; do
+  rel="${file#apps/${PACKAGE}/}"
+  upstream_hash=$(git ls-tree -l "${UPSTREAM_REF}" -- "${rel}" 2>/dev/null | awk '{print $3}')
+  local_hash=$(git ls-tree -l HEAD -- "apps/${PACKAGE}/${rel}" 2>/dev/null | awk '{print $3}')
+  if [ -n "$upstream_hash" ] && [ "$upstream_hash" != "$local_hash" ]; then
+    echo "  MISMATCH: apps/${PACKAGE}/${rel}"
+    MISMATCH=1
+  fi
+done < <(git ls-tree -r --name-only -z "${UPSTREAM_REF}" 2>/dev/null | tr '\n' '\0')
+
+if [ "$MISMATCH" -eq 1 ]; then
+  echo ""
+  echo "ERROR: Subtree diverges from upstream after pull."
+  echo "Files above were likely dropped during merge conflict resolution."
+  echo "Fix: git read-tree --prefix=apps/${PACKAGE} -u ${UPSTREAM_REF}"
+  echo "     git add apps/${PACKAGE}/ && git commit -m 'fix: restore diverged files after subtree sync'"
+  exit 1
+fi
+
+echo "Verified: apps/${PACKAGE} matches ${UPSTREAM_REF} exactly."
 echo ""
 echo "Sync complete: apps/$PACKAGE updated from $PACKAGE@$BRANCH"
 echo "Next: pnpm install --no-frozen-lockfile && git add pnpm-lock.yaml && git commit -m 'chore: update lockfile after $PACKAGE sync'"

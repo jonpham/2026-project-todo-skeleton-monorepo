@@ -4,8 +4,6 @@ on:
   push:
     branches-ignore:
       - 'chore/sync-*'
-  pull_request:
-    branches: [main]
 
 # Cancel superseded runs on the same branch to avoid wasted minutes
 concurrency:
