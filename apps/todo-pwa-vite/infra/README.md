@@ -50,7 +50,6 @@ pulumi stack output
 ## Outputs
 
 After successful deployment:
-
 - `projectName`: Cloudflare Pages project name (`todo-pwa-vite`)
 - `pagesUrl`: Preview/staging URL (e.g., `https://abc123.pages.dev`)
 
@@ -66,7 +65,6 @@ After successful deployment:
 ## CI/CD Integration
 
 GitHub Actions workflows automatically deploy via Pulumi:
-
 - Secrets stored in GitHub repo settings
 - `.github/workflows/cd-preview.yml` uses these secrets
 - No need to run Pulumi manually in CI/CD
@@ -74,18 +72,15 @@ GitHub Actions workflows automatically deploy via Pulumi:
 ## Troubleshooting
 
 **"Project not found"**: Pulumi stack hasn't been deployed yet
-
 ```bash
 pulumi up  # Create the project first
 ```
 
 **"Invalid API token"**: Check environment variable is set
-
 ```bash
 echo $CLOUDFLARE_API_TOKEN
 ```
 
 **"Access denied"**: Token missing required Cloudflare scopes
-
 - Go to https://dash.cloudflare.com/profile/api-tokens
 - Ensure token has "Pages" and "Account" scopes
