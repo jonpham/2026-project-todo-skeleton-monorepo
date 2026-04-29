@@ -4,7 +4,9 @@
 
 ```
 [repo-name]/
-├── CLAUDE.md                        # This file
+├── AGENTS.md                        # Codex entrypoint; points to AI_WORK.md
+├── CLAUDE.md                        # Claude entrypoint; points to AI_WORK.md
+├── AI_WORK.md                       # Shared AI workflow guidance
 ├── docs/
 │   ├── features/                    # Source of truth for all phases & steps
 │   │   ├── _TEMPLATE.md             # Feature doc template
@@ -83,13 +85,6 @@
 ├── .github/
 │   ├── workflows/                   # GitHub Actions CI/CD
 │   └── PULL_REQUEST_TEMPLATE.md     # PR checklist
-├── .claude/
-│   └── commands/                    # Custom Claude Code slash commands
-│       ├── bootstrap.md                  # /project:bootstrap
-│       ├── plan_project.md               # /project:plan_project
-│       ├── develop.md                    # /project:develop
-│       ├── update-status-and-commit.md   # /project:update-status-and-commit
-│       └── update-docs-and-push.md       # /project:update-docs-and-push
 ├── package.json                     # Root pnpm workspace config
 ├── pnpm-workspace.yaml
 ├── turbo.json

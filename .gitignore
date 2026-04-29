@@ -11,6 +11,9 @@ apps/*/infra/bin/
 # Turborepo
 .turbo/
 
+# Git worktrees
+.worktrees/
+
 # Environment variables
 .env
 .env.local

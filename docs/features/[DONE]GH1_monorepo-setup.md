@@ -25,8 +25,8 @@ shared TypeScript config, and the Git/GitHub connection.
 config, .gitignore, README, CLAUDE.md, GitHub remote connection, initial push.
 
 **Excluded:** Any application code, package installations beyond root toolchain,
-ESLint/Prettier/Husky (Phase 2), GitHub Issues or Project board (handled by
-/project:bootstrap and /project:plan_project).
+ESLint/Prettier/Husky (Phase 2), and manual GitHub issue/task-management setup
+when external tracking is needed.
 
 ## Dependencies
 

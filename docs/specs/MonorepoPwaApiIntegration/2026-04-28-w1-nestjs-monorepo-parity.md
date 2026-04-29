@@ -6,6 +6,26 @@
 
 **Architecture:** Two separate bodies of work: (1) upstream changes to `jonpham/2026-project-todo-api-nestjs` (health, findOrFail, CreateTodoDto id?) must be PRed and merged before the monorepo subtree pull in Task 10; (2) monorepo changes (sync workflow, nginx, docker-compose) can be built in parallel and merged independently. Tasks 1–4 run in the upstream repo at `/Users/jp/code/_boilerplate/2026-project-todo/2026-project-todo-api-nestjs/`. Tasks 5–9 run in the monorepo worktree at `/Users/jp/code/_boilerplate/2026-project-todo/worktree-w1-nestjs-parity/`. Task 10 depends on the upstream PR being merged.
 
+**Status update (2026-04-29):** W1 is mostly implemented. Upstream API changes are merged and visible in the monorepo subtree (`/health`, `findOrFail`, and `CreateTodoDto.id?`). Monorepo Docker Compose parity is present (`pwa`/`api` services, nginx `/api/` proxy, SQLite named volume, `/health` healthcheck). The original automated CI/CD subtree sync workflow is deprecated; subtree syncs should be initiated manually with `scripts/subtree-pull.sh`, reviewed in a normal PR, and verified by CI before merge.
+
+**Remaining W1 work:**
+- [ ] Run and record full-stack Docker Compose verification from Task 11 (`docker compose up --build --wait`, `/api/health`, PWA HTML, CRUD through nginx, client UUID create, SQLite persistence after API restart).
+- [ ] Update/close the W1 feature tracking doc after verification (`docs/features/[TODO]GH39_nestjs-monorepo-parity.md`).
+- [ ] Optional cleanup: reconcile this implementation plan's old worktree path and original root-level `subtree-sync.sh` naming with the implemented `scripts/subtree-pull.sh` helper.
+
+**Completed W1 work:**
+- [x] Upstream API parity: `/health`, `findOrFail`, and optional client UUID support.
+- [x] API subtree sync back into the monorepo.
+- [x] Monorepo nginx proxy config.
+- [x] Monorepo Docker Compose parity with named SQLite volume and health checks.
+- [x] Manual subtree pull helper at `scripts/subtree-pull.sh`.
+
+**CI/CD subtree sync decision (2026-04-29):**
+- Automated `repository_dispatch` subtree sync workflows are deprecated for this project phase.
+- Do not add `.github/workflows/sync-nestjs-subtree.yml` or mirror the old PWA sync workflow pattern.
+- Rationale: upstream subtrees are source-controlled repos with their own PR checks; importing them automatically creates noisy PRs, hidden lockfile churn, and CI failures when package-auth or subtree conflicts require human context.
+- Current workflow: merge upstream first, run `./scripts/subtree-pull.sh <package> main` locally, run `pnpm install --no-frozen-lockfile` when the lockfile changes, verify the monorepo, then open a reviewed monorepo PR.
+
 **Tech Stack:** NestJS v11, @nestjs/terminus, Prisma, Docker Compose v2, nginx:alpine, pnpm, Vitest, GitHub Actions
 
 ---
@@ -26,10 +46,10 @@
 
 | Action | Path |
 |--------|------|
-| Create | `.github/workflows/sync-nestjs-subtree.yml` |
+| Deprecated | `.github/workflows/sync-nestjs-subtree.yml` |
 | Create | `infra/nginx/nginx.conf` |
 | Modify | `docker-compose.yml` |
-| Create | `subtree-sync.sh` |
+| Implemented | `scripts/subtree-pull.sh` |
 
 ---
 
@@ -358,10 +378,27 @@ Once merged, proceed to Task 10 (subtree pull). Tasks 5–9 can run in parallel 
 
 ---
 
-### Task 5: Add NestJS subtree sync workflow
+### Task 5: ~~Add NestJS subtree sync workflow~~ Deprecated
 
 **Files:**
-- Create: `.github/workflows/sync-nestjs-subtree.yml`
+- Do not create: `.github/workflows/sync-nestjs-subtree.yml`
+
+**Decision (2026-04-29):** Automated CI/CD subtree sync is deprecated. Keep subtree updates manual, explicit, and PR-reviewed using `scripts/subtree-pull.sh`.
+
+**Superseding workflow:**
+
+```bash
+git remote add todo-api-nestjs https://github.com/jonpham/2026-project-todo-api-nestjs.git || true
+./scripts/subtree-pull.sh todo-api-nestjs main
+pnpm install --no-frozen-lockfile
+git status --short
+```
+
+Expected: subtree changes and any lockfile changes are reviewed together in a monorepo PR.
+
+**Reason:** W1 and W2 both showed that subtree imports can require human review for conflicts, lockfile updates, package-auth changes, and CI/CD adjustments. A manual PR keeps the upstream-to-monorepo boundary explicit and prevents automated sync jobs from creating branches that still need operator context.
+
+The original automated workflow plan below is retained for historical context only and should not be executed.
 
 - [ ] **Step 1: Create the sync workflow (mirrors sync-pwa-subtree.yml)**
 

@@ -1,6 +1,6 @@
 # Changelog
 
-> Updated by `/project:update-docs-and-push` after each merge to `main`.
+> Updated after each merge to `main`.
 > Entries are in reverse chronological order.
 > Format: `[YYYY-MM-DD] — Phase N (GH{n}) — {Feature Name} — #{PR number}`
 

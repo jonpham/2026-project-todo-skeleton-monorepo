@@ -58,31 +58,35 @@ Use a single monorepo orchestrated by pnpm workspaces and Turborepo.
 
 ---
 
-## ADR-002: Claude Code Slash Commands for Workflow Orchestration
+## ADR-002: Repository Plan Documents as Workflow Source of Truth
 
 **Date:** 2026-04-20
-**Status:** Accepted
+**Status:** Superseded 2026-04-29
 **Phase:** Planning
 
 ### Context
 
-The development workflow requires consistent phase-gating, feature doc maintenance, GitHub Issue/Project board sync, and working agreement enforcement across sessions. Relying on manual discipline alone is error-prone.
+The development workflow requires consistent phase-gating, feature doc maintenance, task tracking, and working agreement enforcement across sessions. Earlier workflow drafts delegated this to command files and automated GitHub issue/project syncing.
 
 ### Decision
 
-Encode the full development workflow as Claude Code slash commands in `.claude/commands/`.
+Use repository plan documents as the workflow source of truth. gstack owns initiative planning in `docs/initiatives/{initiative}/`; superpowers owns implementation planning in `docs/specs/{initiative}/`; completed implementation specs move to `docs/features/` after their tasks are completed and merged.
+
+GitHub Issues are written manually from accepted initiatives and specs when issue tracking is useful. Automated GitHub issue sync is deprecated.
 
 ### Rationale
 
-- Slash commands are loaded automatically and surfaced to Claude at session start
 - Workflow logic lives in the repo alongside the code it governs
-- Engineers can read and modify the commands as the workflow evolves
+- Initiative/spec/feature documents are reviewable in PRs
+- `PROJECT_STATUS.md` records the active spec, skill, current task, and next action whenever development starts or resumes
+- Manual GitHub issue writing avoids hidden state drift and noisy API-driven sync
 
 ### Consequences
 
-- Claude Code must be used as the primary development interface
-- Slash command files must be kept up to date as the workflow changes
-- Commands depend on `gh` CLI being authenticated — CI/CD environments may need separate handling
+- Planning agents must write durable outputs to `docs/initiatives/` or `docs/specs/`
+- Completed specs must be moved from `docs/specs/{initiative}/` to `docs/features/` after the merge that completes their planned tasks
+- GitHub/task-management state may temporarily differ from repository docs
+- TODO: Define whether GitHub/project-board state should be reconciled from repository plan documents, and if so, what manual or semi-automated workflow is acceptable
 
 ---
 
