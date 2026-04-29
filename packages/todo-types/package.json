@@ -1,8 +1,13 @@
 {
-  "name": "@todo-skeleton/types",
+  "name": "@jonpham/2026-project-todo-types",
   "version": "0.1.0",
   "type": "module",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jonpham/2026-project-todo-skeleton-monorepo.git",
+    "directory": "packages/todo-types"
+  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {

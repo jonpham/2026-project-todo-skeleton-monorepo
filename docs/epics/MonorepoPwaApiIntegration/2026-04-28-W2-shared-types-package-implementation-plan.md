@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build `@todo-skeleton/types` as a monorepo-owned package, publish it automatically to GitHub Packages from monorepo CI on merges to `main`, and prove both upstream app repos can consume explicit published versions successfully.
+**Goal:** Build `@jonpham/2026-project-todo-types` as a monorepo-owned package, publish it automatically to GitHub Packages from monorepo CI on merges to `main`, and prove both upstream app repos can consume explicit published versions successfully.
 
 **Architecture:** The monorepo is the package producer and release owner. `packages/todo-types` defines the canonical wire-contract schemas and types, GitHub Actions publishes patch bumps to GitHub Packages, and both upstream repos update to consume the published artifact rather than local workspace links. Upstream changes merge first in their own repos, then return to the monorepo via normal subtree sync.
 
@@ -134,7 +134,7 @@ describe("UpdateTodoDtoSchema", () => {
 
 - [ ] **Step 2: Run the package test to verify it fails**
 
-Run: `pnpm --dir /Users/jp/code/_boilerplate/2026-project-todo/2026-project-todo-skeleton-monorepo --filter @todo-skeleton/types test`
+Run: `pnpm --dir /Users/jp/code/_boilerplate/2026-project-todo/2026-project-todo-skeleton-monorepo --filter @jonpham/2026-project-todo-types test`
 
 Expected: FAIL with package not found or missing source files.
 
@@ -142,7 +142,7 @@ Expected: FAIL with package not found or missing source files.
 
 ```json
 {
-  "name": "@todo-skeleton/types",
+  "name": "@jonpham/2026-project-todo-types",
   "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -183,7 +183,7 @@ Expected: FAIL with package not found or missing source files.
 ```
 
 ```ini
-@todo-skeleton:registry=https://npm.pkg.github.com
+@jonpham:registry=https://npm.pkg.github.com
 ```
 
 - [ ] **Step 4: Implement the minimal schema source**
@@ -244,13 +244,13 @@ Run: `pnpm install`
 
 Expected: lockfile updates and workspace package becomes resolvable.
 
-Run: `pnpm --filter @todo-skeleton/types test`
+Run: `pnpm --filter @jonpham/2026-project-todo-types test`
 
 Expected: PASS for all schema tests.
 
 - [ ] **Step 7: Build the package**
 
-Run: `pnpm --filter @todo-skeleton/types build`
+Run: `pnpm --filter @jonpham/2026-project-todo-types build`
 
 Expected: PASS and `packages/todo-types/dist/index.js` plus `index.d.ts` exist.
 
@@ -304,6 +304,8 @@ on:
       - "packages/todo-types/**"
       - ".github/workflows/publish-todo-types.yml"
       - "scripts/release/bump-todo-types-version.mjs"
+      - ".github/workflows/publish-todo-types.yml"
+      - "scripts/release/bump-todo-types-version.mjs"
 
 jobs:
   publish:
@@ -324,14 +326,14 @@ jobs:
         with:
           node-version: 22
           registry-url: https://npm.pkg.github.com
-          scope: "@todo-skeleton"
+          scope: "@jonpham"
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @todo-skeleton/types test
-      - run: pnpm --filter @todo-skeleton/types build
+      - run: pnpm --filter @jonpham/2026-project-todo-types test
+      - run: pnpm --filter @jonpham/2026-project-todo-types build
       - run: node scripts/release/bump-todo-types-version.mjs
-      - run: pnpm --filter @todo-skeleton/types publish --no-git-checks
+      - run: pnpm --filter @jonpham/2026-project-todo-types publish --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -339,11 +341,11 @@ jobs:
 - [ ] **Step 4: Add package workflow documentation**
 
 ```md
-# `@todo-skeleton/types`
+# `@jonpham/2026-project-todo-types`
 
 ## Publish behavior
 
-- Trigger: push to `main` when `packages/todo-types/**` changes
+- Trigger: push to `main` when `packages/todo-types/**`, the publish workflow, or the release helper changes
 - Versioning: automatic patch bump
 - Registry: GitHub Packages
 
@@ -351,7 +353,7 @@ jobs:
 
 Add to `.npmrc`:
 
-@todo-skeleton:registry=https://npm.pkg.github.com
+@jonpham:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:\_authToken=${GITHUB_TOKEN}
 ```
 
@@ -403,7 +405,7 @@ git commit -m "feat: publish todo types to github packages"
 Use these exact adjustments:
 
 ```md
-- GitHub Packages publication for `@todo-skeleton/types`
+- GitHub Packages publication for `@jonpham/2026-project-todo-types`
 - CI publication on merges to `main`
 - Automatic patch bump release behavior
 - Upstream PWA repo consumes the published package
@@ -439,7 +441,7 @@ git commit -m "docs: align GH42 with published package workflow"
 - [ ] **Step 1: Add registry config in the upstream PWA repo**
 
 ```ini
-@todo-skeleton:registry=https://npm.pkg.github.com
+@jonpham:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
 ```
 
@@ -448,7 +450,7 @@ git commit -m "docs: align GH42 with published package workflow"
 ```json
 {
   "dependencies": {
-    "@todo-skeleton/types": "0.1.1"
+    "@jonpham/2026-project-todo-types": "0.1.1"
   }
 }
 ```
@@ -458,7 +460,7 @@ Use the actual version published by Task 2 instead of hard-coding `0.1.1`.
 - [ ] **Step 3: Replace local wire type declarations with imports**
 
 ```ts
-import type { TodoItem } from "@todo-skeleton/types";
+import type { TodoItem } from "@jonpham/2026-project-todo-types";
 
 export type TodoAction =
   | { type: "LOAD_TODOS"; payload: TodoItem[] }
@@ -476,7 +478,7 @@ Use a pattern equivalent to:
 
 ```dockerfile
 ARG GITHUB_TOKEN
-RUN printf "@todo-skeleton:registry=https://npm.pkg.github.com\n//npm.pkg.github.com/:_authToken=%s\n" "$GITHUB_TOKEN" > .npmrc
+RUN printf "@jonpham:registry=https://npm.pkg.github.com\n//npm.pkg.github.com/:_authToken=%s\n" "$GITHUB_TOKEN" > .npmrc
 RUN pnpm install --frozen-lockfile
 RUN rm .npmrc
 ```
@@ -487,7 +489,7 @@ If the current Docker build never installs private packages in CI or local image
 
 Run: `pnpm install`
 
-Expected: PASS and `@todo-skeleton/types` resolves from GitHub Packages.
+Expected: PASS and `@jonpham/2026-project-todo-types` resolves from GitHub Packages.
 
 Run: `pnpm build`
 
@@ -517,7 +519,7 @@ git commit -m "feat: consume shared todo types package"
 - [ ] **Step 1: Add registry config in the upstream API repo**
 
 ```ini
-@todo-skeleton:registry=https://npm.pkg.github.com
+@jonpham:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
 ```
 
@@ -526,7 +528,7 @@ git commit -m "feat: consume shared todo types package"
 ```json
 {
   "dependencies": {
-    "@todo-skeleton/types": "0.1.1"
+    "@jonpham/2026-project-todo-types": "0.1.1"
   }
 }
 ```
@@ -536,7 +538,7 @@ Use the actual version published by Task 2.
 - [ ] **Step 3: Update the API entity/response boundary to import shared types**
 
 ```ts
-import type { TodoItem } from "@todo-skeleton/types";
+import type { TodoItem } from "@jonpham/2026-project-todo-types";
 
 export class TodoEntity implements TodoItem {
   id!: string;
@@ -555,7 +557,7 @@ import type {
   CreateTodoDto,
   TodoItem,
   UpdateTodoDto,
-} from "@todo-skeleton/types";
+} from "@jonpham/2026-project-todo-types";
 ```
 
 Use the shared types for response typing and DTO type references where it does not conflict with NestJS decorator-based classes.
@@ -568,7 +570,7 @@ Use the same temporary `.npmrc` pattern as Task 4 if the build installs private 
 
 Run: `pnpm install`
 
-Expected: PASS and `@todo-skeleton/types` resolves from GitHub Packages.
+Expected: PASS and `@jonpham/2026-project-todo-types` resolves from GitHub Packages.
 
 Run: `pnpm build`
 
@@ -657,19 +659,19 @@ git -C /Users/jp/code/_boilerplate/2026-project-todo/2026-project-todo-skeleton-
 
 - [ ] **Step 1: Verify monorepo package tests**
 
-Run: `pnpm --filter @todo-skeleton/types test`
+Run: `pnpm --filter @jonpham/2026-project-todo-types test`
 
 Expected: PASS.
 
 - [ ] **Step 2: Verify monorepo package build**
 
-Run: `pnpm --filter @todo-skeleton/types build`
+Run: `pnpm --filter @jonpham/2026-project-todo-types build`
 
 Expected: PASS.
 
 - [ ] **Step 3: Verify published package is visible**
 
-Run: `npm view @todo-skeleton/types --registry=https://npm.pkg.github.com`
+Run: `npm view @jonpham/2026-project-todo-types --registry=https://npm.pkg.github.com`
 
 Expected: PASS and shows the latest published version. If auth is required locally, set `NODE_AUTH_TOKEN` first.
 
@@ -725,5 +727,5 @@ git commit -m "docs: close W2 shared types workstream"
 ### Type consistency
 
 - Package exports are consistently named `TodoItem`, `CreateTodoDto`, and `UpdateTodoDto`
-- The package path is consistently `@todo-skeleton/types`
-- The release trigger is consistently “push to monorepo `main` when `packages/todo-types/**` changes”
+- The package path is consistently `@jonpham/2026-project-todo-types`
+- The release trigger is consistently “push to monorepo `main` when package source or publish infrastructure changes”

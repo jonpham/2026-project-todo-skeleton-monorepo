@@ -278,7 +278,7 @@ These can proceed concurrently once the shared types package (Workstream 2) exis
       integration or `railway up`, not Pulumi-managed)
 - [ ] `docker-compose.yml` (default): uses upstream Dockerfiles with standalone build
       context + published npm packages. This is the primary integration path — it tests
-      the same build as Railway/Cloudflare Pages. Requires `@todo-skeleton/types` to be
+      the same build as Railway/Cloudflare Pages. Requires `@jonpham/2026-project-todo-types` to be
       published before `docker compose up` works.
 - [ ] `docker-compose.local.yml` (opt-in override): changes build context to monorepo
       root and uses `Dockerfile.local` for each app. Invoked with:
@@ -309,7 +309,7 @@ These can proceed concurrently once the shared types package (Workstream 2) exis
 
 **Workstream 2: Shared Types Package**
 
-Pre-requisite: Verify npm scope availability for `@todo-skeleton` before starting.
+Pre-requisite: Verify npm scope availability for `@jonpham` before starting.
 Fallback scopes if taken: `@todo-mono`, `@jp-todo`. This is a hard blocker — pick
 and reserve the scope first, then update all references in the doc.
 
@@ -330,22 +330,22 @@ Minimum type shapes (derived from existing NestJS entities and PWA types):
 PWA extension (lives in `apps/todo-pwa-vite/src/types/todo.ts`, imports base from package):
 
 ```typescript
-import type { TodoItem } from "@todo-skeleton/types";
+import type { TodoItem } from "@jonpham/2026-project-todo-types";
 export type SyncStatus = "pending" | "synced" | "failed";
 export type UiTodo = TodoItem & { syncStatus: SyncStatus };
 ```
 
-- [ ] Verify and reserve npm package scope (`@todo-skeleton` or fallback)
+- [ ] Verify and reserve npm package scope (`@jonpham` or fallback)
 - [ ] Scaffold `packages/todo-types` with `TodoItem`, `CreateTodoDto`, `UpdateTodoDto`
       using the field table above
 - [ ] Add Zod schemas alongside TypeScript types — use `z.infer<typeof Schema>` to derive
       TS types from Zod schemas (single source of truth; prevents interface/schema drift)
 - [ ] Configure publishing to npm public
-- [ ] Add `"@todo-skeleton/types": "workspace:*"` to both
+- [ ] Add `"@jonpham/2026-project-todo-types": "workspace:*"` to both
       `apps/todo-pwa-vite/package.json` and `apps/todo-api-nestjs/package.json`
       (pnpm workspace link — no publish needed locally)
 - [ ] Update `apps/todo-pwa-vite/src/types/todo.ts` to import `TodoItem` from
-      `@todo-skeleton/types` and extend with `UiTodo` — do NOT delete the file
+      `@jonpham/2026-project-todo-types` and extend with `UiTodo` — do NOT delete the file
 - [ ] After publish: update upstream repos to install the versioned npm package
       (replace `workspace:*` with `"^1.0.0"` in their standalone `package.json`)
 
@@ -435,7 +435,7 @@ Four levels defined. Each level has a clear scope and isolation contract:
 - Tests: happy-path CRUD (create todo → verify persisted via API → reload → still there)
   - offline-sync smoke (go offline → create todo → go online → assert API received it)
 - Separate Playwright config or project for `e2e-docker` to distinguish from offline L4 tests
-- `@todo-skeleton/types` must be published before L4 CI can run (Docker build dependency)
+- `@jonpham/2026-project-todo-types` must be published before L4 CI can run (Docker build dependency)
 
 **Coverage gaps closed by Phase 1:**
 
@@ -445,7 +445,7 @@ Four levels defined. Each level has a clear scope and isolation contract:
 
 ### Open Questions
 
-1. **Published types package scope**: npm public, package name `@todo-skeleton/types`.
+1. **Published types package scope**: npm public, package name `@jonpham/2026-project-todo-types`.
    Fallbacks if scope taken: `@todo-mono/types`, `@jp-todo/types`. Verify availability
    before starting Workstream 2 — this is a hard blocker.
 2. **PWA on k8s**: Stays on Cloudflare Pages long-term. No k8s manifest needed for the PWA.
@@ -481,7 +481,7 @@ Four levels defined. Each level has a clear scope and isolation contract:
   primary staging and demo target; must work before Railway is considered ready
 - PWA: Cloudflare Pages (existing pipeline, no change) — built with `VITE_TODO_API_URL=https://...railway.app`
 - API: Railway (new) — deployed via Railway GitHub integration or `railway up`; NOT managed by Pulumi
-- Shared types: Published to npm as `@todo-skeleton/types` (fallbacks: `@todo-mono/types`, `@jp-todo/types`)
+- Shared types: Published to npm as `@jonpham/2026-project-todo-types` (fallbacks: `@todo-mono/types`, `@jp-todo/types`)
 - Cloudflare DNS: Pulumi adds CNAME record pointing to Railway URL (Pulumi manages Cloudflare only)
 - k8s: Deployed to self-hosted cluster via `helm install` — no CI automation in Phase 1
 
@@ -535,7 +535,7 @@ Key architectural decisions made during eng review (2026-04-28):
 
 - D5: VITE_TODO_MODE eliminated; single-build offline-first PWA with S2 queue+flush sync
 - D6: findOrFail helper extracted in todos.service.ts (upstream first)
-- D7: @todo-skeleton/types = narrow wire contract; apps extend locally (UiTodo)
+- D7: @jonpham/2026-project-todo-types = narrow wire contract; apps extend locally (UiTodo)
 - D8: useTodoApi.spec.ts with full sync queue coverage in Phase 1 (TDD — not deferred)
 - D9a: L3 isolation via test.db + afterEach deleteMany
 - D9b: L4 Docker Compose + Playwright in Phase 1

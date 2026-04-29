@@ -8,7 +8,7 @@
 ## Goal
 
 Establish a real shared-package workflow for the monorepo and its upstream app
-repositories by creating a monorepo-owned `@todo-skeleton/types` package,
+repositories by creating a monorepo-owned `@jonpham/2026-project-todo-types` package,
 publishing it automatically to GitHub Packages from CI on merges to `main`, and
 proving both upstream repos can consume the published artifact successfully.
 
@@ -37,7 +37,7 @@ depend on.
   - `CreateTodoDto`
   - `UpdateTodoDto`
 - Package build and package-level unit tests
-- GitHub Packages publication for `@todo-skeleton/types`
+- GitHub Packages publication for `@jonpham/2026-project-todo-types`
 - GitHub Actions workflow that publishes on merges to monorepo `main` when
   `packages/todo-types` changes
 - Deterministic package version bumping for automatic publish flow
@@ -66,7 +66,7 @@ depend on.
 
 ### Upstream repos own
 
-- Their dependency declaration on `@todo-skeleton/types`
+- Their dependency declaration on `@jonpham/2026-project-todo-types`
 - Their registry authentication/config for GitHub Packages consumption
 - Code changes needed to replace duplicated wire-contract types with imports from
   the package
@@ -80,7 +80,7 @@ repos first, then return to the monorepo through normal subtree sync.
 
 ### Package name and registry
 
-- Package name: `@todo-skeleton/types`
+- Package name: `@jonpham/2026-project-todo-types`
 - Registry: GitHub Packages
 - Initial version: `0.1.0`
 
