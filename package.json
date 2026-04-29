@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
-    "test": "turbo run test --filter=!todo-pwa && pnpm --filter todo-pwa test:unit",
+    "test": "turbo run test",
     "lint": "turbo run lint",
     "format": "turbo run format",
     "prepare": "husky",
