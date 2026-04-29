@@ -32,18 +32,21 @@ This is a **standalone repository** that can be developed, tested, and deployed 
 
 - Node.js 22+
 - pnpm 10.33+
+- GitHub Packages read access for `@jonpham/2026-project-todo-types`
 
 ### Installation
 
 ```bash
-# Install dependencies (pnpm workspace-aware)
-pnpm install
+# Install dependencies
+GITHUB_TOKEN=$(gh auth token) pnpm install
 
 # Verify setup
 pnpm lint
 pnpm test
 pnpm build
 ```
+
+The GitHub token must include `read:packages`.
 
 ### Environment
 
@@ -233,7 +236,7 @@ For local compose or custom hosting:
 
 ```bash
 # Build Docker image
-docker build -t todo-pwa:latest .
+GITHUB_TOKEN=$(gh auth token) docker build --secret id=github_token,env=GITHUB_TOKEN -t todo-pwa:latest .
 
 # Run locally
 docker run -p 3000:80 todo-pwa:latest
