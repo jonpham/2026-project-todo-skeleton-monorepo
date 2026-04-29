@@ -41,7 +41,7 @@ implementation the app uses — it is not a conditional hook call.
 **Excluded:**
 
 - Changes to `useTodoWorker` (remains pure local, no API awareness)
-- Changes to `@todo-skeleton/types` (wire types — Phase W2)
+- Changes to `@jonpham/2026-project-todo-types` (wire types — Phase W2)
 - L3 system integration tests and L4 E2E (Phase 7)
 - Authentication
 - Rate limiting / retry backoff (TODOS.md — Phase 2)
@@ -49,7 +49,7 @@ implementation the app uses — it is not a conditional hook call.
 ## Dependencies
 
 - Phase 5 complete (NestJS API running at `localhost:3001` via Docker Compose)
-- `@todo-skeleton/types` workspace package exists with `TodoItem`, `CreateTodoDto` (with `id?: string`), `UpdateTodoDto`
+- `@jonpham/2026-project-todo-types` workspace package exists with `TodoItem`, `CreateTodoDto` (with `id?: string`), `UpdateTodoDto`
 
 ## Acceptance Criteria
 
@@ -109,7 +109,7 @@ L1 tests live at `apps/todo-pwa-vite/src/hooks/useTodoApi.test.ts`. They mock `f
 
 ## Assumptions
 
-- `@todo-skeleton/types` is available as a workspace dependency with `TodoItem` and `CreateTodoDto { id?: string, description: string }`.
+- `@jonpham/2026-project-todo-types` is available as a workspace dependency with `TodoItem` and `CreateTodoDto { id?: string, description: string }`.
 - NestJS API accepts a client-provided `id` in the POST body (via `CreateTodoDto id?` — upstream change tracked in W1 upstream issue).
 - The API uses `PATCH /v1/todos/:id` for updates and `DELETE /v1/todos/:id` for deletes — same IDs as the client-generated UUIDs.
 - `useTodoWorker` is not modified in this phase; it continues to return `offline: false` to satisfy `TodoHook`.

@@ -15,7 +15,7 @@ pr: null
 completed_at: null
 ---
 
-# Phase 9 — Shared Types Package `@todo-skeleton/types` (W2)
+# Phase 9 — Shared Types Package `@jonpham/2026-project-todo-types` (W2)
 
 ## Context
 
@@ -25,8 +25,9 @@ and upstream consumption so the shared wire contract can be reused by the standa
 
 The PWA and NestJS API share a wire contract: `TodoItem`, `CreateTodoDto`, and
 `UpdateTodoDto` must stay aligned across implementations. This phase defines the canonical Zod
-schemas and inferred TypeScript types in `@todo-skeleton/types`, publishes that package to
-GitHub Packages from CI on pushes to `main` when `packages/todo-types/**` changes, and updates
+schemas and inferred TypeScript types in `@jonpham/2026-project-todo-types`, publishes that package to
+GitHub Packages from CI on pushes to `main` when the package source or publish infrastructure
+changes, and updates
 both standalone consumers to depend on the published package.
 
 The package remains intentionally narrow. It owns API wire types only. UI-specific types
@@ -37,13 +38,14 @@ stays in the API layer.
 
 **Included:**
 
-- `packages/todo-types/` — source package `@todo-skeleton/types` in the monorepo
+- `packages/todo-types/` — source package `@jonpham/2026-project-todo-types` in the monorepo
 - Zod schemas for `TodoItem`, `CreateTodoDto` (with `id?: string`), `UpdateTodoDto`
 - TypeScript types inferred via `z.infer<>` — no separate type declarations
 - L1 Vitest schema validation tests (co-located in package)
-- GitHub Packages publish configuration for `@todo-skeleton/types`
+- GitHub Packages publish configuration for `@jonpham/2026-project-todo-types`
 - Release workflow in GitHub Actions that runs on pushes to `main` when
-  `packages/todo-types/**` changes
+  `packages/todo-types/**`, `.github/workflows/publish-todo-types.yml`, or
+  `scripts/release/bump-todo-types-version.mjs` changes
 - Automatic patch version bump and package publication behavior in CI
 - Upstream consumer integration in `2026-project-todo-pwa-vite` and
   `2026-project-todo-api-nestjs` using pinned explicit published versions of the GitHub
@@ -74,13 +76,13 @@ stays in the API layer.
 
 ## Acceptance Criteria
 
-- [ ] `packages/todo-types/` exists with `package.json` name `@todo-skeleton/types`
+- [ ] `packages/todo-types/` exists with `package.json` name `@jonpham/2026-project-todo-types`
 - [ ] Zod schemas exported: `TodoItemSchema`, `CreateTodoDtoSchema`, `UpdateTodoDtoSchema`
 - [ ] TypeScript types exported: `TodoItem`, `CreateTodoDto`, `UpdateTodoDto` (all via `z.infer<>`)
-- [ ] `pnpm --filter @todo-skeleton/types test` passes: valid payloads pass, invalid payloads (missing description, wrong types) fail with correct Zod errors
+- [ ] `pnpm --filter @jonpham/2026-project-todo-types test` passes: valid payloads pass, invalid payloads (missing description, wrong types) fail with correct Zod errors
 - [ ] `packages/todo-types/package.json` is configured for GitHub Packages publication
-- [ ] A GitHub Actions workflow publishes on pushes to `main` when
-      `packages/todo-types/**` changes
+- [ ] A GitHub Actions workflow publishes on pushes to `main` when package source or publish
+      infrastructure changes
 - [ ] The committed `packages/todo-types/package.json` version remains at the baseline value;
       patch version mutation happens only inside CI for publication
 - [ ] The publish job authenticates with the repository `GITHUB_TOKEN` using `contents: write`
@@ -88,10 +90,10 @@ stays in the API layer.
 - [ ] Reruns for the same qualifying commit reuse the commit-reserved version and skip publish
       cleanly when that version already exists in GitHub Packages
 - [ ] `2026-project-todo-pwa-vite` installs a pinned explicit published version of
-      `@todo-skeleton/types` from GitHub Packages, not a floating range or tag, with scoped registry
+      `@jonpham/2026-project-todo-types` from GitHub Packages, not a floating range or tag, with scoped registry
       config and auth in place, and its build passes against that artifact
 - [ ] `2026-project-todo-api-nestjs` installs a pinned explicit published version of
-      `@todo-skeleton/types` from GitHub Packages, not a floating range or tag, with scoped registry
+      `@jonpham/2026-project-todo-types` from GitHub Packages, not a floating range or tag, with scoped registry
       config and auth in place, and its build passes against that artifact
 - [ ] Subtree sync brings the upstream consumer integration back into the monorepo in the
       approved W2 flow
@@ -105,24 +107,26 @@ stays in the API layer.
 - [x] **Step 2** — Configure `package.json` for GitHub Packages publication, including package
       name, registry-facing metadata, and versioning expectations for CI-driven patch releases
 - [x] **Step 3** — Add a GitHub Actions workflow that triggers on pushes to `main` when
-      `packages/todo-types/**` changes; build, test, patch-bump, and publish the package
+      package source or publish infrastructure changes; build, test, patch-bump, and publish the
+      package
 - [x] **Step 4** — Keep the committed package manifest at its baseline version and mutate the
       patch version only inside CI for publication
 - [x] **Step 5** — Ensure the release flow automatically publishes the commit-scoped reserved
-      patch version for each qualifying push to `main` when `packages/todo-types/**` changes, and
+      patch version for each qualifying push to `main` when package source or publish
+      infrastructure changes, and
       reruns for the same commit reuse that reserved version and skip publish cleanly if the version
       already exists in GitHub Packages
 - [ ] **Step 6** — Update `2026-project-todo-pwa-vite` to configure scoped GitHub Packages
-      registry/auth, install a pinned explicit published version of `@todo-skeleton/types`, and
+      registry/auth, install a pinned explicit published version of `@jonpham/2026-project-todo-types`, and
       switch imports to the published package contract
 - [ ] **Step 7** — Update `2026-project-todo-api-nestjs` to configure scoped GitHub Packages
-      registry/auth, install a pinned explicit published version of `@todo-skeleton/types`, and
+      registry/auth, install a pinned explicit published version of `@jonpham/2026-project-todo-types`, and
       switch imports to the published package contract
 - [ ] **Step 8** — Subtree sync the upstream consumer changes back into the monorepo as the
       approved W2 follow-through
-- [ ] **Step 9** — Verify the publish workflow is scoped only to pushes to `main` when
-      `packages/todo-types/**` changes, and verify the standalone repos can authenticate, install,
-      and build against the published package
+- [ ] **Step 9** — Verify the publish workflow is scoped only to pushes to `main` when package
+      source or publish infrastructure changes, and verify the standalone repos can authenticate,
+      install, and build against the published package
 - [ ] **Step 10** — Monorepo-local consumer wiring or build checks may be used as supporting
       verification context, but they are not the primary W2 success target
 - [ ] **Step 11** — Update this feature doc to DONE after Tasks 4-7 land
@@ -133,9 +137,9 @@ stays in the API layer.
   is the source of truth and the exported type is derived from it.
 - **Registry target:** The approved publication target is GitHub Packages, not npmjs. The package
   metadata and consumer setup should assume scoped package installation from GitHub's registry.
-- **Workflow trigger breadth:** The earlier plan draft had conflicting trigger scopes. The
-  approved W2 design is narrower and should be implemented exactly: publish on pushes to `main`
-  when `packages/todo-types/**` changes.
+- **Workflow trigger breadth:** Publish only on pushes to `main` when the package source or the
+  publish infrastructure changes. The workflow and release helper are included so publication
+  fixes can bootstrap or repair the package without requiring a meaningless package source edit.
 - **Publish auth model:** The monorepo publish job uses the repository `GITHUB_TOKEN` with
   `contents: write` and `packages: write`. Extra publish secrets are not required for this
   workflow.
@@ -143,13 +147,13 @@ stays in the API layer.
   stays at the baseline value in git. Patch version mutation happens only inside CI as part of
   preparing the publish artifact.
 - **Automatic patch release behavior:** W2 uses a single release model: every qualifying push to
-  `main` when `packages/todo-types/**` changes publishes the commit-scoped reserved patch
+  `main` when package source or publish infrastructure changes publishes the commit-scoped reserved patch
   version to GitHub Packages without manual branch-side version editing. That reserved version
   makes reruns for the same commit idempotent, and reruns should skip publish cleanly when that
   version already exists in GitHub Packages. The reservation tag is an implementation detail of
   the automation.
 - **Upstream dependency pinning:** The standalone repos should consume pinned explicit published
-  versions of `@todo-skeleton/types`. They should not depend on floating semver ranges, dist-tags,
+  versions of `@jonpham/2026-project-todo-types`. They should not depend on floating semver ranges, dist-tags,
   or other moving references for this W2 integration.
 - **Downstream registry auth:** The standalone repos also need scoped GitHub Packages registry
   configuration and authentication in their npm or pnpm setup; pinning the dependency alone is
@@ -159,10 +163,10 @@ stays in the API layer.
   workspace linking is useful for development and spot checks, but it is not the primary
   deliverable.
 - **NestJS DTO classes vs Zod:** NestJS can keep class-validator-based request DTOs if needed.
-  `@todo-skeleton/types` defines the wire contract and shared TS types; it does not require the
+  `@jonpham/2026-project-todo-types` defines the wire contract and shared TS types; it does not require the
   API to replace all app-local validation classes.
 - **Docker and CI auth:** Any downstream Dockerfiles or CI jobs that install
-  `@todo-skeleton/types` from GitHub Packages will need registry authentication wired through the
+  `@jonpham/2026-project-todo-types` from GitHub Packages will need registry authentication wired through the
   appropriate npm config or token injection.
 - **`id?: string` in `CreateTodoDtoSchema`:** `id` remains optional and must validate as a UUID
   when present.

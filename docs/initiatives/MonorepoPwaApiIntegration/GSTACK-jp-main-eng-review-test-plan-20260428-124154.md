@@ -67,7 +67,7 @@ Repo: jonpham/2026-project-todo-skeleton-monorepo
 1. **Offline create → sync to API:** User creates todo while offline, comes back online, todo persists in API and survives page reload — verifies full offline-first cycle end-to-end
 2. **Docker Compose full stack (L4):** `docker compose up`, create todo via PWA UI, todo persists in SQLite after `docker compose down && docker compose up` — verifies nginx proxy, Docker networking, and volume persistence
 3. **NestJS smoke test (L3):** POST → GET → DELETE cycle against real SQLite — verifies Prisma migrations ran, queries work, and cleanup is clean between tests
-4. **Shared types contract:** Both PWA and NestJS compile without errors with @todo-skeleton/types installed as workspace dependency — verifies the package shape matches both consumers
+4. **Shared types contract:** Both PWA and NestJS compile without errors with @jonpham/2026-project-todo-types installed as workspace dependency — verifies the package shape matches both consumers
 
 ## Test Levels Summary
 

@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - "packages/todo-types/**"
+      - ".github/workflows/publish-todo-types.yml"
+      - "scripts/release/bump-todo-types-version.mjs"
 
 concurrency:
   group: publish-todo-types-${{ github.ref }}
@@ -33,19 +35,19 @@ jobs:
           node-version: "22"
           cache: "pnpm"
           registry-url: "https://npm.pkg.github.com"
-          scope: "@todo-skeleton"
+          scope: "@jonpham"
 
       - name: Install todo-types dependencies
-        run: pnpm install --filter @todo-skeleton/types... --frozen-lockfile --ignore-scripts
+        run: pnpm install --filter @jonpham/2026-project-todo-types... --frozen-lockfile --ignore-scripts
 
       - name: Lint package
-        run: pnpm --filter @todo-skeleton/types lint
+        run: pnpm --filter @jonpham/2026-project-todo-types lint
 
       - name: Test package
-        run: pnpm --filter @todo-skeleton/types test
+        run: pnpm --filter @jonpham/2026-project-todo-types test
 
       - name: Build package
-        run: pnpm --filter @todo-skeleton/types build
+        run: pnpm --filter @jonpham/2026-project-todo-types build
 
       - name: Check version reservation
         id: reservation
@@ -74,7 +76,7 @@ jobs:
         if: steps.reservation.outputs.has_reservation != 'true'
         run: |
           stderr_file="$(mktemp)"
-          if published_version="$(npm view @todo-skeleton/types version --registry https://npm.pkg.github.com 2>"$stderr_file")"; then
+          if published_version="$(npm view @jonpham/2026-project-todo-types version --registry https://npm.pkg.github.com 2>"$stderr_file")"; then
             :
           elif grep -Eq '(^npm error code E404\b|404 Not Found)' "$stderr_file"; then
             published_version=""
@@ -112,7 +114,7 @@ jobs:
         run: |
           stderr_file="$(mktemp)"
           reserved_version='${{ steps.reserve.outputs.version }}'
-          if published_version="$(npm view @todo-skeleton/types@"${reserved_version}" version --registry https://npm.pkg.github.com 2>"$stderr_file")"; then
+          if published_version="$(npm view @jonpham/2026-project-todo-types@"${reserved_version}" version --registry https://npm.pkg.github.com 2>"$stderr_file")"; then
             if [ "$published_version" != "$reserved_version" ]; then
               echo "Expected reserved version ${reserved_version}, got ${published_version}." >&2
               rm -f "$stderr_file"
@@ -138,7 +140,7 @@ jobs:
 
       - name: Publish package
         if: steps.registry.outputs.already_published != 'true'
-        run: pnpm --filter @todo-skeleton/types publish --no-git-checks
+        run: pnpm --filter @jonpham/2026-project-todo-types publish --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -156,6 +158,6 @@ jobs:
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "| Field | Value |" >> "$GITHUB_STEP_SUMMARY"
           echo "| --- | --- |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Package | @todo-skeleton/types |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Package | @jonpham/2026-project-todo-types |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Version | ${{ steps.reserve.outputs.version }} |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Registry | https://npm.pkg.github.com |" >> "$GITHUB_STEP_SUMMARY"

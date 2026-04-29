@@ -7,8 +7,8 @@ step_gating: false
 epic_issue: null
   ["jonpham/2026-project-todo-pwa-vite", "jonpham/2026-project-todo-api-nestjs"]
   [
-    "jonpham/2026-project-todo-pwa-vite#3",
-    "jonpham/2026-project-todo-api-nestjs#2",
+  "jonpham/2026-project-todo-pwa-vite#3",
+  "jonpham/2026-project-todo-api-nestjs#2",
   ]
 branch: null
 pr: null
@@ -59,7 +59,7 @@ yet that justifies inter-unit tests beyond what L1 already covers.
 
 - Phase 6 complete (`useTodoApi` implemented with L1 queue tests)
 - Docker Compose stack functional (NestJS + nginx + SQLite volume)
-- `@todo-skeleton/types` with Zod schemas
+- `@jonpham/2026-project-todo-types` with Zod schemas
 
 ## Acceptance Criteria
 
@@ -71,7 +71,7 @@ yet that justifies inter-unit tests beyond what L1 already covers.
 - [ ] L3: each test isolated — `afterEach` deletes all rows; tests do not share state
 - [ ] L4: `docker compose up`, create todo via PWA UI, verify todo persists in SQLite after `docker compose down && docker compose up`
 - [ ] L4: offline create cycle — `page.context().setOffline(true)`, create todo, verify `syncStatus: 'pending'` in UI; `page.context().setOffline(false)`, verify `syncStatus: 'synced'`
-- [ ] Shared types: `pnpm --filter @todo-skeleton/types test` passes Zod schema validation for `TodoItem`, `CreateTodoDto` (with and without id), `UpdateTodoDto`
+- [ ] Shared types: `pnpm --filter @jonpham/2026-project-todo-types test` passes Zod schema validation for `TodoItem`, `CreateTodoDto` (with and without id), `UpdateTodoDto`
 - [ ] All existing L1 tests continue to pass (no regressions)
 
 ## Steps
@@ -90,7 +90,7 @@ yet that justifies inter-unit tests beyond what L1 already covers.
 - **L4 offline mechanism:** `page.context().setOffline(true)` is the only correct Playwright approach. It sets `navigator.onLine = false` AND fires the `offline` event. `page.route()` alone intercepts requests but does not update `navigator.onLine` — the `online` event listener in `useTodoApi` would never fire on reconnect.
 - **L4 Docker Compose setup:** `e2e-docker/` runs against a `docker compose up` stack. Tests use `baseURL: http://localhost` (nginx port 80). SQLite volume must be named (not anonymous) to survive compose down/up — verify in `docker-compose.yml`.
 - **`/health` endpoint:** Upstream change tracked in W1 upstream issue (`jonpham/2026-project-todo-api-nestjs`). L3 test for `/health` depends on that upstream PR being merged and synced into monorepo before this phase runs.
-- **Shared types Zod tests:** Live at `packages/todo-types/src/index.test.ts`. Run via `pnpm --filter @todo-skeleton/types test`. No mocks — pure schema validation.
+- **Shared types Zod tests:** Live at `packages/todo-types/src/index.test.ts`. Run via `pnpm --filter @jonpham/2026-project-todo-types test`. No mocks — pure schema validation.
 
 ## Test Strategy
 
