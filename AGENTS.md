@@ -30,6 +30,7 @@ Output the following before stopping:
 
 - Terse — skip preambles and post-step recaps. The `✅ Step N complete` block is the required exception.
 - Never add a trailing "here's what I did" summary after completing tool calls.
+- Never use an Acronym that you have not defined in the current session, unless the user used it first.
 
 ### Commit Messages
 
@@ -95,6 +96,12 @@ Docs live in `docs/`:
 - NEVER commit directly to `main`; NEVER force push to `main`
 - Always use a feature branch + pull request
 - Every PR must include an updated feature doc in `docs/features/`
+- **Hard limit: ≤10 files changed per PR.** Exemptions: `pnpm-lock.yaml`,
+  `pnpm-workspace.yaml`. If a phase requires more, split it into multiple
+  sequential PRs against the same branch (or stacked branches), each with
+  its own atomic scope (e.g., scaffold → implementation → docs/CI). When
+  writing a spec or plan, design the merge boundaries to fit this limit
+  before drafting steps.
 
 ### Development Workflow
 
