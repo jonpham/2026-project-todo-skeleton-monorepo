@@ -65,25 +65,21 @@ Full design rationale: [`docs/ARCHITECTURE.md — Infrastructure Design`](docs/A
 
 **Setup and first deploy:** [`docs/DEPLOYMENT_SETUP.md`](docs/DEPLOYMENT_SETUP.md) → [`apps/todo-pwa-vite/docs/DEPLOYMENT.md`](apps/todo-pwa-vite/docs/DEPLOYMENT.md)
 
-### Git Subtree — NestJS API
+### App Repos — Downstream Mirrors
 
-The `todo-api-nestjs` app is pulled into this monorepo from its standalone GitHub repository ([jonpham/2026-project-todo-api-nestjs](https://github.com/jonpham/2026-project-todo-api-nestjs)) using Git Subtree. This keeps the API extractable and independently deployable while making it available in the monorepo.
+The monorepo is the source of truth. `apps/todo-api-nestjs` and `apps/todo-pwa-vite` are worked on directly here. After merging to `main`, the `sync-subtrees-push.yml` CI workflow automatically pushes each app to its standalone upstream repo via `git subtree split`, keeping them current as independently deployable templates.
 
-**To pull the latest API updates into the monorepo:**
-
-```bash
-git subtree pull --prefix=apps/todo-api-nestjs todo-api-nestjs main --squash
-```
-
-This creates a single commit containing all API changes since the last pull. For full details, see [`docs/ARCHITECTURE.md — Git Subtree`](docs/ARCHITECTURE.md#git-subtree--nestjs-api).
+**Never make changes in the upstream repos directly** — they will be overwritten on the next monorepo push.
 
 ### CI/CD Workflows
 
-| Workflow         | Trigger                              | What it does                                                          |
-| ---------------- | ------------------------------------ | --------------------------------------------------------------------- |
-| `ci.yml`         | Push / PR to any branch              | Lint, test, build                                                     |
-| `cd-preview.yml` | PR opened / updated targeting `main` | Deploy preview to Cloudflare Pages, run E2E tests against preview URL |
-| `cd-prod.yml`    | Push to `main`                       | Deploy to production Cloudflare Pages + custom domain                 |
+| Workflow                 | Trigger                              | What it does                                                          |
+| ------------------------ | ------------------------------------ | --------------------------------------------------------------------- |
+| `ci.yml`                 | Push / PR to any branch              | Lint, test, build                                                     |
+| `cd-preview.yml`         | PR opened / updated targeting `main` | Deploy preview to Cloudflare Pages, run E2E tests against preview URL |
+| `cd-prod.yml`            | Push to `main`                       | Deploy to production Cloudflare Pages + custom domain                 |
+| `publish-todo-types.yml` | Push to `main` (packages/todo-types) | Bump patch version and publish to GitHub Packages                     |
+| `sync-subtrees-push.yml` | Push to `main` (apps/\*)             | Push changed app subtrees to their upstream template repos            |
 
 ---
 
