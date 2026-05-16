@@ -1,10 +1,13 @@
 # Project and Feature Status
 
 **Last completed phase:** Phase 7 — Integration Tests + E2E (GH40, branch `feat/GH37-GH40-w3-pwa-offline-sync`)
-**Active feature doc:** None
-**Current step:** None
+**Active feature doc:** `[TODO]GH47_k8s-helm-deploy.md` (Phase 10 — K8s/Helm Deploy, W4)
+**Active spec:** `docs/specs/W4K8sHelmDeploy/2026-05-16-k8s-helm-deploy-design.md`
+**Active skill:** superpowers:brainstorming → superpowers:writing-plans (next)
+**Branch:** `feat/GH47-k8s-helm-deploy`
+**Current step:** Spec written; awaiting user review before invoking writing-plans.
 **Known blockers:** None — full L4 Playwright execution deferred to a session with the docker compose stack running.
-**Next action:** Open PR for `feat/GH37-GH40-w3-pwa-offline-sync` (GH37 + GH40), then begin Phase 10 — K8s/Helm Deploy (GH47).
+**Next action:** User reviews spec → invoke superpowers:writing-plans to produce the step-by-step implementation plan.
 
 ## Phase Summary
 
