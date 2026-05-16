@@ -12,7 +12,8 @@ type WorkerCommand =
   | { type: "CREATE_TODO"; payload: { description: string } }
   | { type: "UPDATE_TODO"; payload: { id: string; description: string } }
   | { type: "TOGGLE_TODO"; payload: { id: string } }
-  | { type: "DELETE_TODO"; payload: { id: string } };
+  | { type: "DELETE_TODO"; payload: { id: string } }
+  | { type: "SET_ONLINE"; payload: { online: boolean } };
 
 type QueueEntry =
   | {
@@ -277,6 +278,23 @@ async function deleteTodo(id: string): Promise<void> {
   await flushQueue();
 }
 
+async function setOnlineState(online: boolean): Promise<void> {
+  // Bridge from the main thread. The worker's own self.addEventListener
+  // ("online"/"offline") below covers real-browser network changes, but
+  // some environments (notably Playwright's Network.emulateNetworkConditions)
+  // don't always propagate those events to Worker self. Routing through the
+  // main thread gives us a reliable signal in either case.
+  const wasOffline = offline;
+  offline = !online;
+  emit();
+  if (wasOffline && online) {
+    await flushQueue().catch(() => {
+      error = "Sync failed. Will retry when reconnected.";
+      emit();
+    });
+  }
+}
+
 self.addEventListener("message", (event: MessageEvent<WorkerCommand>) => {
   const command = event.data;
   const run = async () => {
@@ -288,6 +306,8 @@ self.addEventListener("message", (event: MessageEvent<WorkerCommand>) => {
     }
     if (command.type === "TOGGLE_TODO") await toggleTodo(command.payload.id);
     if (command.type === "DELETE_TODO") await deleteTodo(command.payload.id);
+    if (command.type === "SET_ONLINE")
+      await setOnlineState(command.payload.online);
   };
 
   run().catch(() => {

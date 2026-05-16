@@ -8,7 +8,8 @@ type WorkerCommand =
   | { type: "CREATE_TODO"; payload: { description: string } }
   | { type: "UPDATE_TODO"; payload: { id: string; description: string } }
   | { type: "TOGGLE_TODO"; payload: { id: string } }
-  | { type: "DELETE_TODO"; payload: { id: string } };
+  | { type: "DELETE_TODO"; payload: { id: string } }
+  | { type: "SET_ONLINE"; payload: { online: boolean } };
 
 type WorkerState = {
   todos: UiTodo[];
@@ -278,5 +279,32 @@ describe("useTodoWorker", () => {
     unmount();
 
     expect(MockWorker.latest.terminate).toHaveBeenCalled();
+  });
+
+  it("forwards window online/offline events to the worker as SET_ONLINE", () => {
+    renderHook(() => useTodoWorker());
+
+    window.dispatchEvent(new Event("offline"));
+    expect(MockWorker.latest.postMessage).toHaveBeenCalledWith({
+      type: "SET_ONLINE",
+      payload: { online: false },
+    });
+
+    window.dispatchEvent(new Event("online"));
+    expect(MockWorker.latest.postMessage).toHaveBeenCalledWith({
+      type: "SET_ONLINE",
+      payload: { online: true },
+    });
+  });
+
+  it("removes window online/offline listeners on unmount", () => {
+    const { unmount } = renderHook(() => useTodoWorker());
+    const callsBefore = MockWorker.latest.postMessage.mock.calls.length;
+
+    unmount();
+    window.dispatchEvent(new Event("offline"));
+    window.dispatchEvent(new Event("online"));
+
+    expect(MockWorker.latest.postMessage.mock.calls.length).toBe(callsBefore);
   });
 });

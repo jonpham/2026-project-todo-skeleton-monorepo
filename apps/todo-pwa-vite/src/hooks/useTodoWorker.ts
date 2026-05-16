@@ -6,7 +6,8 @@ type WorkerCommand =
   | { type: "CREATE_TODO"; payload: { description: string } }
   | { type: "UPDATE_TODO"; payload: { id: string; description: string } }
   | { type: "TOGGLE_TODO"; payload: { id: string } }
-  | { type: "DELETE_TODO"; payload: { id: string } };
+  | { type: "DELETE_TODO"; payload: { id: string } }
+  | { type: "SET_ONLINE"; payload: { online: boolean } };
 
 type WorkerState = {
   todos: UiTodo[];
@@ -40,7 +41,26 @@ export function useTodoWorker(): TodoHook {
     workerRef.current = worker;
     worker.postMessage({ type: "INIT" } satisfies WorkerCommand);
 
+    // Forward window online/offline to the worker. Belt-and-suspenders with
+    // the worker's own self.addEventListener listeners — some environments
+    // (e.g. Playwright's setOffline) reliably fire these on window but not on
+    // Worker self.
+    const handleOnline = () =>
+      worker.postMessage({
+        type: "SET_ONLINE",
+        payload: { online: true },
+      } satisfies WorkerCommand);
+    const handleOffline = () =>
+      worker.postMessage({
+        type: "SET_ONLINE",
+        payload: { online: false },
+      } satisfies WorkerCommand);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
     return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
       worker.terminate();
     };
   }, []);
