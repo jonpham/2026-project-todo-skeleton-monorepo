@@ -2,7 +2,7 @@ import type { TodoItem } from "../types/todo";
 
 type WorkerMessage =
   | { type: "LOAD_TODOS"; payload: { todos: TodoItem[] } }
-  | { type: "CREATE_TODO"; payload: { description: string } }
+  | { type: "CREATE_TODO"; payload: { id: string; description: string } }
   | { type: "UPDATE_TODO"; payload: { id: string; description: string } }
   | { type: "TOGGLE_TODO"; payload: { id: string } }
   | { type: "DELETE_TODO"; payload: { id: string } };
@@ -26,7 +26,7 @@ self.addEventListener("message", (event: MessageEvent<WorkerMessage>) => {
       todos = [
         ...todos,
         {
-          id: crypto.randomUUID(),
+          id: msg.payload.id,
           description: msg.payload.description,
           completed: false,
           createdAt: new Date().toISOString(),
