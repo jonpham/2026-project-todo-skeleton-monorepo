@@ -1,7 +1,7 @@
 import { renderHook, act } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { useTodoWorker } from "./useTodoWorker";
-import type { TodoItem } from "../types/todo";
+import type { UiTodo } from "../types/todo";
 
 class MockWorker {
   static latest: MockWorker;
@@ -13,18 +13,21 @@ class MockWorker {
     MockWorker.latest = this;
   }
 
-  respond(todos: TodoItem[]) {
+  respond(todos: UiTodo[]) {
     this.onmessage?.({ data: { todos } } as MessageEvent);
   }
 }
 
 vi.stubGlobal("Worker", MockWorker);
 
-const makeTodo = (overrides: Partial<TodoItem> = {}): TodoItem => ({
+let mockRandomUUID: ReturnType<typeof vi.fn>;
+
+const makeTodo = (overrides: Partial<UiTodo> = {}): UiTodo => ({
   id: "1",
   description: "Buy groceries",
   completed: false,
   createdAt: "2026-01-01T00:00:00.000Z",
+  syncStatus: "synced",
   ...overrides,
 });
 
@@ -32,11 +35,20 @@ describe("useTodoWorker", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
+    mockRandomUUID = vi.fn().mockReturnValue("test-uuid-1234-5678");
+    vi.stubGlobal("crypto", { randomUUID: mockRandomUUID });
   });
 
   it("initializes with an empty todos array", () => {
     const { result } = renderHook(() => useTodoWorker());
     expect(result.current.todos).toEqual([]);
+  });
+
+  it("always returns offline: false, error: null, isLoading: false", () => {
+    const { result } = renderHook(() => useTodoWorker());
+    expect(result.current.offline).toBe(false);
+    expect(result.current.error).toBeNull();
+    expect(result.current.isLoading).toBe(false);
   });
 
   it("sends LOAD_TODOS on mount with empty array when localStorage is empty", () => {
@@ -75,14 +87,14 @@ describe("useTodoWorker", () => {
     expect(JSON.parse(localStorage.getItem("todos") ?? "[]")).toEqual([todo]);
   });
 
-  it("createTodo sends CREATE_TODO with description", () => {
+  it("createTodo sends CREATE_TODO with a client-generated UUID and description", () => {
     const { result } = renderHook(() => useTodoWorker());
     act(() => {
       result.current.createTodo("Buy groceries");
     });
     expect(MockWorker.latest.postMessage).toHaveBeenCalledWith({
       type: "CREATE_TODO",
-      payload: { description: "Buy groceries" },
+      payload: { id: "test-uuid-1234-5678", description: "Buy groceries" },
     });
   });
 
