@@ -2,9 +2,9 @@
 
 **Last completed phase:** Phase 6 — PWA Offline-First API Sync (GH37, branch `feat/GH37-GH40-w3-pwa-offline-sync`)
 **Active feature doc:** `docs/features/[TODO]GH40_pwa-api-integration-tests.md`
-**Current step:** GH40 Step 3 — `e2e-docker/` Playwright L4 tests
-**Known blockers:** None
-**Next action:** Create `e2e-docker/` with `playwright.config.ts`, `offline-sync.spec.ts`, and `volume-persistence.spec.ts`
+**Current step:** GH40 Step 4 — Update PWA `e2e/app.spec.ts` to use `page.context().setOffline()` (spec/Task 16)
+**Known blockers:** None — feat/Step 3 specs written and discovered; full L4 verification deferred (requires `docker compose up --wait` + `GITHUB_TOKEN`).
+**Next action:** Open `apps/todo-pwa-vite/e2e/app.spec.ts`, replace any `page.route()` offline simulation with `page.context().setOffline(true/false)`.
 
 ## Phase Summary
 
