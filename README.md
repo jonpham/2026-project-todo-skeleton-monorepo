@@ -65,7 +65,7 @@ Full design rationale: [`docs/ARCHITECTURE.md — Infrastructure Design`](docs/A
 
 **Setup and first deploy:** [`docs/DEPLOYMENT_SETUP.md`](docs/DEPLOYMENT_SETUP.md) → [`apps/todo-pwa-vite/docs/DEPLOYMENT.md`](apps/todo-pwa-vite/docs/DEPLOYMENT.md)
 
-### Git Subtree — NestJS API
+### App Repos — Downstream Mirrors
 
 The monorepo is the source of truth. `apps/todo-api-nestjs` and `apps/todo-pwa-vite` are worked on directly here. After merging to `main`, the `sync-subtrees-push.yml` CI workflow automatically pushes each app to its standalone upstream repo via `git subtree split`, keeping them current as independently deployable templates.
 
