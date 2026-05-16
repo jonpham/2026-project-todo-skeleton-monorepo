@@ -41,10 +41,33 @@
 | ------------------- | ------------------------ | ------------------------------------------------------------------- |
 | `dev`               | `pnpm dev`               | Start all apps in development mode (via Turborepo)                  |
 | `build`             | `pnpm build`             | Build all apps                                                      |
-| `test`              | `pnpm test`              | Run all unit + integration tests                                    |
+| `test`              | `pnpm test`              | Run unit tests (L1) in every workspace — fast, no external infra    |
 | `lint`              | `pnpm lint`              | Lint all workspaces                                                 |
 | `deploy:local`      | `pnpm deploy:local`      | Build and start the production Docker container at `localhost:3000` |
 | `deploy:local:stop` | `pnpm deploy:local:stop` | Stop the local Docker container                                     |
+
+### Test layers
+
+Four levels of automated tests live in this repo. `pnpm test` runs L1 only —
+L3 and L4 require external infra and are invoked explicitly.
+
+| Level | Where                                            | How to run                                      | Needs                              |
+| ----- | ------------------------------------------------ | ----------------------------------------------- | ---------------------------------- |
+| L1    | `apps/*/src/**/*.{test,spec}.ts`, `packages/*`   | `pnpm test`                                     | nothing                            |
+| L3    | `apps/todo-api-nestjs/test/todos.system.spec.ts` | `pnpm --filter todo-api-nestjs test:system`     | Prisma + a SQLite `test.db` (auto) |
+| L4    | `e2e-docker/*.spec.ts`                           | `pnpm --filter e2e-docker test:e2e` (see below) | `pnpm deploy:local` stack          |
+| L4    | `apps/todo-pwa-vite/e2e/app.spec.ts`             | `pnpm --filter todo-pwa test:e2e`               | Vite dev server (auto-started)     |
+
+CI runs L1 (`ci` job) and L3 (`system-tests` job) automatically. L4 is run
+locally before merge by the engineer, and again in the `cd-preview` workflow
+against the deployed preview URL.
+
+L2 (inter-unit) is intentionally deferred — there is no complex component
+interaction graph on the client today that would benefit from it beyond what
+L1 already covers.
+
+See [`e2e-docker/README.md`](e2e-docker/README.md) for the L4 Docker Compose
+workflow, including the two-phase volume-persistence test.
 
 ## Run Locally for Manual Testing
 
@@ -122,13 +145,14 @@ The monorepo is the source of truth. `apps/todo-api-nestjs` and `apps/todo-pwa-v
 
 ### CI/CD Workflows
 
-| Workflow                 | Trigger                              | What it does                                                          |
-| ------------------------ | ------------------------------------ | --------------------------------------------------------------------- |
-| `ci.yml`                 | Push / PR to any branch              | Lint, test, build                                                     |
-| `cd-preview.yml`         | PR opened / updated targeting `main` | Deploy preview to Cloudflare Pages, run E2E tests against preview URL |
-| `cd-prod.yml`            | Push to `main`                       | Deploy to production Cloudflare Pages + custom domain                 |
-| `publish-todo-types.yml` | Push to `main` (packages/todo-types) | Bump patch version and publish to GitHub Packages                     |
-| `sync-subtrees-push.yml` | Push to `main` (apps/\*)             | Push changed app subtrees to their upstream template repos            |
+| Workflow                      | Trigger                              | What it does                                                          |
+| ----------------------------- | ------------------------------------ | --------------------------------------------------------------------- |
+| `ci.yml` — `ci` job           | Push / PR to any branch              | Lint, L1 test, build                                                  |
+| `ci.yml` — `system-tests` job | Push / PR to any branch              | L3 system tests for NestJS API against a fresh SQLite `test.db`       |
+| `cd-preview.yml`              | PR opened / updated targeting `main` | Deploy preview to Cloudflare Pages, run E2E tests against preview URL |
+| `cd-prod.yml`                 | Push to `main`                       | Deploy to production Cloudflare Pages + custom domain                 |
+| `publish-todo-types.yml`      | Push to `main` (packages/todo-types) | Bump patch version and publish to GitHub Packages                     |
+| `sync-subtrees-push.yml`      | Push to `main` (apps/\*)             | Push changed app subtrees to their upstream template repos            |
 
 ---
 
