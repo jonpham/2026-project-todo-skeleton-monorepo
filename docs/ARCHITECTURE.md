@@ -4,7 +4,8 @@
 
 ```
 [repo-name]/
-├── CLAUDE.md                        # This file
+├── AGENTS.md                        # Shared AI workflow guidance
+├── CLAUDE.md                        # Claude entrypoint; points to AGENTS.md
 ├── docs/
 │   ├── features/                    # Source of truth for all phases & steps
 │   │   ├── _TEMPLATE.md             # Feature doc template
@@ -13,67 +14,15 @@
 │   └── DECISIONS.md                 # Architecture Decision Records
 ├── apps/
 │   ├── todo-pwa/                    # Vite + React 19 PWA
-│   │   ├── docs/                    # App-specific docs (stack, deployment)
-│   │   │   ├── STACK.md             # React, Vite, Tailwind, testing, conventions
-│   │   │   └── DEPLOYMENT.md        # Local Docker, Pulumi infra, CI/CD, custom domain
-│   │   ├── infra/                   # App-specific Pulumi program (Cloudflare Pages)
-│   │   ├── .storybook/              # Storybook config (main.ts, preview.ts)
-│   │   ├── e2e/                     # Playwright E2E tests
-│   │   ├── public/
-│   │   │   ├── manifest.webmanifest # PWA manifest
-│   │   │   └── icons/               # PWA icons (192×192, 512×512)
-│   │   ├── src/
-│   │   │   ├── App.tsx              # Thin shell — renders TodoApp inside <main>
-│   │   │   ├── App.test.tsx         # Vitest unit tests (mocks useTodoWorker)
-│   │   │   ├── App.stories.tsx      # Storybook stories
-│   │   │   ├── components/          # Feature UI components — one folder per component
-│   │   │   │   ├── TodoApp/
-│   │   │   │   │   ├── TodoApp.tsx          # Root feature component — composes list + input
-│   │   │   │   │   ├── TodoApp.test.tsx
-│   │   │   │   │   ├── TodoApp.stories.tsx
-│   │   │   │   │   └── index.ts             # Re-exports component for clean imports
-│   │   │   │   ├── TodoInput/               # (same structure)
-│   │   │   │   ├── TodoItem/                # (same structure)
-│   │   │   │   └── TodoList/                # (same structure)
-│   │   │   ├── types/
-│   │   │   │   └── todo.ts                  # App-local TypeScript types (TodoItem)
-│   │   │   ├── hooks/
-│   │   │   │   └── useTodoWorker.ts # Owns localStorage; hydrates worker on mount
-│   │   │   ├── workers/
-│   │   │   │   └── todo.worker.ts   # Pure in-memory state machine (no localStorage)
-│   │   │   ├── test-setup.ts        # @testing-library/jest-dom setup
-│   │   │   ├── main.tsx
-│   │   │   └── index.css            # Tailwind CSS v4 entry
-│   │   ├── index.html
-│   │   ├── playwright.config.ts
-│   │   ├── vite.config.ts           # Vitest: unit (jsdom) + storybook (Chromium) projects
-│   │   └── package.json
+│   │   ├── docs/                    # App-specific docs
+│   |   │   └── ARCHITECTURE.md      # REST API design, Prisma schema, module structure
+│   │   ├── ...
+│   │   └── README.md                # Visit Upstream Repositories for Details
 │   └── todo-api-nestjs/             # NestJS REST API (standalone repo via Git Subtree)
-│       ├── docs/                    # App-specific docs (stack, deployment)
-│       │   ├── STACK.md             # NestJS, Prisma, SQLite, Vitest, conventions
-│       │   ├── ARCHITECTURE.md      # REST API design, Prisma schema, module structure
-│       │   └── DEPLOYMENT.md        # Local Docker, CI/CD
-│       ├── src/
-│       │   ├── main.ts              # NestJS bootstrap: versioning, validation, CORS, Swagger
-│       │   ├── app.module.ts
-│       │   ├── todos/               # Todo domain module
-│       │   │   ├── todos.controller.ts    # REST endpoints
-│       │   │   ├── todos.service.ts       # Business logic
-│       │   │   ├── dto/                   # CreateTodoDto, UpdateTodoDto
-│       │   │   ├── entities/              # Todo entity (Swagger)
-│       │   │   └── *.spec.ts              # Unit tests
-│       │   └── prisma/               # Prisma client module
-│       ├── prisma/
-│       │   ├── schema.prisma         # SQLite datasource + Todo model
-│       │   └── migrations/           # Database migration history
-│       ├── test/                     # Integration/E2E tests
-│       │   └── *.e2e-spec.ts         # Supertest + Vitest
-│       ├── .github/
-│       │   └── workflows/            # CI workflow
-│       ├── Dockerfile                # Multi-stage: builder + runtime
-│       ├── docker-compose.yml        # Local container deployment
-│       ├── package.json              # NestJS app (pnpm)
-│       └── tsconfig.json             # Strict TypeScript
+│       ├── docs/                    # App-specific docs
+│       │   └── ARCHITECTURE.md      # REST API design, Prisma schema, module structure
+│       ├── ...
+│       └── README.md                # Visit Upstream Repositories for Details
 ├── infra/                           # Monorepo Pulumi orchestrator (Automation API)
 │   ├── index.ts                     # Drives all apps/*/infra/ stacks in sequence
 │   ├── package.json                 # Standalone npm project (not a pnpm workspace member)
@@ -83,13 +32,6 @@
 ├── .github/
 │   ├── workflows/                   # GitHub Actions CI/CD
 │   └── PULL_REQUEST_TEMPLATE.md     # PR checklist
-├── .claude/
-│   └── commands/                    # Custom Claude Code slash commands
-│       ├── bootstrap.md                  # /project:bootstrap
-│       ├── plan_project.md               # /project:plan_project
-│       ├── develop.md                    # /project:develop
-│       ├── update-status-and-commit.md   # /project:update-status-and-commit
-│       └── update-docs-and-push.md       # /project:update-docs-and-push
 ├── package.json                     # Root pnpm workspace config
 ├── pnpm-workspace.yaml
 ├── turbo.json

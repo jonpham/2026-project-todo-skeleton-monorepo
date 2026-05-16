@@ -5,7 +5,7 @@
 ```
 .
 ├── apps/
-│   ├── todo-pwa/           # Vite + React PWA
+│   ├── todo-pwa-vite/           # Vite + React PWA
 │   │   ├── docs/           # App-specific docs (STACK.md, DEPLOYMENT.md)
 │   │   └── infra/          # App-specific Pulumi program (Cloudflare Pages)
 │   └── todo-api-nestjs/    # NestJS REST API (via Git Subtree from standalone repo)
@@ -28,8 +28,8 @@
 | [`docs/STACK.md`](docs/STACK.md)                                                     | Monorepo toolchain, root scripts, CI/CD overview, app stacks |
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)                                       | Full repo structure, Git Subtree workflow                    |
 | [`docs/DEPLOYMENT_SETUP.md`](docs/DEPLOYMENT_SETUP.md)                               | Shared prerequisites: Cloudflare, DNS, secrets, Pulumi CLI   |
-| [`apps/todo-pwa/docs/STACK.md`](apps/todo-pwa/docs/STACK.md)                         | todo-pwa tech stack, dev commands, conventions               |
-| [`apps/todo-pwa/docs/DEPLOYMENT.md`](apps/todo-pwa/docs/DEPLOYMENT.md)               | Local Docker, Pulumi infra, CI/CD, custom domain             |
+| [`apps/todo-pwa-vite/docs/STACK.md`](apps/todo-pwa-vite/docs/STACK.md)               | todo-pwa tech stack, dev commands, conventions               |
+| [`apps/todo-pwa-vite/docs/DEPLOYMENT.md`](apps/todo-pwa-vite/docs/DEPLOYMENT.md)     | Local Docker, Pulumi infra, CI/CD, custom domain             |
 | [`apps/todo-api-nestjs/docs/STACK.md`](apps/todo-api-nestjs/docs/STACK.md)           | todo-api-nestjs tech stack, dev commands, conventions        |
 | [`apps/todo-api-nestjs/docs/DEPLOYMENT.md`](apps/todo-api-nestjs/docs/DEPLOYMENT.md) | Local Docker, NestJS/Prisma setup, CI/CD                     |
 
@@ -54,16 +54,16 @@ Infrastructure is managed with [Pulumi](https://www.pulumi.com/) and targets [Cl
 
 Each app owns its own Pulumi stack in `apps/{app}/infra/` — fully self-contained and deployable standalone. The root `infra/` is a Pulumi Automation API orchestrator that drives all app stacks in one command, passing shared config automatically. This separation means any app can be extracted into its own repo with its infrastructure intact.
 
-| Layer                 | Path                   | Purpose                                                                            |
-| --------------------- | ---------------------- | ---------------------------------------------------------------------------------- |
-| App stack             | `apps/todo-pwa/infra/` | Declares this app's cloud resources. Deployable standalone with `pulumi up`.       |
-| Monorepo orchestrator | `infra/`               | Drives all app stacks via Pulumi Automation API. Full-monorepo deploy entry point. |
+| Layer                 | Path                        | Purpose                                                                            |
+| --------------------- | --------------------------- | ---------------------------------------------------------------------------------- |
+| App stack             | `apps/todo-pwa-vite/infra/` | Declares this app's cloud resources. Deployable standalone with `pulumi up`.       |
+| Monorepo orchestrator | `infra/`                    | Drives all app stacks via Pulumi Automation API. Full-monorepo deploy entry point. |
 
 Full design rationale: [`docs/ARCHITECTURE.md — Infrastructure Design`](docs/ARCHITECTURE.md#infrastructure-design)
 
 **Quick start:** copy `.env.example` → `.env` and fill in your Cloudflare credentials — both infra entry points load it automatically, so no inline env vars are needed.
 
-**Setup and first deploy:** [`docs/DEPLOYMENT_SETUP.md`](docs/DEPLOYMENT_SETUP.md) → [`apps/todo-pwa/docs/DEPLOYMENT.md`](apps/todo-pwa/docs/DEPLOYMENT.md)
+**Setup and first deploy:** [`docs/DEPLOYMENT_SETUP.md`](docs/DEPLOYMENT_SETUP.md) → [`apps/todo-pwa-vite/docs/DEPLOYMENT.md`](apps/todo-pwa-vite/docs/DEPLOYMENT.md)
 
 ### Git Subtree — NestJS API
 
