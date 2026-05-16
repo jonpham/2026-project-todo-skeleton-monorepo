@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import type { Todo } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service.js";
 import { CreateTodoDto } from "./dto/create-todo.dto.js";
@@ -6,7 +6,7 @@ import { UpdateTodoDto } from "./dto/update-todo.dto.js";
 
 @Injectable()
 export class TodosService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
   findAll() {
     return this.prisma.todo.findMany();

@@ -1,10 +1,10 @@
 # Project and Feature Status
 
-**Last completed phase:** Phase 9 — Shared Types Package `@jonpham/2026-project-todo-types` (GH42, merged PR #57)
-**Active feature doc:** None
-**Current step:** None
+**Last completed phase:** Phase 6 — PWA Offline-First API Sync (GH37, branch `feat/GH37-GH40-w3-pwa-offline-sync`)
+**Active feature doc:** `docs/features/[TODO]GH40_pwa-api-integration-tests.md`
+**Current step:** Task 12 — L3 system tests for NestJS
 **Known blockers:** None
-**Next action:** Begin W3 — PWA Offline-First API Sync (GH37)
+**Next action:** Add `apps/todo-api-nestjs/test/todos.system.spec.ts`
 
 ## Phase Summary
 
@@ -17,6 +17,6 @@
 | Phase 5 — API Subtree Integration         | `[DONE]GH33_todo-api-subtree-integration.md` | ✅ Done            |
 | Phase 8 — NestJS Monorepo Parity (W1)     | `[DONE]GH39_nestjs-monorepo-parity.md`       | ✅ Done            |
 | Phase 9 — Shared Types Package (W2)       | `[DONE]GH42_shared-types-package.md`         | ✅ Done            |
-| Phase 6 — PWA Offline-First API Sync (W3) | `[TODO]GH37_pwa-api-client-sync-queue.md`    | 🔲 Next            |
-| Phase 7 — Integration Tests + E2E (W3)    | `[TODO]GH40_pwa-api-integration-tests.md`    | 🔲 Todo            |
+| Phase 6 — PWA Offline-First API Sync (W3) | `[DONE]GH37_pwa-api-client-sync-queue.md`    | ✅ Done            |
+| Phase 7 — Integration Tests + E2E (W3)    | `[TODO]GH40_pwa-api-integration-tests.md`    | 🔲 Next            |
 | Phase 10 — K8s/Helm Deploy (W4)           | `[TODO]GH47_k8s-helm-deploy.md`              | 🔲 Todo (parallel) |

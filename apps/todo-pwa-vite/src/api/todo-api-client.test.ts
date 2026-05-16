@@ -7,7 +7,7 @@ import {
   deleteTodo,
 } from "./todo-api-client";
 
-const BASE = "http://localhost:3000";
+const BASE = "http://localhost:3001/v1";
 
 vi.stubGlobal("fetch", vi.fn());
 

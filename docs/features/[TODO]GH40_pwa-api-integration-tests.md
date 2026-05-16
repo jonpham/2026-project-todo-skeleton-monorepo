@@ -19,19 +19,20 @@ completed_at: null
 
 ## Context
 
-Phase 6 delivered `useTodoApi` with L1 unit tests for queue logic. This phase adds the remaining
+Phase 6 delivered worker-owned IndexedDB offline sync with L1 unit tests for the API client and
+`useTodoWorker` message contract. This phase adds the remaining
 test layers: L3 system integration tests for the NestJS API against a real SQLite database, and
 L4 full-platform E2E tests via Docker Compose + Playwright covering the offline-first cycle
 end-to-end. After this phase the Integration Phase 1 Epic is complete.
 
 Test levels:
 
-| Level | Name               | DB                           | Mocks                          |
-| ----- | ------------------ | ---------------------------- | ------------------------------ | ------------------------------------------- |
-| L1    | Unit               | none                         | fetch, localStorage, navigator |
-| L2    | Inter-unit         | none                         | mocked DB                      | ← deferred (no complex component graph yet) |
-| L3    | System integration | real SQLite (test.db)        | none                           |
-| L4    | Full platform E2E  | real SQLite + Docker Compose | none                           |
+| Level | Name               | DB                           | Mocks                        |
+| ----- | ------------------ | ---------------------------- | ---------------------------- | ------------------------------------------- |
+| L1    | Unit               | none                         | fetch, MockWorker, navigator |
+| L2    | Inter-unit         | none                         | mocked DB                    | ← deferred (no complex component graph yet) |
+| L3    | System integration | real SQLite (test.db)        | none                         |
+| L4    | Full platform E2E  | real SQLite + Docker Compose | none                         |
 
 L2 is explicitly deferred — there is no complex component interaction graph on the client surface
 yet that justifies inter-unit tests beyond what L1 already covers.
@@ -57,7 +58,7 @@ yet that justifies inter-unit tests beyond what L1 already covers.
 
 ## Dependencies
 
-- Phase 6 complete (`useTodoApi` implemented with L1 queue tests)
+- Phase 6 complete (`todo.worker.ts` owns IndexedDB persistence/queue/API sync; `useTodoWorker` is thin)
 - Docker Compose stack functional (NestJS + nginx + SQLite volume)
 - `@jonpham/2026-project-todo-types` with Zod schemas
 
@@ -87,20 +88,20 @@ yet that justifies inter-unit tests beyond what L1 already covers.
 
 - **L3 test database isolation:** Use a separate `test.db` file (`DATABASE_URL=file:./test.db` in test env). `beforeAll` calls `prisma migrate deploy` to ensure schema is current. `afterEach` calls `prisma.todo.deleteMany()` — faster than full schema teardown, safe because each test creates its own data.
 - **L3 tool stack:** Vitest (not Jest) + `supertest` for HTTP layer. NestJS app initialized once in `beforeAll` with `Test.createTestingModule`. No `@nestjs/testing` mock overrides — real Prisma client, real SQLite.
-- **L4 offline mechanism:** `page.context().setOffline(true)` is the only correct Playwright approach. It sets `navigator.onLine = false` AND fires the `offline` event. `page.route()` alone intercepts requests but does not update `navigator.onLine` — the `online` event listener in `useTodoApi` would never fire on reconnect.
+- **L4 offline mechanism:** `page.context().setOffline(true)` is the only correct Playwright approach. It sets `navigator.onLine = false` AND fires the `offline` event. `page.route()` alone intercepts requests but does not update `navigator.onLine` — the worker's online/offline event handling would never fire on reconnect.
 - **L4 Docker Compose setup:** `e2e-docker/` runs against a `docker compose up` stack. Tests use `baseURL: http://localhost` (nginx port 80). SQLite volume must be named (not anonymous) to survive compose down/up — verify in `docker-compose.yml`.
 - **`/health` endpoint:** Upstream change tracked in W1 upstream issue (`jonpham/2026-project-todo-api-nestjs`). L3 test for `/health` depends on that upstream PR being merged and synced into monorepo before this phase runs.
 - **Shared types Zod tests:** Live at `packages/todo-types/src/index.test.ts`. Run via `pnpm --filter @jonpham/2026-project-todo-types test`. No mocks — pure schema validation.
 
 ## Test Strategy
 
-| Level     | Location                                          | Tool                             | Scope                           |
-| --------- | ------------------------------------------------- | -------------------------------- | ------------------------------- |
-| L1 Unit   | `apps/todo-pwa-vite/src/hooks/useTodoApi.test.ts` | Vitest + mocked fetch            | Queue logic (Phase 6)           |
-| L1 Unit   | `packages/todo-types/src/index.test.ts`           | Vitest + Zod                     | Schema validation               |
-| L3 System | `apps/todo-api-nestjs/test/todos.system.spec.ts`  | Vitest + supertest + real SQLite | Full CRUD + validation + health |
-| L4 E2E    | `e2e-docker/offline-sync.spec.ts`                 | Playwright + Docker Compose      | Offline create → sync cycle     |
-| L4 E2E    | `e2e-docker/volume-persistence.spec.ts`           | Playwright + Docker Compose      | SQLite volume survives restart  |
+| Level     | Location                                             | Tool                             | Scope                           |
+| --------- | ---------------------------------------------------- | -------------------------------- | ------------------------------- |
+| L1 Unit   | `apps/todo-pwa-vite/src/hooks/useTodoWorker.test.ts` | Vitest + MockWorker              | Hook/worker contract (Phase 6)  |
+| L1 Unit   | `packages/todo-types/src/index.test.ts`              | Vitest + Zod                     | Schema validation               |
+| L3 System | `apps/todo-api-nestjs/test/todos.system.spec.ts`     | Vitest + supertest + real SQLite | Full CRUD + validation + health |
+| L4 E2E    | `e2e-docker/offline-sync.spec.ts`                    | Playwright + Docker Compose      | Offline create → sync cycle     |
+| L4 E2E    | `e2e-docker/volume-persistence.spec.ts`              | Playwright + Docker Compose      | SQLite volume survives restart  |
 
 ## Assumptions
 

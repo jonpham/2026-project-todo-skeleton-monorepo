@@ -46,6 +46,55 @@
 | `deploy:local`      | `pnpm deploy:local`      | Build and start the production Docker container at `localhost:3000` |
 | `deploy:local:stop` | `pnpm deploy:local:stop` | Stop the local Docker container                                     |
 
+## Run Locally for Manual Testing
+
+### Development Servers
+
+Run the API and PWA in separate terminals from the monorepo root.
+
+The repo commits non-secret local defaults in each app's `.env.local`. Replace
+those values only when your local ports or URLs differ. Developer-specific
+secrets must stay out of git in ignored `.env` files or your shell.
+
+```bash
+# Terminal 1: start the NestJS API at http://localhost:3001
+cd apps/todo-api-nestjs
+pnpm prisma:migrate
+pnpm dev
+```
+
+```bash
+# Terminal 2: start the PWA at http://localhost:5173
+cd apps/todo-pwa-vite
+pnpm dev
+```
+
+Open the PWA at `http://localhost:5173`.
+
+Useful API checks:
+
+```bash
+curl http://localhost:3001/health
+curl http://localhost:3001/v1/todos
+```
+
+### Docker Full Stack
+
+Docker builds install GitHub Packages, so `GITHUB_TOKEN` must be set in your
+shell or in the root `.env` file before starting the stack.
+
+```bash
+export GITHUB_TOKEN="$(gh auth token)"
+pnpm deploy:local
+```
+
+Open the PWA at `http://localhost:3000`. In Docker, nginx proxies API requests
+from `/api/v1/todos` to the NestJS API service.
+
+```bash
+pnpm deploy:local:stop
+```
+
 ---
 
 ## Infrastructure & Deployment

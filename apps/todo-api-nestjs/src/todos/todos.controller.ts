@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   HttpCode,
+  Inject,
   Param,
   Patch,
   Post,
@@ -17,7 +18,9 @@ import { TodosService } from "./todos.service.js";
 @ApiTags("todos")
 @Controller({ version: "1", path: "todos" })
 export class TodosController {
-  constructor(private readonly todosService: TodosService) {}
+  constructor(
+    @Inject(TodosService) private readonly todosService: TodosService
+  ) {}
 
   @Get()
   @HttpCode(200)
