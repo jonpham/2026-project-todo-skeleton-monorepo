@@ -1,4 +1,4 @@
 import type { TodoHook } from "../types/todo";
-import { useTodoWorker } from "./useTodoWorker";
+import { useTodoApi } from "./useTodoApi";
 
-export const useTodos: () => TodoHook = useTodoWorker;
+export const useTodos: () => TodoHook = useTodoApi;
