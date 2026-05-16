@@ -17,13 +17,6 @@ These rules govern every session. Follow them without exception.
 - State your assumptions explicitly
 - If a decision has meaningful tradeoffs, present options and ask which to take
 
-### Git Subtrees - Rules against Changes
-
-- Never make changes in a subtree directory in `./apps/`
-- If it is found that a subtree's contents in the monorepo have diverged from its upstream at the same commit,
-  ask the engineer to force overwrite of the monorepo subtree with upstream contents, either using a subtree pull or in extreme
-  situations a "Nuke and Re-Add Subtree" process.
-
 ### After Every Step
 
 Output the following before stopping:
@@ -43,9 +36,12 @@ Output the following before stopping:
 - Header describes the feature work only — never mention doc/status updates in the header
 - Doc and status updates (`PROJECT_STATUS.md`, feature doc checkmarks) go in body bullets only
 
-### Subtree discipline
+### Monorepo-First — Working in `apps/` and `packages/`
 
-- Any git subtrees in /apps/_ or /packages/_ should NEVER! have their files modified, all changes needed in those directories must come from their upstream via a `git subtree pull`.
+- Make all changes directly in `apps/` and `packages/` inside this monorepo
+- The monorepo is the source of truth; upstream repos are deployable mirrors
+- After merging to `main`, CI automatically pushes each app subtree to its upstream repo via `git subtree split` + force push
+- Never make changes directly in the upstream repos — they will be overwritten on the next monorepo push
 
 ### File & Status Discipline
 
@@ -62,7 +58,7 @@ Output the following before stopping:
 
 **Purpose:** A monorepo using a To-Do app use case to build a collection of deployable skeleton projects — each demonstrating a different tech stack or deployment type — that can be cloned or reused for real projects.
 
-**Type:** Monorepo with Various System Components (Projects) with individualized Tech Stacks as Git Subtrees
+**Type:** Monorepo with Various System Components (Projects) with individualized Tech Stacks. App repos are Git Subtrees used as downstream mirrors — the monorepo is the source of truth.
 
 **GitHub Repo:** [2026-project-todo-skeleton-monorepo](https://github.com/jonpham/2026-project-todo-skeleton-monorepo)
 
@@ -102,7 +98,9 @@ Docs live in `docs/`:
 
 ### Development Workflow
 
-Work from a feature branch and one focused worktree. Read the active feature doc and any matching initiative/spec docs before implementation. When development starts or resumes, update `docs/PROJECT_STATUS.md` with the active spec, the skill being used, the current task, and the next action for that task or the next task. Update repository docs in the same PR as the code change.
+Always open Claude in this monorepo — never in the individual app repos. Work from a feature branch and one focused worktree. Read the active feature doc and any matching initiative/spec docs before implementation. When development starts or resumes, update `docs/PROJECT_STATUS.md` with the active spec, the skill being used, the current task, and the next action for that task or the next task. Update repository docs in the same PR as the code change.
+
+After merging to `main`, the `sync-subtrees-push.yml` workflow automatically pushes changed app subtrees to their upstream repos. No manual subtree push is needed.
 
 ---
 
