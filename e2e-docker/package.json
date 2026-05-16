@@ -2,7 +2,7 @@
   "name": "e2e-docker",
   "private": true,
   "scripts": {
-    "test": "playwright test",
+    "test:e2e": "playwright test",
     "test:offline": "playwright test offline-sync.spec.ts",
     "test:persistence": "playwright test volume-persistence.spec.ts"
   },
