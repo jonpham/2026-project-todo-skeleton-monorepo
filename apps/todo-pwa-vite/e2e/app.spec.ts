@@ -32,3 +32,17 @@ test("full todo flow: create → complete → edit → delete", async ({ page })
   await page.getByRole("button", { name: /delete/i }).click();
   await expect(page.getByText(/no to-do items/i)).toBeVisible();
 });
+
+test("offline banner appears when context goes offline and disappears on reconnect", async ({
+  page,
+}) => {
+  // context.setOffline(true) sets navigator.onLine = false AND fires the
+  // 'offline' event, which the worker's online/offline listeners require.
+  // page.route() would intercept requests but leave navigator.onLine = true,
+  // so the worker would never flip its offline flag.
+  await page.goto("/");
+  await page.context().setOffline(true);
+  await expect(page.getByText(/you are offline/i)).toBeVisible();
+  await page.context().setOffline(false);
+  await expect(page.getByText(/you are offline/i)).not.toBeVisible();
+});
