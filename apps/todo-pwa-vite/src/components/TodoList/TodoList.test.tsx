@@ -2,13 +2,14 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import { TodoList } from "./TodoList";
-import type { TodoItem } from "../../types/todo";
+import type { UiTodo } from "../../types/todo";
 
-const makeTodo = (overrides: Partial<TodoItem> = {}): TodoItem => ({
+const makeTodo = (overrides: Partial<UiTodo> = {}): UiTodo => ({
   id: "1",
   description: "Buy groceries",
   completed: false,
   createdAt: "2026-01-01T00:00:00.000Z",
+  syncStatus: "synced",
   ...overrides,
 });
 

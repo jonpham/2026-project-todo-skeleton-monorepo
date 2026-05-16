@@ -1,8 +1,8 @@
-import type { TodoItem } from "../../types/todo";
+import type { UiTodo } from "../../types/todo";
 import { TodoItem as TodoItemComponent } from "../TodoItem";
 
 interface TodoListProps {
-  todos: TodoItem[];
+  todos: UiTodo[];
   onToggle: (id: string) => void;
   onUpdate: (id: string, description: string) => void;
   onDelete: (id: string) => void;

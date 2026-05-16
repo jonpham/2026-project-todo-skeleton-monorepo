@@ -1,12 +1,17 @@
 import { useState } from "react";
-import type { TodoItem as TodoItemType } from "../../types/todo";
+import type { UiTodo } from "../../types/todo";
 
 interface TodoItemProps {
-  todo: TodoItemType;
+  todo: UiTodo;
   onToggle: (id: string) => void;
   onUpdate: (id: string, description: string) => void;
   onDelete: (id: string) => void;
 }
+
+const syncBadge: Record<string, { className: string } | undefined> = {
+  pending: { className: "h-2 w-2 rounded-full bg-amber-400 shrink-0" },
+  failed: { className: "h-2 w-2 rounded-full bg-red-500 shrink-0" },
+};
 
 export function TodoItem({
   todo,
@@ -32,6 +37,8 @@ export function TodoItem({
     if (e.key === "Enter") commitEdit();
     if (e.key === "Escape") cancelEdit();
   }
+
+  const badge = syncBadge[todo.syncStatus];
 
   return (
     <li className="flex items-center gap-3 rounded border bg-white px-4 py-2">
@@ -61,6 +68,13 @@ export function TodoItem({
         >
           {todo.description}
         </span>
+      )}
+
+      {badge && (
+        <span
+          aria-label={`sync status: ${todo.syncStatus}`}
+          className={badge.className}
+        />
       )}
 
       <button

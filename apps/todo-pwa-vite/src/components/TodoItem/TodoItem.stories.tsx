@@ -20,6 +20,7 @@ export const Default: Story = {
       description: "Buy groceries",
       completed: false,
       createdAt: "2026-01-01T00:00:00.000Z",
+      syncStatus: "synced",
     },
   },
 };
@@ -31,6 +32,31 @@ export const Completed: Story = {
       description: "Buy groceries",
       completed: true,
       createdAt: "2026-01-01T00:00:00.000Z",
+      syncStatus: "synced",
+    },
+  },
+};
+
+export const Pending: Story = {
+  args: {
+    todo: {
+      id: "3",
+      description: "Waiting to sync",
+      completed: false,
+      createdAt: "2026-01-01T00:00:00.000Z",
+      syncStatus: "pending",
+    },
+  },
+};
+
+export const Failed: Story = {
+  args: {
+    todo: {
+      id: "4",
+      description: "Sync failed",
+      completed: false,
+      createdAt: "2026-01-01T00:00:00.000Z",
+      syncStatus: "failed",
     },
   },
 };
@@ -38,10 +64,11 @@ export const Completed: Story = {
 export const Editing: Story = {
   args: {
     todo: {
-      id: "3",
+      id: "5",
       description: "Buy groceries",
       completed: false,
       createdAt: "2026-01-01T00:00:00.000Z",
+      syncStatus: "synced",
     },
   },
   play: async ({ canvas, userEvent: ue }) => {
