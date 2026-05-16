@@ -3,6 +3,10 @@ services:
     build:
       context: apps/todo-pwa-vite
       dockerfile: Dockerfile
+      args:
+        VITE_TODO_API_URL: /api/v1
+      secrets:
+        - github_token
     ports:
       - "3000:80"
     volumes:
@@ -22,6 +26,8 @@ services:
     build:
       context: apps/todo-api-nestjs
       dockerfile: Dockerfile
+      secrets:
+        - github_token
     ports:
       - "3001:3000"
     volumes:
@@ -39,3 +45,7 @@ services:
 
 volumes:
   todo-db-data:
+
+secrets:
+  github_token:
+    environment: GITHUB_TOKEN

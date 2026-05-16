@@ -1,20 +1,26 @@
 import { useEffect, useRef, useState } from "react";
-import type { TodoItem } from "../types/todo";
+import type { TodoHook, UiTodo } from "../types/todo";
 
-export type { TodoItem };
+type WorkerCommand =
+  | { type: "INIT" }
+  | { type: "CREATE_TODO"; payload: { description: string } }
+  | { type: "UPDATE_TODO"; payload: { id: string; description: string } }
+  | { type: "TOGGLE_TODO"; payload: { id: string } }
+  | { type: "DELETE_TODO"; payload: { id: string } }
+  | { type: "SET_ONLINE"; payload: { online: boolean } };
 
-const STORAGE_KEY = "todos";
+type WorkerState = {
+  todos: UiTodo[];
+  offline: boolean;
+  error: string | null;
+  isLoading?: boolean;
+};
 
-function loadFromStorage(): TodoItem[] {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]");
-  } catch {
-    return [];
-  }
-}
-
-export function useTodoWorker() {
-  const [todos, setTodos] = useState<TodoItem[]>([]);
+export function useTodoWorker(): TodoHook {
+  const [todos, setTodos] = useState<UiTodo[]>([]);
+  const [offline, setOffline] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const workerRef = useRef<Worker | null>(null);
 
   useEffect(() => {
@@ -23,44 +29,56 @@ export function useTodoWorker() {
       { type: "module" }
     );
 
-    worker.onmessage = (event: MessageEvent<{ todos: TodoItem[] }>) => {
-      const updated = event.data.todos;
-      setTodos(updated);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    worker.onmessage = (event: MessageEvent<WorkerState>) => {
+      setTodos(event.data.todos);
+      setOffline(event.data.offline);
+      setError(event.data.error);
+      if (event.data.isLoading !== undefined) {
+        setIsLoading(event.data.isLoading);
+      }
     };
 
     workerRef.current = worker;
-    worker.postMessage({
-      type: "LOAD_TODOS",
-      payload: { todos: loadFromStorage() },
-    });
+    worker.postMessage({ type: "INIT" } satisfies WorkerCommand);
+
+    // Forward window online/offline to the worker. Belt-and-suspenders with
+    // the worker's own self.addEventListener listeners — some environments
+    // (e.g. Playwright's setOffline) reliably fire these on window but not on
+    // Worker self.
+    const handleOnline = () =>
+      worker.postMessage({
+        type: "SET_ONLINE",
+        payload: { online: true },
+      } satisfies WorkerCommand);
+    const handleOffline = () =>
+      worker.postMessage({
+        type: "SET_ONLINE",
+        payload: { online: false },
+      } satisfies WorkerCommand);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
 
     return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
       worker.terminate();
     };
   }, []);
 
-  function createTodo(description: string) {
-    workerRef.current?.postMessage({
-      type: "CREATE_TODO",
-      payload: { description },
-    });
+  function post(command: WorkerCommand) {
+    workerRef.current?.postMessage(command);
   }
 
-  function updateTodo(id: string, description: string) {
-    workerRef.current?.postMessage({
-      type: "UPDATE_TODO",
-      payload: { id, description },
-    });
-  }
-
-  function toggleTodo(id: string) {
-    workerRef.current?.postMessage({ type: "TOGGLE_TODO", payload: { id } });
-  }
-
-  function deleteTodo(id: string) {
-    workerRef.current?.postMessage({ type: "DELETE_TODO", payload: { id } });
-  }
-
-  return { todos, createTodo, updateTodo, toggleTodo, deleteTodo };
+  return {
+    todos,
+    createTodo: (description) =>
+      post({ type: "CREATE_TODO", payload: { description } }),
+    updateTodo: (id, description) =>
+      post({ type: "UPDATE_TODO", payload: { id, description } }),
+    toggleTodo: (id) => post({ type: "TOGGLE_TODO", payload: { id } }),
+    deleteTodo: (id) => post({ type: "DELETE_TODO", payload: { id } }),
+    offline,
+    error,
+    isLoading,
+  };
 }

@@ -1,11 +1,19 @@
-import { useTodoWorker } from "../../hooks/useTodoWorker";
+import type { TodoHook } from "../../types/todo";
 import { TodoInput } from "../TodoInput";
 import { TodoList } from "../TodoList";
 
-export function TodoApp() {
-  const { todos, createTodo, toggleTodo, updateTodo, deleteTodo } =
-    useTodoWorker();
+type Props = Pick<
+  TodoHook,
+  "todos" | "createTodo" | "updateTodo" | "toggleTodo" | "deleteTodo"
+>;
 
+export function TodoApp({
+  todos,
+  createTodo,
+  updateTodo,
+  toggleTodo,
+  deleteTodo,
+}: Props) {
   return (
     <>
       <h1 className="mb-6 text-3xl font-bold text-gray-900">Todo PWA</h1>

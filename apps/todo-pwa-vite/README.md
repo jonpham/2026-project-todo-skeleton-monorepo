@@ -11,6 +11,7 @@ This is a **standalone repository** that can be developed, tested, and deployed 
 - **Standalone Development**: Full development environment with independent CI/CD
 - **Monorepo Integration**: Automatically synced to monorepo for coordinated deployments
 - **Production PWA**: Vite-optimized build with service workers and offline support
+- **Worker-Owned Data**: Dedicated Web Worker owns IndexedDB persistence, sync queue, and Todo API sync
 - **Type-Safe**: Full TypeScript with strict mode enabled
 - **Tested**: Unit tests (Vitest), component tests (Storybook), E2E tests (Playwright)
 
@@ -50,12 +51,20 @@ The GitHub token must include `read:packages`.
 
 ### Environment
 
-Create `.env` if needed for custom configuration (none required for local development):
+Create `.env` if needed for custom API configuration:
 
 ```bash
-# Example - not required for local dev
-VITE_API_URL=http://localhost:3001
+VITE_TODO_API_URL=http://localhost:3001/v1
 ```
+
+This repo commits `.env.local` with non-secret local defaults. Replace those
+values only when your local ports or URLs differ. Developer-specific secrets
+must stay out of git in ignored `.env` files or your shell.
+
+Todo data sync is owned by `src/workers/todo.worker.ts`, which uses IndexedDB
+for durable local todos and queued writes. The service worker remains the
+production upgrade path for PWA asset caching and broader network strategy; it
+does not own Todo data sync.
 
 ## Developer Scripts
 
@@ -92,6 +101,35 @@ pnpm test:e2e
 pnpm build && pnpm preview  # Terminal 1
 pnpm test:e2e               # Terminal 2
 ```
+
+### Run PWA + API Locally
+
+Run the API and PWA in separate terminals from the monorepo.
+
+```bash
+# Terminal 1: start the API at http://localhost:3001
+cd apps/todo-api-nestjs
+pnpm prisma:migrate
+pnpm dev
+```
+
+```bash
+# Terminal 2: start the PWA at http://localhost:5173
+cd apps/todo-pwa-vite
+pnpm dev
+```
+
+Open the PWA at `http://localhost:5173`.
+
+For Docker-based manual testing from the monorepo root:
+
+```bash
+export GITHUB_TOKEN="$(gh auth token)"
+pnpm deploy:local
+```
+
+Open the PWA at `http://localhost:3000`. The monorepo nginx config proxies
+`/api/v1/todos` to the API container.
 
 ### Build & Preview
 
@@ -133,13 +171,15 @@ git push origin feat/my-feature
 
 ```bash
 # Terminal 1: Start PWA dev server
+cd apps/todo-pwa-vite
 pnpm dev
 
 # Terminal 2: Start API (in monorepo)
-cd ../2026-project-todo-skeleton-monorepo
-docker-compose up todo-api-nestjs
+cd apps/todo-api-nestjs
+pnpm prisma:migrate
+pnpm dev
 
-# Now PWA at http://localhost:5173 can call API at http://localhost:3001
+# Now PWA at http://localhost:5173 can call API at http://localhost:3001/v1
 ```
 
 ### Pull Request Workflow

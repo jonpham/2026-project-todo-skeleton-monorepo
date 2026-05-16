@@ -2,13 +2,14 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import { TodoItem } from "./TodoItem";
-import type { TodoItem as TodoItemType } from "../../types/todo";
+import type { UiTodo } from "../../types/todo";
 
-const makeTodo = (overrides: Partial<TodoItemType> = {}): TodoItemType => ({
+const makeTodo = (overrides: Partial<UiTodo> = {}): UiTodo => ({
   id: "1",
   description: "Buy groceries",
   completed: false,
   createdAt: "2026-01-01T00:00:00.000Z",
+  syncStatus: "synced",
   ...overrides,
 });
 
@@ -135,5 +136,41 @@ describe("TodoItem", () => {
     await userEvent.type(input, "Something else{Escape}");
     expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
     expect(screen.getByText("Buy groceries")).toBeInTheDocument();
+  });
+
+  it("shows no sync badge when syncStatus is synced", () => {
+    render(
+      <TodoItem
+        todo={makeTodo({ syncStatus: "synced" })}
+        onToggle={vi.fn()}
+        onUpdate={vi.fn()}
+        onDelete={vi.fn()}
+      />
+    );
+    expect(screen.queryByLabelText(/sync status/i)).not.toBeInTheDocument();
+  });
+
+  it("shows amber badge when syncStatus is pending", () => {
+    render(
+      <TodoItem
+        todo={makeTodo({ syncStatus: "pending" })}
+        onToggle={vi.fn()}
+        onUpdate={vi.fn()}
+        onDelete={vi.fn()}
+      />
+    );
+    expect(screen.getByLabelText("sync status: pending")).toBeInTheDocument();
+  });
+
+  it("shows red badge when syncStatus is failed", () => {
+    render(
+      <TodoItem
+        todo={makeTodo({ syncStatus: "failed" })}
+        onToggle={vi.fn()}
+        onUpdate={vi.fn()}
+        onDelete={vi.fn()}
+      />
+    );
+    expect(screen.getByLabelText("sync status: failed")).toBeInTheDocument();
   });
 });

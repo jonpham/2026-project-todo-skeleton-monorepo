@@ -17,6 +17,9 @@ RUN --mount=type=secret,id=github_token \
 
 COPY . .
 
+ARG VITE_TODO_API_URL=/api/v1
+ENV VITE_TODO_API_URL=$VITE_TODO_API_URL
+
 RUN pnpm build
 
 # Stage 2: Server

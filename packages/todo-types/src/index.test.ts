@@ -42,6 +42,25 @@ describe("TodoItemSchema", () => {
 
     expect(result.success).toBe(false);
   });
+
+  it("rejects wrong field types with path-specific errors", () => {
+    const result = TodoItemSchema.safeParse({
+      id: 123,
+      description: false,
+      completed: "no",
+      createdAt: "not-a-date",
+    });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues.map((issue) => issue.path.join("."))).toEqual([
+        "id",
+        "description",
+        "completed",
+        "createdAt",
+      ]);
+    }
+  });
 });
 
 describe("CreateTodoDtoSchema", () => {
