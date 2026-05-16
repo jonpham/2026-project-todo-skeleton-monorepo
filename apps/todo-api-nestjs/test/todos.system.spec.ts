@@ -1,5 +1,6 @@
 import "reflect-metadata";
 import { execSync } from "child_process";
+import { rmSync } from "fs";
 import path from "path";
 import {
   INestApplication,
@@ -12,8 +13,12 @@ import request from "supertest";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import { AppModule } from "../src/app.module.js";
 
-const TEST_DATABASE_URL = "file:./test.db";
+// SQLite paths in DATABASE_URL are resolved relative to the schema file
+// location (prisma/schema.prisma), so this file lands at prisma/system-test.db.
+// Distinct from dev.db (used by .env.local) so tests can't corrupt local data.
+const TEST_DATABASE_URL = "file:./system-test.db";
 const APP_ROOT = path.resolve(import.meta.dirname, "..");
+const TEST_DB_PATH = path.join(APP_ROOT, "prisma", "system-test.db");
 
 let app: INestApplication;
 let prisma: PrismaClient;
@@ -21,7 +26,16 @@ let prisma: PrismaClient;
 beforeAll(async () => {
   process.env.DATABASE_URL = TEST_DATABASE_URL;
 
-  execSync("node_modules/.bin/prisma migrate deploy", {
+  // Force a clean slate per run; migrate deploy only applies pending
+  // migrations and would otherwise inherit any leftover rows from an
+  // interrupted previous run.
+  rmSync(TEST_DB_PATH, { force: true });
+  rmSync(`${TEST_DB_PATH}-journal`, { force: true });
+
+  // pnpm exec resolves the prisma binary correctly across hoist modes and
+  // OSes; a hard-coded node_modules/.bin/prisma path can break under
+  // node-linker=hoisted or on Windows.
+  execSync("pnpm exec prisma migrate deploy", {
     cwd: APP_ROOT,
     env: { ...process.env, DATABASE_URL: TEST_DATABASE_URL },
     stdio: "pipe",

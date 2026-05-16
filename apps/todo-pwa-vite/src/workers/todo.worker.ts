@@ -286,6 +286,12 @@ async function setOnlineState(online: boolean): Promise<void> {
   // main thread gives us a reliable signal in either case.
   const wasOffline = offline;
   offline = !online;
+  if (wasOffline && online) {
+    // Clear any stale "Sync failed" banner from the prior offline window so
+    // an empty queue (already-flushed via the worker-self listener) still
+    // hides the error on reconnect.
+    error = null;
+  }
   emit();
   if (wasOffline && online) {
     await flushQueue().catch(() => {
@@ -324,6 +330,9 @@ self.addEventListener("offline", () => {
 
 self.addEventListener("online", () => {
   offline = false;
+  // Mirror setOnlineState: clear stale error banner on reconnect; flushQueue
+  // will re-set it only if entries actually fail.
+  error = null;
   emit();
   flushQueue().catch(() => {
     error = "Sync failed. Will retry when reconnected.";
