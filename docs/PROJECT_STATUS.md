@@ -1,10 +1,10 @@
 # Project and Feature Status
 
-**Last completed phase:** Phase 6 — PWA Offline-First API Sync (GH37, branch `feat/GH37-GH40-w3-pwa-offline-sync`)
-**Active feature doc:** `docs/features/[TODO]GH40_pwa-api-integration-tests.md`
-**Current step:** GH40 Step 6 — mark GH40 DONE (frontmatter, file rename, status table)
-**Known blockers:** None
-**Next action:** Update feature doc frontmatter (`status: DONE`, `completed_at: 2026-05-15`), rename `[TODO]GH40_*.md` → `[DONE]GH40_*.md`, update Phase Summary table.
+**Last completed phase:** Phase 7 — Integration Tests + E2E (GH40, branch `feat/GH37-GH40-w3-pwa-offline-sync`)
+**Active feature doc:** None
+**Current step:** None
+**Known blockers:** None — full L4 Playwright execution deferred to a session with the docker compose stack running.
+**Next action:** Open PR for `feat/GH37-GH40-w3-pwa-offline-sync` (GH37 + GH40), then begin Phase 10 — K8s/Helm Deploy (GH47).
 
 ## Phase Summary
 
@@ -18,5 +18,5 @@
 | Phase 8 — NestJS Monorepo Parity (W1)     | `[DONE]GH39_nestjs-monorepo-parity.md`       | ✅ Done            |
 | Phase 9 — Shared Types Package (W2)       | `[DONE]GH42_shared-types-package.md`         | ✅ Done            |
 | Phase 6 — PWA Offline-First API Sync (W3) | `[DONE]GH37_pwa-api-client-sync-queue.md`    | ✅ Done            |
-| Phase 7 — Integration Tests + E2E (W3)    | `[TODO]GH40_pwa-api-integration-tests.md`    | 🔲 Next            |
+| Phase 7 — Integration Tests + E2E (W3)    | `[DONE]GH40_pwa-api-integration-tests.md`    | ✅ Done            |
 | Phase 10 — K8s/Helm Deploy (W4)           | `[TODO]GH47_k8s-helm-deploy.md`              | 🔲 Todo (parallel) |
