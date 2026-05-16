@@ -2,7 +2,7 @@
 
 **Last completed phase:** Phase 6 — PWA Offline-First API Sync (GH37, branch `feat/GH37-GH40-w3-pwa-offline-sync`)
 **Active feature doc:** `docs/features/[TODO]GH40_pwa-api-integration-tests.md`
-**Current step:** Task 12 — L3 system tests for NestJS
+**Current step:** GH40 Step 2 — L3 system tests for NestJS
 **Known blockers:** None
 **Next action:** Add `apps/todo-api-nestjs/test/todos.system.spec.ts`
 

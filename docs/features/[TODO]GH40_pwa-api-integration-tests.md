@@ -72,12 +72,12 @@ yet that justifies inter-unit tests beyond what L1 already covers.
 - [ ] L3: each test isolated — `afterEach` deletes all rows; tests do not share state
 - [ ] L4: `docker compose up`, create todo via PWA UI, verify todo persists in SQLite after `docker compose down && docker compose up`
 - [ ] L4: offline create cycle — `page.context().setOffline(true)`, create todo, verify `syncStatus: 'pending'` in UI; `page.context().setOffline(false)`, verify `syncStatus: 'synced'`
-- [ ] Shared types: `pnpm --filter @jonpham/2026-project-todo-types test` passes Zod schema validation for `TodoItem`, `CreateTodoDto` (with and without id), `UpdateTodoDto`
+- [x] Shared types: `pnpm --filter @jonpham/2026-project-todo-types test` passes Zod schema validation for `TodoItem`, `CreateTodoDto` (with and without id), `UpdateTodoDto`
 - [ ] All existing L1 tests continue to pass (no regressions)
 
 ## Steps
 
-- [ ] **Step 1** — Add Zod schema unit tests to `packages/todo-types/src/index.test.ts`: valid `TodoItem` passes; invalid payload (missing description, wrong types) fails with correct error; `CreateTodoDto` with and without `id` both pass
+- [x] **Step 1** — Add Zod schema unit tests to `packages/todo-types/src/index.test.ts`: valid `TodoItem` passes; invalid payload (missing description, wrong types) fails with correct error; `CreateTodoDto` with and without `id` both pass
 - [ ] **Step 2** — Create `apps/todo-api-nestjs/test/todos.system.spec.ts`: L3 smoke using Vitest + supertest + real SQLite (`test.db`); `beforeAll` runs `prisma migrate deploy`; `afterEach` runs `prisma.todo.deleteMany()`; covers full CRUD + validation errors + /health
 - [ ] **Step 3** — Create `e2e-docker/` directory with `playwright.config.ts` and `offline-sync.spec.ts`: L4 tests using `page.context().setOffline(true/false)` for offline cycle; separate `volume-persistence.spec.ts` verifying SQLite data survives compose restart
 - [ ] **Step 4** — Update `apps/todo-pwa-vite/e2e/app.spec.ts`: replace any `page.route()` offline simulation with `page.context().setOffline(true)` to correctly set `navigator.onLine` and fire the `offline` event
