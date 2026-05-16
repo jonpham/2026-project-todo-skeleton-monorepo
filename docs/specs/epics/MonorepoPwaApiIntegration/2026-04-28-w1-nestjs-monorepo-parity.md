@@ -14,22 +14,22 @@
 
 ### Upstream repo (`2026-project-todo-api-nestjs`)
 
-| Action | Path |
-|--------|------|
-| Create | `src/health/health.controller.ts` |
-| Modify | `src/app.module.ts` |
-| Modify | `src/todos/todos.service.ts` |
+| Action | Path                               |
+| ------ | ---------------------------------- |
+| Create | `src/health/health.controller.ts`  |
+| Modify | `src/app.module.ts`                |
+| Modify | `src/todos/todos.service.ts`       |
 | Modify | `src/todos/dto/create-todo.dto.ts` |
-| Modify | `src/todos/todos.service.spec.ts` |
+| Modify | `src/todos/todos.service.spec.ts`  |
 
 ### Monorepo worktree (`worktree-w1-nestjs-parity`)
 
-| Action | Path |
-|--------|------|
+| Action | Path                                        |
+| ------ | ------------------------------------------- |
 | Create | `.github/workflows/sync-nestjs-subtree.yml` |
-| Create | `infra/nginx/nginx.conf` |
-| Modify | `docker-compose.yml` |
-| Create | `subtree-sync.sh` |
+| Create | `infra/nginx/nginx.conf`                    |
+| Modify | `docker-compose.yml`                        |
+| Create | `subtree-sync.sh`                           |
 
 ---
 
@@ -43,6 +43,7 @@
 ### Task 1: Add `/health` endpoint (TerminusModule)
 
 **Files:**
+
 - Create: `src/health/health.controller.ts`
 - Modify: `src/app.module.ts`
 - Modify: `package.json` (add @nestjs/terminus)
@@ -102,13 +103,15 @@ pnpm dev
 ```
 
 In a second terminal:
+
 ```bash
 curl http://localhost:3000/health
 ```
 
 Expected output:
+
 ```json
-{"status":"ok","info":{},"error":{},"details":{}}
+{ "status": "ok", "info": {}, "error": {}, "details": {} }
 ```
 
 Kill the dev server with `Ctrl+C`.
@@ -125,6 +128,7 @@ git commit -m "feat: add /health endpoint via TerminusModule"
 ### Task 2: Extract `findOrFail` helper in TodosService
 
 **Files:**
+
 - Modify: `src/todos/todos.service.ts`
 - Modify: `src/todos/todos.service.spec.ts`
 
@@ -225,6 +229,7 @@ git commit -m "refactor: extract findOrFail helper in TodosService"
 ### Task 3: Add `id?` to CreateTodoDto
 
 **Files:**
+
 - Modify: `src/todos/dto/create-todo.dto.ts`
 
 - [ ] **Step 1: Write a failing test for client-UUID passthrough**
@@ -236,7 +241,10 @@ describe("create", () => {
   it("passes client-provided id to Prisma", async () => {
     const clientId = "550e8400-e29b-41d4-a716-446655440000";
     const dto = { id: clientId, description: "Test todo" };
-    mockPrismaService.todo.create.mockResolvedValue({ ...mockTodo, id: clientId });
+    mockPrismaService.todo.create.mockResolvedValue({
+      ...mockTodo,
+      id: clientId,
+    });
 
     const result = await service.create(dto);
 
@@ -361,6 +369,7 @@ Once merged, proceed to Task 10 (subtree pull). Tasks 5–9 can run in parallel 
 ### Task 5: Add NestJS subtree sync workflow
 
 **Files:**
+
 - Create: `.github/workflows/sync-nestjs-subtree.yml`
 
 - [ ] **Step 1: Create the sync workflow (mirrors sync-pwa-subtree.yml)**
@@ -466,6 +475,7 @@ git commit -m "ci: add NestJS API subtree sync workflow"
 ### Task 6: Create monorepo nginx config
 
 **Files:**
+
 - Create: `infra/nginx/nginx.conf`
 
 - [ ] **Step 1: Create the nginx config**
@@ -530,6 +540,7 @@ git commit -m "feat: add monorepo nginx config with /api/ proxy for Docker Compo
 ### Task 7: Update docker-compose.yml
 
 **Files:**
+
 - Modify: `docker-compose.yml`
 
 Current state: two services (`todo-pwa`, `todo-api-nestjs`), no named volume, SQLite in working dir, no nginx proxy, healthcheck uses `/v1/todos`.
@@ -608,6 +619,7 @@ git commit -m "feat: update docker-compose with nginx proxy, SQLite volume, heal
 ### Task 8: Create subtree-sync.sh
 
 **Files:**
+
 - Create: `subtree-sync.sh`
 
 - [ ] **Step 1: Create the script**
@@ -741,6 +753,7 @@ EOF
 ### Task 10: Pull upstream changes into monorepo
 
 **Files:**
+
 - Modify: `apps/todo-api-nestjs/` (subtree pull — many files updated)
 
 - [ ] **Step 1: Ensure the remote is registered**
@@ -750,6 +763,7 @@ git -C /Users/jp/code/_boilerplate/2026-project-todo/worktree-w1-nestjs-parity r
 ```
 
 If not present:
+
 ```bash
 git -C /Users/jp/code/_boilerplate/2026-project-todo/worktree-w1-nestjs-parity remote add todo-api-nestjs https://github.com/jonpham/2026-project-todo-api-nestjs.git
 ```
@@ -811,8 +825,9 @@ curl http://localhost:3000/api/health
 ```
 
 Expected:
+
 ```json
-{"status":"ok","info":{},"error":{},"details":{}}
+{ "status": "ok", "info": {}, "error": {}, "details": {} }
 ```
 
 - [ ] **Step 3: Verify PWA is served**
@@ -878,18 +893,18 @@ Update the PR description to indicate full-stack verification passed.
 
 ### Spec coverage
 
-| Requirement | Task |
-|-------------|------|
-| GET /health returns `{ status: 'ok' }` | Task 1 |
-| findOrFail extracted | Task 2 |
+| Requirement                                           | Task                            |
+| ----------------------------------------------------- | ------------------------------- |
+| GET /health returns `{ status: 'ok' }`                | Task 1                          |
+| findOrFail extracted                                  | Task 2                          |
 | POST /v1/todos with client UUID → response.id matches | Task 3, verified Task 11 Step 5 |
-| POST /v1/todos without id → server UUID | Task 3, verified Task 11 Step 4 |
-| docker compose up starts both services | Task 7, verified Task 11 Step 1 |
-| curl localhost/api/health returns ok | Verified Task 11 Step 2 |
-| curl localhost/ serves PWA HTML | Verified Task 11 Step 3 |
-| SQLite persists after restart | Verified Task 11 Step 6 |
-| subtree-sync.sh is executable and documented | Task 8 |
-| NestJS sync workflow mirrors PWA pattern | Task 5 |
+| POST /v1/todos without id → server UUID               | Task 3, verified Task 11 Step 4 |
+| docker compose up starts both services                | Task 7, verified Task 11 Step 1 |
+| curl localhost/api/health returns ok                  | Verified Task 11 Step 2         |
+| curl localhost/ serves PWA HTML                       | Verified Task 11 Step 3         |
+| SQLite persists after restart                         | Verified Task 11 Step 6         |
+| subtree-sync.sh is executable and documented          | Task 8                          |
+| NestJS sync workflow mirrors PWA pattern              | Task 5                          |
 
 All acceptance criteria from the feature doc are covered.
 

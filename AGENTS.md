@@ -76,15 +76,15 @@ Docs live in `docs/`:
 | -------------------------------------------------- | --------------------------------------------------------------------------- |
 | `docs/features/`                                   | Phase task tracking — frontmatter + step checklists are the source of truth |
 | `docs/initiatives/{initiative}/`                   | gstack initiative planning, discovery, and design review artifacts          |
-| `docs/epics/{initiative}/`                         | Active superpowers implementation plans and specs for that initiative       |
+| `docs/specs/{initiative}/`                         | Active superpowers implementation plans and specs for that initiative       |
 | `docs/ideas/`                                      | Lightweight ADRs and idea capture                                           |
 | `docs/STACK.md`, `ARCHITECTURE.md`, `CHANGELOG.md` | Reference docs                                                              |
 
 **No automated GitHub issue sync.** Repository plan documents are the source of truth. GitHub Issues may be written manually from accepted initiatives and specs when external tracking is useful.
 
 - Use gstack for initiative planning and store outputs in `docs/initiatives/{initiative}/`
-- Use superpowers for implementation planning and store outputs in `docs/epics/{initiative}/`
-- After merged changes complete the tasks defined by a spec implementation plan, move that spec file from `docs/epics/{initiative}/` to `docs/features/` to signal completion/history.
+- Use superpowers for implementation planning and store outputs in `docs/specs/{initiative}/`
+- After merged changes complete the tasks defined by a spec implementation plan, move that spec file from `docs/specs/{initiative}/` to `docs/features/` to signal completion/history.
 - Manual task after planning: write or update GitHub Issues from the accepted initiative/spec documents when issue tracking is needed
 - TODO: Decide how GitHub/task-management state should be reconciled with repository plan documents without reintroducing automated issue sync
 
@@ -121,7 +121,7 @@ Work from a feature branch and one focused worktree. Read the active feature doc
 
 Use gstack for initiative planning, product/design/architecture review, and discovery. Store retained gstack artifacts under `docs/initiatives/{initiative}/`.
 
-Use superpowers for implementation planning and execution plans. Store retained superpowers plans/specs under `docs/epics/{initiative}/`.
+Use superpowers for implementation planning and execution plans. Store retained superpowers plans/specs under `docs/specs/{initiative}/`.
 
 When a spec's implementation tasks are completed and merged, move the completed spec to `docs/features/` as the completion record.
 
@@ -139,4 +139,4 @@ Key routing rules:
 
 - Product ideas and initiative planning → use gstack
 - Strategy, scope, architecture, design, and developer-experience review → use gstack
-- Implementation planning → use superpowers and write specs under `docs/epics/{initiative}/`
+- Implementation planning → use superpowers and write specs under `docs/specs/{initiative}/`
