@@ -32,12 +32,17 @@ file (`values-k3d-local.yaml`) adapts it to k3d for the laptop dev loop.
 # 1. Create a k3d cluster with the ingress port mapped to localhost:80.
 k3d cluster create todo --port "80:80@loadbalancer"
 
-# 2. Build the app images locally.
-docker build -t todo-pwa-vite:dev   apps/todo-pwa-vite
-docker build -t todo-api-nestjs:dev apps/todo-api-nestjs
+# 2. Build the app images locally and tag them with the full reference the
+#    chart renders. The chart's image helper always prepends
+#    <image.registry>/<image.repository>/, so the local Docker tag must
+#    match exactly — otherwise the kubelet falls back to pulling from GHCR
+#    and fails on a private package.
+REG="ghcr.io/jonpham/2026-project-todo-skeleton-monorepo"
+docker build -t "$REG/todo-pwa-vite:dev"   apps/todo-pwa-vite
+docker build -t "$REG/todo-api-nestjs:dev" apps/todo-api-nestjs
 
 # 3. Import them into the k3d cluster (bypasses any registry).
-k3d image import todo-pwa-vite:dev todo-api-nestjs:dev -c todo
+k3d image import "$REG/todo-pwa-vite:dev" "$REG/todo-api-nestjs:dev" -c todo
 
 # 4. Map the chart's default host onto loopback (one-time).
 echo "127.0.0.1 todo.local" | sudo tee -a /etc/hosts
