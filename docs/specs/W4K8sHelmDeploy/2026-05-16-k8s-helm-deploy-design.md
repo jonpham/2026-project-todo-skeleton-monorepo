@@ -37,7 +37,7 @@ are deliberate follow-ups.
 
 ## Out of Scope
 
-- Managed databases (RDS, Cloud SQL); SQLite PVC only.
+- Managed databases (RDS, Cloud SQL); SQLite Peristent Volume Claim (PVC) only.
 - Horizontal Pod Autoscaler.
 - cert-manager / TLS termination.
 - GitOps (ArgoCD, Flux).
@@ -184,17 +184,36 @@ ingress:
 
 `readinessProbe` gates traffic to the pod (Service won't route to it until ready). `livenessProbe` restarts the container if it hangs. Liveness is intentionally more forgiving than readiness so transient slowness doesn't trigger restart loops.
 
+## PR Sequencing
+
+AGENTS.md caps pull requests at ≤10 changed files (lockfile exemptions only). Phase 10 totals ~15 files (5 chart-root + 8 templates + 2 docs), so the work splits into three sequential pull requests against the same feature branch `feat/GH47-k8s-helm-deploy`. Each PR is independently meaningful, independently lintable, and bounded by a teaching theme.
+
+| PR                               | Theme                                                                                                                                          | Files                                                                                                                                                                                                            | Approx. count | Acceptance gate                                                                                                                                                                                                                           |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **PR-A — Chart scaffold**        | Helm mechanics: chart structure, values, named templates. Zero Kubernetes resources yet.                                                       | `Chart.yaml`, `values.yaml`, `values-k3d-local.yaml`, `.helmignore`, `templates/_helpers.tpl`, `docs/PROJECT_STATUS.md`                                                                                          | 6             | `helm lint` passes (base + overlay); `helm template` renders empty manifest set without error.                                                                                                                                            |
+| **PR-B — Workloads + storage**   | Kubernetes workload primitives: Deployment, Service, ConfigMap, PersistentVolumeClaim. Both apps deployable in-cluster, no external entry yet. | `templates/pwa-deployment.yaml`, `templates/api-deployment.yaml`, `templates/pwa-service.yaml`, `templates/api-service.yaml`, `templates/api-configmap.yaml`, `templates/api-pvc.yaml`, `docs/PROJECT_STATUS.md` | 7             | `helm lint`, `helm template -f values-k3d-local.yaml`, and `kubectl apply --dry-run=server` all pass. Optional cluster smoke: `helm install`, both deployments reach `Ready`, in-cluster `kubectl exec` curl of the API service succeeds. |
+| **PR-C — Ingress + docs + done** | External entry + documentation + phase closure.                                                                                                | `templates/ingress.yaml`, `infra/helm/todo-skeleton/README.md`, feature doc rename `[TODO]GH47_…` → `[DONE]GH47_…`, `docs/PROJECT_STATUS.md`                                                                     | 4             | Full end-to-end verification (k3d image import → `helm install` → ingress curl → pod delete → todo persists → `helm uninstall` → PVC retained). Feature doc frontmatter set to DONE with branch/PR/completed_at.                          |
+
+**Why this split (teaching rationale):**
+
+- **Cognitive load per review.** A reviewer of PR-A only needs Helm scaffolding context. They never have to evaluate a Deployment or an Ingress in the same review. PR-B introduces Kubernetes workload primitives in isolation. PR-C adds the single new concept (Ingress) plus closure.
+- **Failure isolation.** If PR-B's chart fails to render valid Kubernetes manifests, the bug is provably inside the 7 template-related files — not tangled with chart structure or ingress routing.
+- **Each PR stands alone.** PR-A merged-but-not-PR-B leaves a valid (if empty-of-resources) Helm chart. PR-B merged-but-not-PR-C leaves a fully deployable in-cluster stack; only external entry is missing. The repo never lands in a broken half-state.
+- **Maps to natural test gates.** PR-A → lint. PR-B → lint + server-side dry-run. PR-C → real cluster install.
+
+**Branching mechanics.** All three PRs target `main` from the same branch `feat/GH47-k8s-helm-deploy`. PR-A merges first; PR-B is rebased on the new `main` (now containing PR-A) and merged; PR-C follows. Alternative — stacked branches — is acceptable if the user prefers, but sequential single-branch is simpler and matches the AGENTS.md guidance.
+
 ## Implementation Steps (mirrors feature doc)
 
-The chart is built in feature-doc order. Each step is independently verifiable via `helm lint` + `helm template | kubectl apply --dry-run=client`. Full cluster verification is reserved for Step 6.
+The chart is built in feature-doc order. Each step is independently verifiable via `helm lint` + `helm template | kubectl apply --dry-run=client`. Full cluster verification is reserved for Step 6. Step boundaries map to PR boundaries as noted.
 
-1. **Chart skeleton** — `Chart.yaml`, empty `values.yaml`, empty `templates/_helpers.tpl`, `.helmignore`. `helm lint` passes against the empty chart.
-2. **`values.yaml`** populated as specified above. Lint still passes.
-3. **`_helpers.tpl`** with the seven named templates listed. Then `pwa-deployment.yaml` and `api-deployment.yaml` consuming the helpers; API includes PVC volume mount and ConfigMap envFrom (the referenced ConfigMap/PVC files arrive in Step 5).
-4. **Service templates** — `pwa-service.yaml`, `api-service.yaml` (both ClusterIP).
-5. **`api-configmap.yaml`**, **`api-pvc.yaml`** (with `helm.sh/resource-policy: keep`), **`ingress.yaml`**. After this step `helm template -f values-k3d-local.yaml | kubectl apply --dry-run=server -f -` passes against a real cluster.
-6. **End-to-end cluster verification.** Build images, `k3d image import`, `helm install`, hit the API through the ingress, create a todo, delete the API pod, confirm the todo survives. `helm uninstall`, confirm the PVC remains.
-7. **Feature doc → DONE.** Update frontmatter (`status: DONE`, `branch`, `pr`, `completed_at`), rename file `[TODO]` → `[DONE]`, tick step checklist, update `PROJECT_STATUS.md`.
+1. **Chart skeleton** — `Chart.yaml`, empty `values.yaml`, empty `templates/_helpers.tpl`, `.helmignore`. `helm lint` passes against the empty chart. _(PR-A)_
+2. **`values.yaml`** populated as specified above; `values-k3d-local.yaml` overlay added; `_helpers.tpl` populated with the seven named templates. Lint still passes against both base and overlay. _(PR-A)_
+3. **Deployment templates** — `pwa-deployment.yaml` and `api-deployment.yaml` consuming the helpers; API includes PersistentVolumeClaim volume mount and ConfigMap `envFrom` (the referenced ConfigMap and PVC files arrive in Step 5). _(PR-B)_
+4. **Service templates** — `pwa-service.yaml`, `api-service.yaml` (both ClusterIP). _(PR-B)_
+5. **`api-configmap.yaml`**, **`api-pvc.yaml`** (with `helm.sh/resource-policy: keep`). After this step `helm template -f values-k3d-local.yaml | kubectl apply --dry-run=server -f -` passes against a real cluster. _(PR-B)_
+6. **`ingress.yaml`** + chart **`README.md`**, then end-to-end cluster verification: build images, `k3d image import`, `helm install`, hit the API through the ingress, create a todo, delete the API pod, confirm the todo survives. `helm uninstall`, confirm the PVC remains. _(PR-C)_
+7. **Feature doc → DONE.** Update frontmatter (`status: DONE`, `branch`, `pr`, `completed_at`), rename file `[TODO]` → `[DONE]`, tick step checklist, update `PROJECT_STATUS.md`. _(PR-C)_
 
 ## Verification Commands
 
