@@ -2,12 +2,12 @@
 project: "2026-project-todo-skeleton-monorepo"
 phase: 10
 slug: "k8s-helm-deploy"
-status: TODO
+status: DONE
 step_gating: true
 epic_issue: null
-branch: null
-pr: null
-completed_at: null
+branch: "feat/GH47-pr-c-ingress-docs"
+pr: "#61"
+completed_at: "2026-05-19"
 ---
 
 # Phase 10 — Kubernetes / Helm Deployment (W4)
@@ -47,22 +47,22 @@ for SQLite. This demonstrates that the skeleton is cluster-deployable, not just 
 
 ## Acceptance Criteria
 
-- [ ] `helm lint infra/helm/todo-skeleton` passes with no errors
-- [ ] `helm install todo-skeleton infra/helm/todo-skeleton` deploys both pods to the cluster
-- [ ] `kubectl get pods` shows both PWA and API pods in `Running` state
-- [ ] PWA accessible at the configured Ingress host; creates a todo, todo persists after pod restart
-- [ ] SQLite data persists across API pod deletion (PVC survives pod lifecycle)
-- [ ] `helm uninstall todo-skeleton` cleanly removes all resources except the PVC
+- [x] `helm lint infra/helm/todo-skeleton` passes with no errors
+- [x] `helm install todo-skeleton infra/helm/todo-skeleton` deploys both pods to the cluster
+- [x] `kubectl get pods` shows both PWA and API pods in `Running` state
+- [x] PWA accessible at the configured Ingress host; creates a todo, todo persists after pod restart
+- [x] SQLite data persists across API pod deletion (PVC survives pod lifecycle)
+- [x] `helm uninstall todo-skeleton` cleanly removes all resources except the PVC
 
 ## Steps
 
-- [ ] **Step 1** — Create `infra/helm/todo-skeleton/Chart.yaml`: name, version, appVersion
-- [ ] **Step 2** — Create `infra/helm/todo-skeleton/values.yaml`: image repositories, tags, replica counts, ingress host, storage size (default 1Gi)
-- [ ] **Step 3** — Create Deployment templates: `pwa-deployment.yaml` (nginx image), `api-deployment.yaml` (NestJS image, mounts PVC at `/data`, sets `DATABASE_URL`)
-- [ ] **Step 4** — Create Service templates: `pwa-service.yaml` (ClusterIP), `api-service.yaml` (ClusterIP)
-- [ ] **Step 5** — Create `pvc.yaml` (PersistentVolumeClaim for SQLite) and `ingress.yaml` (routes `/api/` to API service, `/` to PWA service)
-- [ ] **Step 6** — Verify on local cluster: `helm install`, check pod health, create todo via ingress host, delete API pod, verify todo survives restart
-- [ ] **Step 7** — Update this feature doc to DONE
+- [x] **Step 1** — Create `infra/helm/todo-skeleton/Chart.yaml`: name, version, appVersion
+- [x] **Step 2** — Create `infra/helm/todo-skeleton/values.yaml`: image repositories, tags, replica counts, ingress host, storage size (default 1Gi)
+- [x] **Step 3** — Create Deployment templates: `pwa-deployment.yaml` (nginx image), `api-deployment.yaml` (NestJS image, mounts PVC at `/data`, sets `DATABASE_URL`)
+- [x] **Step 4** — Create Service templates: `pwa-service.yaml` (ClusterIP), `api-service.yaml` (ClusterIP)
+- [x] **Step 5** — Create `pvc.yaml` (PersistentVolumeClaim for SQLite) and `ingress.yaml` (routes `/api/` to API service, `/` to PWA service)
+- [x] **Step 6** — Verify on local cluster: `helm install`, check pod health, create todo via ingress host, delete API pod, verify todo survives restart
+- [x] **Step 7** — Update this feature doc to DONE
 
 ## Technical Notes
 
@@ -85,6 +85,7 @@ serve as the manual test checklist. L4 automated cluster tests are a Phase 2 con
 
 ## Change Log
 
-| Date | PR  | Status Change | Notes                                             |
-| ---- | --- | ------------- | ------------------------------------------------- |
-|      |     | TODO          | Created for W4 workstream (eng review 2026-04-28) |
+| Date       | PR           | Status Change | Notes                                                                                                                                                                                                                                                       |
+| ---------- | ------------ | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|            |              | TODO          | Created for W4 workstream (eng review 2026-04-28)                                                                                                                                                                                                           |
+| 2026-05-19 | PR-C (`#61`) | DONE          | Phase 10 complete: PR-A chart scaffold (landed directly on `main` via `2713218`), PR-B workloads + storage (`#60`), PR-C ingress + docs + closure. End-to-end k3d verification passed (todo persists across API pod restart; `helm uninstall` retains PVC). |
