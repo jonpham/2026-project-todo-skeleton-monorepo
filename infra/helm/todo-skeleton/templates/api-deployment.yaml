@@ -1,0 +1,63 @@
+{{- if gt (int .Values.api.replicaCount) 1 -}}
+{{- fail "api.replicaCount must be 1. SQLite is single-writer and the PersistentVolumeClaim is node-local (ReadWriteOnce); scaling > 1 will corrupt the database. To deploy multiple API replicas, switch to a multi-writer datastore (e.g. Postgres) and remove the PVC mount from the API Deployment." -}}
+{{- end -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "todo-skeleton.componentName" (dict "context" . "component" "api") }}
+  labels:
+    {{- include "todo-skeleton.labels" (dict "context" . "component" "api") | nindent 4 }}
+spec:
+  # Recreate: terminate old pod before starting new. Required because
+  # ReadWriteOnce PVCs allow only one node to mount at a time; RollingUpdate
+  # would deadlock waiting for the new pod to mount what the old still holds.
+  strategy:
+    type: Recreate
+  replicas: {{ .Values.api.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "todo-skeleton.selectorLabels" (dict "context" . "component" "api") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "todo-skeleton.labels" (dict "context" . "component" "api") | nindent 8 }}
+    spec:
+      {{- include "todo-skeleton.imagePullSecrets" . | nindent 6 }}
+      containers:
+        - name: api
+          image: {{ include "todo-skeleton.image" (dict "context" . "name" .Values.api.image.name "tag" .Values.api.image.tag) }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.api.service.port }}
+              name: http
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: {{ printf "%s-config" (include "todo-skeleton.componentName" (dict "context" . "component" "api")) }}
+          {{- if .Values.api.persistence.enabled }}
+          volumeMounts:
+            - name: data
+              mountPath: {{ .Values.api.persistence.mountPath }}
+          {{- end }}
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            failureThreshold: 5
+          resources:
+            {{- toYaml .Values.api.resources | nindent 12 }}
+      {{- if .Values.api.persistence.enabled }}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ printf "%s-data" (include "todo-skeleton.componentName" (dict "context" . "component" "api")) }}
+      {{- end }}
