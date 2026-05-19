@@ -3,11 +3,12 @@
 **Last completed phase:** Phase 7 — Integration Tests + E2E (GH40, branch `feat/GH37-GH40-w3-pwa-offline-sync`)
 **Active feature doc:** `[TODO]GH47_k8s-helm-deploy.md` (Phase 10 — K8s/Helm Deploy, W4)
 **Active spec:** `docs/specs/W4K8sHelmDeploy/2026-05-16-k8s-helm-deploy-design.md`
-**Active skill:** superpowers:brainstorming → superpowers:writing-plans (next)
+**Active plan:** `docs/specs/W4K8sHelmDeploy/2026-05-18-pr-a-chart-scaffold-plan.md` (PR-A — Chart scaffold)
+**Active skill:** superpowers:executing-plans
 **Branch:** `feat/GH47-k8s-helm-deploy`
-**Current step:** Spec written; awaiting user review before invoking writing-plans.
-**Known blockers:** None — full L4 Playwright execution deferred to a session with the docker compose stack running.
-**Next action:** User reviews spec → invoke superpowers:writing-plans to produce the step-by-step implementation plan.
+**Current step:** PR-A — Chart scaffold complete locally (Helm 4.2.0, k3d 5.8.3). Awaiting PR open + review.
+**Known blockers:** None.
+**Next action:** Open PR-A; on merge, rebase the branch and begin PR-B (workloads + storage).
 
 ## Phase Summary
 
