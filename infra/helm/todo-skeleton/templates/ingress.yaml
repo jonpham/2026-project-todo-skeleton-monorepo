@@ -1,0 +1,64 @@
+{{- if .Values.ingress.enabled -}}
+{{- $apiName := include "todo-skeleton.componentName" (dict "context" . "component" "api") -}}
+{{- $pwaName := include "todo-skeleton.componentName" (dict "context" . "component" "pwa") -}}
+{{- $fullName := include "todo-skeleton.fullname" . -}}
+{{- $isTraefik := eq .Values.ingress.className "traefik" -}}
+{{- if $isTraefik }}
+# Traefik Middleware: strips the leading /api segment before the request is
+# forwarded to the API Service. NestJS does NOT set a global /api prefix;
+# its controllers serve /v1/todos and /health directly. This middleware
+# mirrors the trailing-slash proxy_pass strip used by the Docker Compose
+# nginx reverse proxy at infra/nginx/nginx.conf, so in-cluster routing
+# matches local-dev routing 1:1.
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ printf "%s-strip-api" $fullName }}
+  labels:
+    {{- include "todo-skeleton.labels" (dict "context" . "component" "api") | nindent 4 }}
+spec:
+  stripPrefix:
+    prefixes:
+      - /api
+---
+{{- end }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}
+  labels:
+    {{- include "todo-skeleton.labels" (dict "context" . "component" "ingress") | nindent 4 }}
+  annotations:
+    {{- if $isTraefik }}
+    # Bind the strip-prefix Middleware above to this Ingress's router.
+    # Format: <namespace>-<middleware-name>@kubernetescrd
+    traefik.ingress.kubernetes.io/router.middlewares: {{ printf "%s-%s-strip-api@kubernetescrd" .Release.Namespace $fullName }}
+    {{- end }}
+    {{- with .Values.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- with .Values.ingress.tls }}
+  tls:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.ingress.host | quote }}
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $apiName }}
+                port:
+                  number: {{ .Values.api.service.port }}
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $pwaName }}
+                port:
+                  number: {{ .Values.pwa.service.port }}
+{{- end }}
