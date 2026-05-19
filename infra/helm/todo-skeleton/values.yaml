@@ -1,2 +1,81 @@
 # Default values for todo-skeleton.
-# Populated in Task 2 — Populate values.yaml with staging-shaped defaults.
+# This file is shaped for production / Proxmox-k3s staging.
+# For local k3d development, layer values-k3d-local.yaml on top via `-f`.
+
+# Optional name overrides — used by the todo-skeleton.name and .fullname helpers.
+nameOverride: ""
+fullnameOverride: ""
+
+# Global image settings shared by both apps.
+image:
+  registry: ghcr.io
+  # Repository under the registry — both app image names append to this path.
+  repository: jonpham/2026-project-todo-skeleton-monorepo
+  # IfNotPresent because we use immutable version tags; Always would re-pull on
+  # every restart. Override to Always if you start using mutable tags like :latest.
+  pullPolicy: IfNotPresent
+
+# Reference to a docker-registry Secret you create out-of-band, for example:
+#   kubectl create secret docker-registry ghcr-pull \
+#     --docker-server=ghcr.io \
+#     --docker-username=<github-username> \
+#     --docker-password=<github-personal-access-token>
+# Leave empty when images are public, or when using `k3d image import` locally.
+imagePullSecrets: []
+# - name: ghcr-pull
+
+# ----- PWA (nginx serving the Vite build) -----
+pwa:
+  image:
+    name: todo-pwa-vite
+    tag: "0.1.0"
+  # PWA is stateless; safe to scale horizontally.
+  replicaCount: 2
+  service:
+    port: 80
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+
+# ----- API (NestJS + SQLite) -----
+api:
+  image:
+    name: todo-api-nestjs
+    tag: "0.1.0"
+  # MUST stay 1. SQLite is single-writer and the PersistentVolumeClaim is
+  # node-local (ReadWriteOnce). Scaling >1 will corrupt the database.
+  # The chart enforces this in PR-B via a {{ fail }} guard in api-deployment.yaml.
+  replicaCount: 1
+  service:
+    port: 3000
+  env:
+    DATABASE_URL: "file:/data/prod.db"
+    PORT: "3000"
+    CORS_ALLOWED_ORIGINS: "https://todo.example.com"
+  persistence:
+    enabled: true
+    storageClass: local-path
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    mountPath: /data
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+# ----- Ingress (single Ingress routes both paths) -----
+ingress:
+  enabled: true
+  # k3s ships Traefik by default; nginx-ingress users set "nginx".
+  className: traefik
+  host: todo.example.com
+  annotations: {}
+  # cert-manager / TLS deferred to a follow-up phase.
+  tls: []
