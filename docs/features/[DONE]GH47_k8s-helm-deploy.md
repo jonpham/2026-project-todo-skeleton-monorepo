@@ -6,7 +6,7 @@ status: DONE
 step_gating: true
 epic_issue: null
 branch: "feat/GH47-pr-c-ingress-docs"
-pr: "<set after Task 8 opens the PR>"
+pr: "#61"
 completed_at: "2026-05-19"
 ---
 
@@ -85,7 +85,7 @@ serve as the manual test checklist. L4 automated cluster tests are a Phase 2 con
 
 ## Change Log
 
-| Date       | PR             | Status Change | Notes                                                                                                                                                                                                                       |
-| ---------- | -------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|            |                | TODO          | Created for W4 workstream (eng review 2026-04-28)                                                                                                                                                                           |
-| 2026-05-19 | PR-C (`#<NN>`) | DONE          | Phase 10 complete: PR-A chart scaffold (`#<A>`), PR-B workloads + storage (`#<B>`), PR-C ingress + docs + closure. End-to-end k3d verification passed (todo persists across API pod restart; `helm uninstall` retains PVC). |
+| Date       | PR           | Status Change | Notes                                                                                                                                                                                                                                                       |
+| ---------- | ------------ | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|            |              | TODO          | Created for W4 workstream (eng review 2026-04-28)                                                                                                                                                                                                           |
+| 2026-05-19 | PR-C (`#61`) | DONE          | Phase 10 complete: PR-A chart scaffold (landed directly on `main` via `2713218`), PR-B workloads + storage (`#60`), PR-C ingress + docs + closure. End-to-end k3d verification passed (todo persists across API pod restart; `helm uninstall` retains PVC). |
