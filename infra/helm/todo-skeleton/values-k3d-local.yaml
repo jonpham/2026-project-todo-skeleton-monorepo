@@ -1,0 +1,23 @@
+# Overlay for the laptop dev loop (k3d cluster).
+# Usage: helm install todo-skeleton infra/helm/todo-skeleton \
+#          -f infra/helm/todo-skeleton/values-k3d-local.yaml
+#
+# Only fields that differ from values.yaml are listed.
+
+# k3d image import bypasses GHCR; no pull secret needed.
+imagePullSecrets: []
+
+pwa:
+  image:
+    tag: "dev"
+
+api:
+  image:
+    tag: "dev"
+  env:
+    # Localhost ingress hostname; matches /etc/hosts entry (added in PR-C).
+    CORS_ALLOWED_ORIGINS: "http://todo.local"
+
+ingress:
+  className: traefik
+  host: todo.local
