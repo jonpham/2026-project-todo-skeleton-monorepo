@@ -1,0 +1,17 @@
+# Patterns excluded from `helm package`. Standard set.
+.DS_Store
+.git/
+.gitignore
+.bzr/
+.hg/
+.hgignore
+.svn/
+*.swp
+*.bak
+*.tmp
+*.orig
+*~
+.project
+.idea/
+*.tmproj
+.vscode/

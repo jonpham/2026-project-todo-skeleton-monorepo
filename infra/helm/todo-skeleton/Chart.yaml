@@ -1,0 +1,16 @@
+apiVersion: v2
+name: todo-skeleton
+description: |
+  Two-service todo-app skeleton — Vite progressive web app (nginx) and
+  NestJS API with a single-writer SQLite database on a PersistentVolumeClaim.
+  Deployable to any Kubernetes cluster; defaults shaped for k3s.
+type: application
+# Chart version — bump when the chart itself changes (templates, helpers, defaults).
+version: 0.1.0
+# appVersion — version of the app images this chart was authored against.
+# Bumped when a new image tag is cut.
+appVersion: "0.1.0"
+kubeVersion: ">=1.27.0-0"
+maintainers:
+  - name: Jonathan Pham
+    url: https://github.com/jonpham

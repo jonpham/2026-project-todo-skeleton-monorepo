@@ -41,19 +41,19 @@ This task is one-time per machine. Skip if `helm version` already reports 3.13 o
 brew install helm
 ```
 
-- [ ] **Step 2: Verify Helm version is 3.13 or newer**
+- [ ] **Step 2: Verify Helm version is 3.13 or newer (Helm 4.x is also fine)**
 
 ```bash
 helm version --short
 ```
 
-Expected output (version may be newer):
+Expected output — either Helm 3.13+ or Helm 4.x (current as of 2026):
 
 ```
-v3.14.0+gxxxxxxxx
+v4.2.0+gxxxxxxxx
 ```
 
-If the major version is not 3, stop and re-install. Helm 2 is incompatible.
+Helm 2 is incompatible. Helm 4 is mostly backward-compatible for chart authors; our chart uses only Helm-3-and-4 common syntax (apiVersion v2, standard helpers). If lint fails on this chart with Helm 4 due to a removed function or flag, stop and surface the error.
 
 - [ ] **Step 3: Install k3d via Homebrew**
 
