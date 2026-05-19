@@ -538,24 +538,22 @@ Expected output: header banner showing `# Source: todo-skeleton/templates/_helpe
 
 - [ ] **Step 5: Smoke-test a helper inline**
 
-Render `componentName` and `image` using `--show-only`-incompatible inline trick: create a one-line throwaway template, render, delete.
+Render `componentName` and `image` via a throwaway template. **Important:** the throwaway file must NOT start with an underscore. Helm treats `_`-prefixed files in `templates/` as partials and excludes them from `--show-only` rendering.
 
 ```bash
-cat > /tmp/_smoke.yaml <<'EOF'
+cat > infra/helm/todo-skeleton/templates/zz-smoke.yaml <<'EOF'
 api-name: {{ include "todo-skeleton.componentName" (dict "context" . "component" "api") }}
 api-image: {{ include "todo-skeleton.image" (dict "context" . "name" .Values.api.image.name "tag" .Values.api.image.tag) }}
 EOF
-cp /tmp/_smoke.yaml infra/helm/todo-skeleton/templates/_smoke.yaml
-helm template test infra/helm/todo-skeleton -f infra/helm/todo-skeleton/values-k3d-local.yaml --show-only templates/_smoke.yaml
-rm infra/helm/todo-skeleton/templates/_smoke.yaml
-rm /tmp/_smoke.yaml
+helm template test infra/helm/todo-skeleton -f infra/helm/todo-skeleton/values-k3d-local.yaml --show-only templates/zz-smoke.yaml
+rm infra/helm/todo-skeleton/templates/zz-smoke.yaml
 ```
 
 Expected output:
 
 ```yaml
 ---
-# Source: todo-skeleton/templates/_smoke.yaml
+# Source: todo-skeleton/templates/zz-smoke.yaml
 api-name: test-todo-skeleton-api
 api-image: ghcr.io/jonpham/2026-project-todo-skeleton-monorepo/todo-api-nestjs:dev
 ```
