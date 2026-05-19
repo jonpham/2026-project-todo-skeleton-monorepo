@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "todo-skeleton.componentName" (dict "context" . "component" "pwa") }}
+  labels:
+    {{- include "todo-skeleton.labels" (dict "context" . "component" "pwa") | nindent 4 }}
+spec:
+  replicas: {{ .Values.pwa.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "todo-skeleton.selectorLabels" (dict "context" . "component" "pwa") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "todo-skeleton.labels" (dict "context" . "component" "pwa") | nindent 8 }}
+    spec:
+      {{- include "todo-skeleton.imagePullSecrets" . | nindent 6 }}
+      containers:
+        - name: pwa
+          image: {{ include "todo-skeleton.image" (dict "context" . "name" .Values.pwa.image.name "tag" .Values.pwa.image.tag) }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 80
+              name: http
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            failureThreshold: 5
+          resources:
+            {{- toYaml .Values.pwa.resources | nindent 12 }}
